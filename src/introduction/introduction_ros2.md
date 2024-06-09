@@ -2,12 +2,12 @@
 
 Avant de commencer, assurez-vous d'avoir correctement installé ROS 2 comme décrit dans [la section précédente](./installation_ros2.md). 
 
-##  Tutoriels
+## Tutoriels
 
 Turtlesim est un outil pédagogique inclus dans ROS 2 qui nous permettra de découvrir et de tester les concepts de base de ROS 2.  
-Pour cela, nous allons suivre une série de tutoriels de la documentation officielle de ROS 2.
+Pour cela, vous allez suivre une série de tutoriels de la documentation officielle de ROS 2.
 
-Voici une liste des tutoriels que vous allez suivre (dans l'ordre) :
+Voici une liste des tutoriels à suivre dans l'ordre :
 
 1. [Using turtlesim, ros2, and rqt](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html)
 2. [Understanding nodes](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html)
