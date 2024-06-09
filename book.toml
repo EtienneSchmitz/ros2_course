@@ -1,0 +1,6 @@
+[book]
+title = "Workshop - ROS 2"
+authors = ["Etienne SCHMITZ"]
+language = "fr"
+multilingual = false
+src = "src"
