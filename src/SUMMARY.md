@@ -5,7 +5,7 @@
 # Journée - Introduction à ROS 2
 
 - [Ressources](./introduction/ressources.md)
-- [Installation](./introduction/installation.md)
+- [Installation - ROS 2](./introduction/installation_ros2.md)
 - [Atelier - Introduction à ROS 2](./introduction/introduction_ros2.md)
 
 # Journée - Navigation
