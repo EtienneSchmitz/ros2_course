@@ -2,12 +2,12 @@
 
 Selon votre système d'exploitation, vous pouvez suivre l'une des instructions d'installation disponibles à [cette adresse](https://docs.ros.org/en/humble/Installation.html).
 
-Pour le workshop, nous recommandons l'utilisation d'Ubuntu 22.04. Les instructions pour l'installation de ROS 2 sur Ubuntu 22.04 sont disponibles à [ce lien](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html).
+Pour le workshop, il est recommandé l'utilisation d'Ubuntu 22.04 avec la distribution ROS 2 Humble. Les instructions pour l'installation de ROS 2 sur Ubuntu 22.04 sont disponibles à [ce lien](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html).
 
 
 ## Installation - Ubuntu 22.04
 
-Vous trouverez ici un guide condensé des étapes à suivre pour installer ROS 2 Humble sur Ubuntu 22.04.
+Vous trouverez ici un guide condensé des étapes à suivre pour installer ROS 2 Humble Hawksbill sur Ubuntu 22.04.
 
 ```bash
 # Ubuntu Universe repository
