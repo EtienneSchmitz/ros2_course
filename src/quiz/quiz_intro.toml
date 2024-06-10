@@ -1,0 +1,144 @@
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quel est le rôle d'un nœud dans ROS 2 ?"
+prompt.distractors = [
+  "Une unité de stockage pour les données.",
+  "Un outil pour visualiser les états du robot.",
+  "Un fichier de configuration pour définir les paramètres."
+]
+answer.answer = "Un processus qui effectue des calculs et des communications."
+context = "Les nœuds sont les blocs de construction fondamentaux d'un système ROS 2, responsables de réaliser des calculs et de communiquer avec d'autres nœuds."
+id = "339fb93a-3ae8-4f28-8fac-8b96a7f80383"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quel est le principal avantage d'utiliser des nœuds dans ROS 2 ?"
+prompt.distractors = [
+  "Ils augmentent la mémoire disponible.",
+  "Ils permettent une exécution plus rapide des algorithmes.",
+  "Ils facilitent la modularité et la réutilisabilité du code."
+]
+answer.answer = "Ils facilitent la modularité et la réutilisabilité du code."
+context = "L'utilisation de nœuds permet de créer des composants logiciels modulaires et réutilisables, ce qui simplifie le développement et la maintenance des systèmes robotiques."
+id = "57736f09-d569-4246-93bc-93ed8a0df822"
+
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Comment les nœuds communiquent-ils en utilisant les topics dans ROS 2 ?"
+prompt.distractors = [
+  "Par des paires de requêtes/réponses synchrones.",
+  "En lisant et en écrivant dans une mémoire partagée.",
+  "En appelant directement les fonctions des autres nœuds."
+]
+answer.answer = "En publiant et en s'abonnant à des bus nommés."
+context = "Dans ROS 2, les nœuds publient des messages sur des topics et s'abonnent à des topics pour recevoir des messages de manière asynchrone."
+id = "42bfe4a7-359c-47d4-81cb-4fd0bed511af"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quel modèle de communication est utilisé par les topics dans ROS 2 ?"
+prompt.distractors = [
+  "Client/Serveur",
+  "Peer-to-Peer",
+  "Pub/Sub (Publish/Subscribe)"
+]
+answer.answer = "Pub/Sub (Publish/Subscribe)"
+context = "Le modèle de communication Pub/Sub (Publish/Subscribe) est utilisé par les topics dans ROS 2, permettant une communication asynchrone entre les nœuds."
+id = "df4b2b27-eb68-41af-82b2-c09c15bc92a0"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quelle est la caractéristique des services dans ROS 2 ?"
+prompt.distractors = [
+  "Ils sont utilisés pour une communication unidirectionnelle.",
+  "Ils ne peuvent être utilisés que pour des tâches en temps réel.",
+  "Ils ne supportent pas la communication par requête/réponse."
+]
+answer.answer = "Ils fournissent une communication synchrone par requête/réponse."
+context = "Les services dans ROS 2 permettent aux nœuds de communiquer de manière synchrone en envoyant des requêtes et en recevant des réponses."
+id = "a92be084-c2ea-4379-99d8-824a5e457ddd"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quel type de communication les services ROS 2 supportent-ils ?"
+prompt.distractors = [
+  "Unidirectionnelle",
+  "Asynchrone",
+  "Synchrone"
+]
+answer.answer = "Synchrone"
+context = "Les services ROS 2 supportent la communication synchrone, où une requête est envoyée par un nœud et une réponse est reçue de manière coordonnée."
+id = "bbf731db-2e17-4c06-8363-5f17ebd7a4e9"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quel est un avantage de l'utilisation des actions dans ROS 2 ?"
+prompt.distractors = [
+  "Elles sont plus simples que les services.",
+  "Elles fournissent des résultats immédiats sans attendre.",
+  "Elles ne nécessitent aucun retour d'information."
+]
+answer.answer = "Elles permettent des tâches longues avec des retours périodiques et un résultat final."
+context = "Les actions dans ROS 2 sont adaptées aux tâches qui prennent plus de temps à compléter, en fournissant des mises à jour sur la progression et un résultat final."
+id = "a866340c-3000-46f3-b7c8-71a4baf4eaeb"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quand est-il approprié d'utiliser des actions dans ROS 2 ?"
+prompt.distractors = [
+  "Pour des tâches instantanées.",
+  "Pour des tâches qui nécessitent une réponse immédiate.",
+  "Pour des tâches longues et complexes nécessitant des mises à jour périodiques."
+]
+answer.answer = "Pour des tâches longues et complexes nécessitant des mises à jour périodiques."
+context = "Les actions sont adaptées aux tâches longues et complexes qui nécessitent un suivi et des mises à jour sur la progression avant de fournir un résultat final."
+id = "98407ad1-a1e0-4cce-9ddd-856030ba6d82"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Pourquoi utilise-t-on les paramètres dans ROS 2 ?"
+prompt.distractors = [
+  "Pour stocker de grandes quantités de données.",
+  "Pour communiquer entre les nœuds de manière asynchrone.",
+  "Pour exécuter des boucles de contrôle en temps réel."
+]
+answer.answer = "Pour configurer le comportement des nœuds à l'exécution sans changer le code."
+context = "Les paramètres dans ROS 2 sont utilisés pour configurer dynamiquement le comportement des nœuds, permettant ainsi une flexibilité sans modifier le code source."
+id = "6ddd529b-0a12-487e-9678-cb8d57a9bb5f"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Quelle est la fonction principale des paramètres dans ROS 2 ?"
+prompt.distractors = [
+  "Envoyer des messages entre nœuds.",
+  "Stocker des données persistantes.",
+  "Configurer dynamiquement le comportement des nœuds."
+]
+answer.answer = "Configurer dynamiquement le comportement des nœuds."
+context = "Les paramètres permettent de configurer le comportement des nœuds de manière dynamique à l'exécution, offrant une flexibilité sans modifier le code."
+id = "85453591-de2e-448d-b54c-07a120dfe8be"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Pourquoi changer le ROS_DOMAIN_ID dans un réseau ROS 2 ?"
+prompt.distractors = [
+  "Pour augmenter la vitesse de passage des messages.",
+  "Pour permettre aux nœuds de s'exécuter plus rapidement.",
+  "Pour rendre les nœuds détectables par défaut."
+]
+answer.answer = "Pour séparer différents groupes de nœuds sur le même réseau."
+context = "Changer le ROS_DOMAIN_ID aide à éviter les interférences entre différents groupes de nœuds s'exécutant sur le même réseau physique."
+id = "1ccce20e-a51c-4a29-83cc-fd0fab43a123"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Comment configure-t-on le ROS_DOMAIN_ID pour un groupe de nœuds ROS 2 ?"
+prompt.distractors = [
+  "En modifiant le code source des nœuds.",
+  "En utilisant une interface graphique.",
+  "En définissant une variable d'environnement."
+]
+answer.answer = "En définissant une variable d'environnement."
+context = "Le ROS_DOMAIN_ID peut être configuré en définissant la variable d'environnement ROS_DOMAIN_ID avant de lancer les nœuds ROS 2."
+id = "a7ad5671-75e9-4cce-ab74-443748551c3f"

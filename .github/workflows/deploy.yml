@@ -22,6 +22,7 @@ jobs:
           mkdir mdbook
           curl -sSL $url | tar -xz --directory=./mdbook
           echo `pwd`/mdbook >> $GITHUB_PATH
+          cargo install mdbook-quiz --locked
       - name: Build Book
         run: |
           # This assumes your book is in the root of your repository.

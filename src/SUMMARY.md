@@ -7,12 +7,14 @@
 - [Ressources](./introduction/ressources.md)
 - [Installation - ROS 2](./introduction/installation.md)
 - [Atelier - Introduction à ROS 2](./introduction/activites.md)
+- [Quiz - Introduction ROS2](./introduction/quiz.md)
 
 # Journée - Navigation
 
 - [Ressources](./navigation/ressources.md)
 - [Installation - Turtlebot 3](./navigation/installation.md)
 - [Atelier - Navigation (TurtleBot 3) avec ROS 2](./navigation/activites.md)
+- [Quiz - Navigation](./navigation/quiz.md)
 
 # Journée - Manipulation
 
