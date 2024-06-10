@@ -31,7 +31,3 @@ Voici une liste des tutoriels à suivre dans l'ordre :
 
 N'hésitez pas à prendre le temps de bien comprendre chaque tutoriel avant de passer au suivant.  
 Bon apprentissage !
-
-## Installation des robots
-
-TODO !

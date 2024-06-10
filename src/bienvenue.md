@@ -3,6 +3,10 @@
 Bienvenue au workshop sur le framework ROS 2.  
 Ce site contient un ensemble de ressources francophones pour l'apprentissage de la robotique opensource avec le framework [ROS 2](http://ros.org) à travers un workshop interactif.
 
+## Diaporama
+
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRLvLrDJLSkSl9fT8ZK1Rq12liuD_4t2OTo3UV5xBAakMa0sOa5mHku02_AKjeJUQwXBDKoAHMNXeIC/embed?start=true&loop=true&delayms=60000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+
 ## Structure du Workshop
 
 Le workshop est divisé en cinq parties indépendantes :
