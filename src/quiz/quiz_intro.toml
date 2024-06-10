@@ -15,8 +15,8 @@ type = "MultipleChoice"
 prompt.prompt = "Quel est le principal avantage d'utiliser des nœuds dans ROS 2 ?"
 prompt.distractors = [
   "Ils augmentent la mémoire disponible.",
-  "Ils permettent une exécution plus rapide des algorithmes.",
-  "Ils facilitent la modularité et la réutilisabilité du code."
+  "Ils permettent une meilleure sécurité des données.",
+  "Ils permettent une exécution plus rapide des algorithmes."
 ]
 answer.answer = "Ils facilitent la modularité et la réutilisabilité du code."
 context = "L'utilisation de nœuds permet de créer des composants logiciels modulaires et réutilisables, ce qui simplifie le développement et la maintenance des systèmes robotiques."
@@ -41,7 +41,7 @@ prompt.prompt = "Quel modèle de communication est utilisé par les topics dans 
 prompt.distractors = [
   "Client/Serveur",
   "Peer-to-Peer",
-  "Pub/Sub (Publish/Subscribe)"
+  "Broadcast"
 ]
 answer.answer = "Pub/Sub (Publish/Subscribe)"
 context = "Le modèle de communication Pub/Sub (Publish/Subscribe) est utilisé par les topics dans ROS 2, permettant une communication asynchrone entre les nœuds."
@@ -65,7 +65,7 @@ prompt.prompt = "Quel type de communication les services ROS 2 supportent-ils ?"
 prompt.distractors = [
   "Unidirectionnelle",
   "Asynchrone",
-  "Synchrone"
+  "En temps réel"
 ]
 answer.answer = "Synchrone"
 context = "Les services ROS 2 supportent la communication synchrone, où une requête est envoyée par un nœud et une réponse est reçue de manière coordonnée."
@@ -89,7 +89,7 @@ prompt.prompt = "Quand est-il approprié d'utiliser des actions dans ROS 2 ?"
 prompt.distractors = [
   "Pour des tâches instantanées.",
   "Pour des tâches qui nécessitent une réponse immédiate.",
-  "Pour des tâches longues et complexes nécessitant des mises à jour périodiques."
+  "Pour des tâches nécessitant une faible latence."
 ]
 answer.answer = "Pour des tâches longues et complexes nécessitant des mises à jour périodiques."
 context = "Les actions sont adaptées aux tâches longues et complexes qui nécessitent un suivi et des mises à jour sur la progression avant de fournir un résultat final."
@@ -112,8 +112,8 @@ type = "MultipleChoice"
 prompt.prompt = "Quelle est la fonction principale des paramètres dans ROS 2 ?"
 prompt.distractors = [
   "Envoyer des messages entre nœuds.",
-  "Stocker des données persistantes.",
-  "Configurer dynamiquement le comportement des nœuds."
+  "Stocker des configurations de manière persistante.",
+  "Gérer la communication entre nœuds."
 ]
 answer.answer = "Configurer dynamiquement le comportement des nœuds."
 context = "Les paramètres permettent de configurer le comportement des nœuds de manière dynamique à l'exécution, offrant une flexibilité sans modifier le code."
@@ -121,7 +121,7 @@ id = "85453591-de2e-448d-b54c-07a120dfe8be"
 
 [[questions]]
 type = "MultipleChoice"
-prompt.prompt = "Pourquoi changer le ROS_DOMAIN_ID dans un réseau ROS 2 ?"
+prompt.prompt = "Pourquoi changer le `ROS_DOMAIN_ID` dans un réseau ROS 2 ?"
 prompt.distractors = [
   "Pour augmenter la vitesse de passage des messages.",
   "Pour permettre aux nœuds de s'exécuter plus rapidement.",
@@ -133,11 +133,11 @@ id = "1ccce20e-a51c-4a29-83cc-fd0fab43a123"
 
 [[questions]]
 type = "MultipleChoice"
-prompt.prompt = "Comment configure-t-on le ROS_DOMAIN_ID pour un groupe de nœuds ROS 2 ?"
+prompt.prompt = "Comment configure-t-on le `ROS_DOMAIN_ID` pour un groupe de nœuds ROS 2 ?"
 prompt.distractors = [
   "En modifiant le code source des nœuds.",
   "En utilisant une interface graphique.",
-  "En définissant une variable d'environnement."
+  "En configurant un fichier de lancement."
 ]
 answer.answer = "En définissant une variable d'environnement."
 context = "Le ROS_DOMAIN_ID peut être configuré en définissant la variable d'environnement ROS_DOMAIN_ID avant de lancer les nœuds ROS 2."
