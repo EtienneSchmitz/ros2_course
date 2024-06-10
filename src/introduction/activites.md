@@ -1,6 +1,6 @@
 # Atelier - Introduction à ROS 2
 
-Avant de commencer, assurez-vous d'avoir correctement installé ROS 2 comme décrit dans [la section précédente](./installation_ros2.md). 
+Avant de commencer, assurez-vous d'avoir correctement installé ROS 2 comme décrit dans [la section précédente](./installation.md). 
 
 ## 🧑‍🏫 Tutoriels
 
