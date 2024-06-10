@@ -12,7 +12,7 @@
 
 ## Installation - Robot
 
-### Flashage de la carte SD
+### Flashage de la carte SD
 
 Pour installer l'image sur votre Raspberry Pi, vous pouvez utiliser l'un des deux outils suivants : [Raspberry Pi Imager](https://www.raspberrypi.com/software/) ou [Balena Etcher](https://etcher.balena.io/).  
 L'image à flasher sera fournie par votre enseignant.
@@ -21,7 +21,7 @@ Si vous préférez procéder à l'installation complète par vous-même, vous po
 - [Configuration du Single Board Computer (SBC)](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/#sbc-setup)
 - [Configuration de l'OpenCR](https://emanual.robotis.com/docs/en/platform/turtlebot3/opencr_setup/#opencr-setup)
 
-### WIFI 
+### WIFI 
 
 Pour configurer le WiFi sur votre système Ubuntu via le fichier 50-cloud-init.yaml, suivez les étapes ci-dessous :
 
@@ -72,9 +72,17 @@ sudo apt install ros-humble-cartographer ros-humble-cartographer-ros
 sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
 ```
 
-4. Installer les paquets Turtlebot 3
+4. Compiler les paquets Turtlebot 3
 ```bash
-source ~/.bashrc
-sudo apt install ros-humble-dynamixel-sdk ros-humble-turtlebot3-msgs ros-humble-turtlebot3
+sudo apt remove ros-humble-turtlebot3-msgs
+sudo apt remove ros-humble-turtlebot3
+mkdir -p ~/turtlebot3_ws/src
+cd ~/turtlebot3_ws/src/
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
+cd ~/turtlebot3_ws
+colcon build --symlink-install
+echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+source ~/.bashrc```
 ```
-

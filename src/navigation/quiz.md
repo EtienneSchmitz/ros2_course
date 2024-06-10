@@ -1,3 +1,3 @@
 # Quiz - Navigation
 
-{{#quiz ../quiz/quiz_navigation.toml}}
+{{#quiz ../quiz/navigation/quiz_navigation.toml}}

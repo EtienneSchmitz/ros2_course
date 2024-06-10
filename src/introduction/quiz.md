@@ -1,3 +1,3 @@
 # Quiz - Introduction ROS2
 
-{{#quiz ../quiz/quiz_intro.toml}}
+{{#quiz ../quiz/introduction/quiz_intro.toml}}
