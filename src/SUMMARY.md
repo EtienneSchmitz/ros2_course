@@ -18,14 +18,14 @@
 
 - [Ressources](./manipulation/ressources.md)
 - [Installation](./manipulation/installation.md)
-- [Atelier - Manipulation avec ROS 2](./manipulation/atelier_manipulation_ros2.md)
+- [Atelier - Manipulation avec ROS 2](./manipulation/manipulation_ros2.md)
 
 # Journée - Vision et IA
 - [Ressources](./vision_ia/ressources.md)
 - [Installation](./vision_ia/installation.md)
-- [Atelier - Vision et IA avec ROS 2](./vision_ia/atelier_vision_ia_ros2.md)
+- [Atelier - Vision et IA avec ROS 2](./vision_ia/vision_ia_ros2.md)
 
 # Journée - Intégration
 - [Ressources](./integration/ressources.md)
 - [Installation](./integration/installation.md)
-- [Atelier - Intégration avec ROS 2](./integration/atelier_integration_ros2.md)
+- [Atelier - Intégration avec ROS 2](./integration/integration_ros2.md)

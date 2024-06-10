@@ -6,11 +6,11 @@ Ce site contient un ensemble de ressources francophones pour l'apprentissage de 
 ## Structure du Workshop
 
 Le workshop est divisé en cinq parties indépendantes :
-1. Introduction à ROS
-2. Navigation
-3. Manipulation
-4. Vision
-5. Intégration (Projet)
+1. [Introduction à ROS](./introduction/introduction_ros2.md)
+2. [Navigation - Turtlebot3](./navigation/navigation_tb3_ros2.md)
+3. [Manipulation](./manipulation/manipulation_ros2.md)
+4. [Vision](./vision_ia/vision_ia_ros2.md)
+5. [Intégration (Projet)](./integration/integration_ros2.md)
 
 Chaque partie se concentre sur un aspect précis de ROS 2, ce qui vous permet d'apprendre à votre rythme et de choisir les sujets qui vous intéressent le plus.  
 Il est possible de faire un workshop accéléré ou plus long en fonction des domaines voulus. La durée idéale est de 5 à 6 jours.

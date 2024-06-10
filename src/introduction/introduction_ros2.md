@@ -2,7 +2,7 @@
 
 Avant de commencer, assurez-vous d'avoir correctement installé ROS 2 comme décrit dans [la section précédente](./installation_ros2.md). 
 
-## Tutoriels
+## 🧑‍🏫 Tutoriels
 
 Turtlesim est un outil pédagogique inclus dans ROS 2 qui nous permettra de découvrir et de tester les concepts de base de ROS 2.  
 Pour cela, vous allez suivre une série de tutoriels de la documentation officielle de ROS 2.
@@ -16,3 +16,7 @@ TODO : Mettre les autres
 
 N'hésitez pas à prendre le temps de bien comprendre chaque tutoriel avant de passer au suivant.  
 Bon apprentissage !
+
+## Installation des robots
+
+TODO !

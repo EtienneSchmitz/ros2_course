@@ -4,9 +4,10 @@ Selon votre système d'exploitation, vous pouvez suivre l'une des instructions d
 
 Pour le workshop, nous recommandons l'utilisation d'Ubuntu 22.04. Les instructions pour l'installation de ROS 2 sur Ubuntu 22.04 sont disponibles à [ce lien](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html).
 
-Vous trouverez ici un guide condensé des étapes à suivre pour installer ROS 2 Humble sur Ubuntu 22.04.
 
 ## Installation - Ubuntu 22.04
+
+Vous trouverez ici un guide condensé des étapes à suivre pour installer ROS 2 Humble sur Ubuntu 22.04.
 
 ```bash
 # Ubuntu Universe repository
