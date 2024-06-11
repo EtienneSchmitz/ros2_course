@@ -209,7 +209,7 @@ if __name__ == '__main__':
 cd ~/workshop_ros/
 colcon build --symlink-install
 echo 'source ~/workshop_ros/install/setup.bash' >> ~/.bashrc
-``` 
+```
 
 7. En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.
 
