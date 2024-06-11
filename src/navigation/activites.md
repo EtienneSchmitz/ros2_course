@@ -40,13 +40,15 @@ Le programme doit rester ouvert pendant toute la durée de la manipulation. S'il
 
 ### 4. Navigation
 
+Arrêtez l'ensemble des terminaux hormis le bringup du robot.
+
 💻 Lancez le commande `ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_workshop.yaml` pour lancer la localisation et la navigation autonome.
 
 👀 Sur RViz vous devez voir le robot, les scans du LIDAR, les particules de AMCL et la carte que vous avez enregistrée.
 
 📍 Si le robot est mal localisé, utilisez l'outil *2D Pose Estimate* sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.
 
-📍 Pour donner des ordres de navigation, utilisez l'outil *2D Nav Goal* sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.
+📍 Pour donner des ordres de navigation, utilisez l'outil *Nav2 Goal* sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.
 
 ### 5. Scenario de navigation
 
@@ -247,9 +249,11 @@ Le simulateur gazebo doit rester ouvert pendant toute la durée de la manipulati
 
 💻 Dans un nouveau terminal lancez la commande `ros2 run turtlebot3_teleop teleop_keyboard` et gardez le focus sur le terminal pour contrôler le robot avec le clavier comme précédemment. Cependant cette fois-ci, votre carte est en cours d'enregistrement. Quand la carte est terminée **ne quittez ni RViz ni le terminal de la cartographie**.
 
-💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver. Lancez la commande `ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop` qui va sauvegarder la carte dans le dossier `$HOME/.map` (fichiers maps.yaml et maps.pgm).
+💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver. Lancez la commande `mkdir ~/map` puis `ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop` qui va sauvegarder la carte dans le dossier `$HOME/.map` (fichiers maps.yaml et maps.pgm).
 
 ### 4. Navigation
+
+Arrêtez l'ensemble des terminaux hormis la simulation.
 
 💻 Lancez le commande `ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=$HOME/map/map_workshop.yaml` pour lancer la localisation et la navigation autonome.
 
@@ -257,7 +261,7 @@ Le simulateur gazebo doit rester ouvert pendant toute la durée de la manipulati
 
 📍 Si le robot est mal localisé, utilisez l'outil *2D Pose Estimate* sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.
 
-📍 Pour donner des ordres de navigation, utilisez l'outil *2D Nav Goal* sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.
+📍 Pour donner des ordres de navigation, utilisez l'outil *Nav2 Goal* sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.
 
 ### 5. Scenario de navigation
 

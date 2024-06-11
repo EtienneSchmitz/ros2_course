@@ -14,7 +14,6 @@
 - [Ressources](./navigation/ressources.md)
 - [Installation - Turtlebot 3](./navigation/installation.md)
 - [Atelier - Navigation (TurtleBot 3) avec ROS 2](./navigation/activites.md)
-- [Quiz - Navigation](./navigation/quiz.md)
 
 # Journée - Manipulation
 
