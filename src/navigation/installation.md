@@ -76,13 +76,13 @@ sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
 ```bash
 sudo apt remove ros-humble-turtlebot3-msgs
 sudo apt remove ros-humble-turtlebot3
-mkdir -p ~/turtlebot3_ws/src
-cd ~/turtlebot3_ws/src/
+mkdir -p ~/workshop_ws/src
+cd ~/workshop_ws/src/
 git clone -b humble-devel https://github.com/ROBOTIS-GIT/DynamixelSDK.git
 git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
 git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
-cd ~/turtlebot3_ws
-colcon build --symlink-install
-echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+cd ~/workshop_ws
+colcon build --symlink-install --parallel-workers 1
+echo 'source ~/workshop_ws/install/setup.bash' >> ~/.bashrc
 source ~/.bashrc```
 ```

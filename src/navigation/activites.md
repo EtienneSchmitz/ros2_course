@@ -80,7 +80,6 @@ ros2 pkg create --build-type ament_python simple_navigation_goals --node-name si
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
-#echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -207,8 +206,7 @@ if __name__ == '__main__':
 
 ```bash
 cd ~/workshop_ros/
-colcon build --symlink-install
-echo 'source ~/workshop_ros/install/setup.bash' >> ~/.bashrc
+colcon build --symlink-install --parallel-workers 1
 ```
 
 7. En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.
@@ -293,7 +291,6 @@ ros2 pkg create --build-type ament_python simple_navigation_goals --node-name si
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
-#echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -420,8 +417,7 @@ if __name__ == '__main__':
 
 ```bash
 cd ~/workshop_ros/
-colcon build --symlink-install
-echo 'source ~/workshop_ros/install/setup.bash' >> ~/.bashrc
+colcon build --symlink-install --parallel-workers 1
 ``` 
 
 7. En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.
