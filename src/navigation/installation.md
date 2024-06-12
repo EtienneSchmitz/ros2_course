@@ -62,6 +62,16 @@ ssh ubuntu@turtlebot.local
 On vous demandera d'entrer un mot de passe, qui est **turtlebot**.  
 Veuillez noter que pour des raisons de sécurité, les caractères du mot de passe ne s'afficheront pas à l'écran lors de la saisie. 
 
+## Mise à jour de l'OPENCR
+
+🤖 En SSH, exécutez les commandes suivantes :
+
+```bash
+export OPENCR_PORT=/dev/ttyACM0
+export OPENCR_MODEL=burger
+./update.sh $OPENCR_PORT $OPENCR_MODEL.opencr
+```
+
 ## Installation - Ordinateur
 
 💻 L'ensemble des procédures est à faire dans le terminal de votre pc.
