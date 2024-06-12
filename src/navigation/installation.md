@@ -106,5 +106,5 @@ cd ~/workshop_ws
 colcon build --symlink-install --parallel-workers 1
 echo 'source ~/workshop_ws/install/setup.bash' >> ~/.bashrc
 echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
-source ~/.bashrc```
+source ~/.bashrc
 ```
