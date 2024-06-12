@@ -31,7 +31,8 @@ Pour configurer le WiFi sur votre système Ubuntu via le fichier 50-cloud-init.y
 sudo nano /media/$(whoami)/writable/etc/netplan
 ```
 
-2. Ajoutez les informations de configuration de votre réseau WiFi à la fin du fichier. Cela devrait ressembler à ceci :
+2. Remplacer les informations de configuration de votre réseau WiFi à la fin du fichier.  
+Votre fichier finale devrait ressembler à ceci :
 ```yaml
 network:
     ethernets:
@@ -44,8 +45,8 @@ network:
             dhcp4: true
             optional: true
             access-points:
-                "your_wifi_ssid":
-                    password: "your_wifi_password"
+                your_wifi_ssid:
+                    password: your_wifi_password
 ```
 
 3. Remplacez "your_wifi_ssid" par le SSID de votre réseau WiFi et "your_wifi_password" par le mot de passe de votre réseau WiFi.
