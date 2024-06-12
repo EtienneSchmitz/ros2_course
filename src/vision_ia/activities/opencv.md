@@ -12,7 +12,9 @@ OpenCV est une bibliothèque logicielle qui est devenue le "standard" du domaine
 
 ## 2. Ouverture d'une image
 
-- Téléchargez l'image: ![img](./img/ergo_cubes.jpg)
+- Téléchargez l'image :   
+![img](./img/ergo_cubes.jpg)
+
 - Créez un fichier `couleurs.py`
 
     ```python
@@ -110,7 +112,7 @@ cv.putText(img, 'cube', (x, y), cv.FONT_HERSHEY_SIMPLEX, 1,(255, 255, 255),1, cv
 
 ## 5. Intégration avec ROS
 
-Pour intégrer la détection de cube coloré à ROS en utilisant l'image de la caméra de votre ordinateur ou une image statique, vous pouvez créer un nœud ROS qui offre un service. Ce service prendra en entrée un string indiquant la source de l'image (caméra ou image statique) et renverra la position et le label du cube détecté. Voici comment vous pouvez le faire :
+Pour intégrer la détection de cube coloré à ROS 2 en utilisant l'image de la caméra de votre ordinateur ou une image statique, vous pouvez créer un nœud ROS qui offre un service. Ce service prendra en entrée un string indiquant la source de l'image (caméra ou image statique) et renverra la position et le label du cube détecté. Voici comment vous pouvez le faire :
 
 1. Créez un nouveau package ROS nommé color_cube_detection. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
 
