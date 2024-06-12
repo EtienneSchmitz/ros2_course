@@ -25,6 +25,8 @@
 - [Ressources](./vision_ia/ressources.md)
 - [Installation](./vision_ia/installation.md)
 - [Atelier - Vision et IA avec ROS 2](./vision_ia/activites.md)
+    - [Ateliers - OpenCV](./vision_ia/activities/opencv.md)
+    - [Ateliers - PyTorch](./vision_ia/activities/pytorch.md)  
 
 # Journée - Intégration
 - [Ressources](./integration/ressources.md)
