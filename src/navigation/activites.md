@@ -214,6 +214,44 @@ colcon build --symlink-install --parallel-workers 1
 
 7. En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.
 
+## 🧳 Challenge additionnel : Carry my luggage
+
+Challenge inspiré de l'épreuve "Carry my luggage" de la RoboCup @Home.
+Pour info, le réglement de la compétition se trouve ici (mais ça n'apporte rien pour votre projet) :
+<https://athome.robocup.org/wp-content/uploads/2019_rulebook.pdf>
+
+🗺️ **Prérequis :** avoir une carte représentative de l'environnement.
+
+### ➡️ Phase 1 : Follow me
+
+Vous avez toute liberté pour préparer le début de l'épreuve (ex. comment faire que le robot soit bien localisé dès le début ?).
+
+Le robot part d'un point connu et doit suivre un humain qui va à un endroit inconnu par le robot (mais à l'intérieur de la carte). L'humain commence l'épreuve en étant en face du robot à une distance de 50 cm.
+
+Le robot doit suivre l'humain en maintenant une distance comprise entre 20cm minimum et 1m maximum.
+
+Pour être valide, l'humain doit avoir un déplacement non trivial : il ne va pas toujours tout droit et il fait varier sa vitesse de marche dans la limite du raisonnable. Distance minimum de marche demandée 4 mètres (mais vous êtes libres de faire plus si ça vous arrange, ça n'impactera pas directement la note). Il faut obligatoirement que le robot traverse une porte.
+
+Lorsque l'humain est arrivé à sa destination, il s'arrête pendant une durée d'au moins 3 secondes. Le robot doit alors comprendre que la phase 1 est terminée et passer à la phase 2.
+
+### ↩️ Phase 2 : Go home
+
+Le robot doit repartir et naviguer en totale autonomie jusqu'à son point de départ. Sur le retour, vous rajouterez jusqu'à :
+
+* 1 obstacle statique sur son chemin de retour
+* 1 obstacle dynamique (typiquement un humain qui lui coupe la route)
+* 1 obstacle qui bloque complètement le passage prévu par le robot (il faut qu'il ait la possiblité d'arriver à destination par un autre chemin)
+
+Si le robot arrive à destination (à +-20cm, +-15°) la phase 2 est validée.
+
+### ↙️ Phase 3 : Dock
+Si le robot arrive à destination (à +-20cm, +-15°) la phase 2 est validée.
+
+Le robot doit chercher où se trouve sa base et s'y accoster. La position grossière de la base est connue mais cette partie n'est validée que si le robot réussi un accostage précis sans contact : la distance entre le robot et la base soit être supériere à 5mm et inférieure à 2cm.
+
+Vous avez toute liberté pour choisir un objet qui représentera la base du robot. Un pot de peinture par exemple serait un choix pertinent (la symétrie radiale peut simplifier la détection).
+
+
 ## Simulation
 
 ⚠️ **Attention** la simulation du TB3 n'est à utiliser qu'en dernier recours pour remplacer votre robot s'il ne fonctionne pas. Avant de passer en simulation demandez de l'aide pour réparer votre robot.
