@@ -57,16 +57,16 @@ Arrêtez l'ensemble des terminaux hormis le bringup du robot.
 
 Pour réaliser cet objectif, suivez les étapes ci-dessous :
 
-1. Créez un nouvel espace de travail ROS, que vous pouvez nommer `workshop_ros` par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
+1. Créez un nouvel espace de travail ROS, que vous pouvez nommer `workshop_ws` par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
 
 ```bash
-mkdir -p ~/workshop_ros/src
+mkdir -p ~/workshop_ws/src
 ```
 
 2. Créez un nouveau package Python nommé `simple_navigation_goals` avec le fichier principale `simple_navigation_goals`. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
 
 ```bash
-cd ~/workshop_ros/src
+cd ~/workshop_ws/src
 ros2 pkg create --build-type ament_python simple_navigation_goals --node-name simple_navigation_goals
 ```
 
@@ -208,7 +208,7 @@ if __name__ == '__main__':
 6. Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :
 
 ```bash
-cd ~/workshop_ros/
+cd ~/workshop_ws/
 colcon build --symlink-install --parallel-workers 1
 ```
 
@@ -308,16 +308,16 @@ Arrêtez l'ensemble des terminaux hormis la simulation.
 
 Pour réaliser cet objectif, suivez les étapes ci-dessous :
 
-1. Créez un nouvel espace de travail ROS, que vous pouvez nommer `workshop_ros` par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
+1. Créez un nouvel espace de travail ROS, que vous pouvez nommer `workshop_ws` par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
 
 ```bash
-mkdir -p ~/workshop_ros/src
+mkdir -p ~/workshop_ws/src
 ```
 
 2. Créez un nouveau package Python nommé `simple_navigation_goals` avec le fichier principale `simple_navigation_goals`. Vous pouvez le faire en utilisant la commande suivante dans le terminal :
 
 ```bash
-cd ~/workshop_ros/src
+cd ~/workshop_ws/src
 ros2 pkg create --build-type ament_python simple_navigation_goals --node-name simple_navigation_goals
 ```
 
@@ -459,7 +459,7 @@ if __name__ == '__main__':
 6. Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :
 
 ```bash
-cd ~/workshop_ros/
+cd ~/workshop_ws/
 colcon build --symlink-install --parallel-workers 1
 ``` 
 
