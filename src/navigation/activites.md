@@ -36,7 +36,8 @@ Le programme doit rester ouvert pendant toute la durée de la manipulation. S'il
 
 💻 Dans un nouveau terminal lancez la commande `ros2 run turtlebot3_teleop teleop_keyboard` et gardez le focus sur le terminal pour contrôler le robot avec le clavier comme précédemment. Cependant cette fois-ci, votre carte est en cours d'enregistrement. Quand la carte est terminée **ne quittez ni RViz ni le terminal de la cartographie**.
 
-💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver. Lancez la commande `ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop` qui va sauvegarder la carte dans le dossier `$HOME/.map` (fichiers maps.yaml et maps.pgm).
+💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver.  
+Lancez la commande `mkdir ~/map` et `ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop` qui va sauvegarder la carte dans le dossier `$HOME/.map` (fichiers maps.yaml et maps.pgm).
 
 ### 4. Navigation
 
