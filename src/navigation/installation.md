@@ -69,6 +69,7 @@ Veuillez noter que pour des raisons de sécurité, les caractères du mot de pas
 ```bash
 export OPENCR_PORT=/dev/ttyACM0
 export OPENCR_MODEL=burger
+cd ~/opencr_update
 ./update.sh $OPENCR_PORT $OPENCR_MODEL.opencr
 ```
 
