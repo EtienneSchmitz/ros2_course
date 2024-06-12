@@ -29,7 +29,7 @@ Pour configurer le WiFi sur votre système Ubuntu via le fichier 50-cloud-init.y
 
 ```bash
 sudo nano /media/$(whoami)/writable/etc/netplan
-``` 
+```
 
 2. Ajoutez les informations de configuration de votre réseau WiFi à la fin du fichier. Cela devrait ressembler à ceci :
 ```yaml
@@ -51,6 +51,16 @@ network:
 3. Remplacez "your_wifi_ssid" par le SSID de votre réseau WiFi et "your_wifi_password" par le mot de passe de votre réseau WiFi.
 
 4. Enregistrez le fichier et quittez l'éditeur de texte. Si vous utilisez nano comme dans l'exemple ci-dessus, vous pouvez le faire en appuyant sur Ctrl+X, puis en appuyant sur Y pour confirmer l'enregistrement des modifications, et enfin en appuyant sur Enter pour quitter.
+
+## Connection - SSH
+
+Pour établir une connexion SSH, exécutez la commande suivante dans votre terminal :
+
+```bash
+ssh ubuntu@turtlebot.local
+```
+On vous demandera d'entrer un mot de passe, qui est **turtlebot**.  
+Veuillez noter que pour des raisons de sécurité, les caractères du mot de passe ne s'afficheront pas à l'écran lors de la saisie. 
 
 ## Installation - Ordinateur
 
