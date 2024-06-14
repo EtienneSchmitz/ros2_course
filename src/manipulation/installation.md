@@ -9,3 +9,11 @@ curl 'https://raw.githubusercontent.com/Interbotix/interbotix_ros_manipulators/m
 chmod +x xsarm_amd64_install.sh
 ./xsarm_amd64_install.sh -d humble -n
 ```
+
+Dans le ̀`.bashrc`, pour que gazebo se lance bien, il faut mettre les lignes suivantes :
+```bash
+stat /usr/share/gazebo/setup.sh &> /dev/null
+if [ $? -eq 0 ]; then
+    source /usr/share/gazebo/setup.sh
+fi
+```
