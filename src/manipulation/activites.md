@@ -34,10 +34,10 @@ Ouvrez le PDF obtenu dans le dossier des descriptions du robot (`wx250s.pdf`) pu
 
 Lancer le robot avec la commande suivante : 
 ```bash
-LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_description.launch.py robot_model:=wx250s
+LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_description.launch.py robot_model:=wx250s use_joint_pub_gui:=true
 ```
 
-##### 1.2.a. Topics du robot
+##### 1.2.a. Topics du robot
 
 ✍ Avec l’utilitaire `ros2 topic`, lister les topics disponibles puis consultez celui qui décrit l’état courant des joints, en particulier :
 * Quel est son nom ?
