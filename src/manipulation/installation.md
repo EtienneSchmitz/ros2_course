@@ -21,4 +21,4 @@ fi
 Lancer la commande suivante pour que les modifications soient prise en compte : 
 ```bash
 source ~/.bashrc
-``̀ 
+```
