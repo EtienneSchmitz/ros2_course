@@ -44,16 +44,6 @@ LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_descripti
 * Quel est le type de message qu'il transmet ?
 * A quelle fréquence (en Hertz) est-ce qu'il met à jour l'état des joints ?
 
-##### 1.2.b. Services du robot
-
-✍ Avec les utilitaires `ros2 service`, listez les services disponibles puis consultez celui qui met le robot en mode **compliant** (TorqueEnable). En particulier :
-
-* Quel est le nom de topic du service mettant le robot en compliant ?
-* Quel est le type de ce service ?
-* Consultez le détail des champs. Quels sont les champs de la **requête** de ce service ?
-* Consultez le détail des champs. Quels sont les champs de la **réponse** de ce service ?
-* Appelez ce service pour activer et désactiver le mode compliant et essayez de faire bouger votre robot à la main à chaque fois. Que déduisez-vous de la signification du **mode compliant** ? *Conseil :* aidez-vous de l'autocomplétion avec la touche `TAB`.
-
 #### 1.3 Tracer la courbe des positions des moteurs en temps réel
 
 Lancer le robot avec la commande suivante :
@@ -61,7 +51,7 @@ Lancer le robot avec la commande suivante :
 LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_description.launch.py robot_model:=wx250s use_joint_pub_gui:=true
 ```
 
-✍  Mettez votre robot en mode compliant. Démarrez `ros2 run rqt_graph rqt_graph`, démarrez le streaming `ROS Topic Subscriber`, et sélectionnez `/wx250s/joint_states`. Sélectionnez la position et la vitesse angulaire du moteur `m6` puis faîtes-les glisser sur le graphe. Bougez les moteurs à la main et vérifiez que les valeurs sont tracées en temps réel.
+✍  Démarrez `ros2 run rqt_graph rqt_graph`, démarrez le streaming `ROS Topic Subscriber`, et sélectionnez `/wx250s/joint_states`. Sélectionnez la position et la vitesse angulaire du moteur `m6` puis faîtes-les glisser sur le graphe. Bougez les moteurs à la main et vérifiez que les valeurs sont tracées en temps réel.
 
 
 ### 2. Cinématique, et planification avec MoveIt dans RViz
