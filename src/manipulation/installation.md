@@ -17,3 +17,8 @@ if [ $? -eq 0 ]; then
     source /usr/share/gazebo/setup.sh
 fi
 ```
+
+Lancer la commande suivante pour que les modifications soient prise en compte : 
+```bash
+source ~/.bashrc
+``̀ 
