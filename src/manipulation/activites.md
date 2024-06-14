@@ -16,6 +16,8 @@ Pour visualiser l'URDF du robot `wx250s`, lancer la commande suivante :
 ros2 launch urdf_tutorial display.launch.py model:=/home/$USER/interbotix_ws/src/interbotix_ros_manipulators/interbotix_ros_xsarms/interbotix_xsarm_descriptions/urdf/wx250s.urdf.xacro
 ``` 
 
+⚠️ Dans `Global Options`, mettez la valeur de fixed frame à `wx250s/base_link` au lieu de `base_link`.
+
 Vous pouvez aussi visualiser l'arbre du robot URDF : 
 ```bash
 cd /home/$USER/interbotix_ws/src/interbotix_ros_manipulators/interbotix_ros_xsarms/interbotix_xsarm_descriptions/urdf/
