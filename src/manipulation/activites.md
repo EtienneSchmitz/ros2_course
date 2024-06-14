@@ -66,6 +66,22 @@ LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_descripti
 
 ### 2. Cinématique, et planification avec MoveIt dans RViz
 
+Il y a une erreur dans le groupe `interbotix_gripper` pour MoveIt 2!
+
+Modifier le fichier `~/interbotix_ws/src/interbotix_ros_manipulators/interbotix_ros_xsarms/interbotix_xsarm_moveit/config/controllers/wx250s_controllers.yaml`
+Dans le group  `/wx250s/gripper_controller`, ajouter `right_finger`.
+
+```yaml
+/wx250s/gripper_controller:
+  action_ns: follow_joint_trajectory
+  type: FollowJointTrajectory
+  default: true
+  joints:
+    - left_finger
+    - right_finger
+```
+
+
 #### 2.1. Démarrer avec MoveIt avec un robot réel
 
 Démarrez MoveIt et Gazebo avec la commande suivante :
