@@ -28,6 +28,4 @@
 - [Atelier - Manipulation avec ROS 2](./manipulation/activites.md)
 
 # Journée - Intégration
-- [Ressources](./integration/ressources.md)
-- [Installation](./integration/installation.md)
-- [Atelier - Intégration avec ROS 2](./integration/activites.md)
+- [Atelier - Projet Intégration avec ROS 2](./integration/activites.md)
