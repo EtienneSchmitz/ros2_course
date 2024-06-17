@@ -34,5 +34,16 @@ La présentation orale comprendra les éléments suivants :
 - Une démonstration en direct de 5 minutes pour montrer votre projet en action. Assurez-vous d'avoir une vidéo de sauvegarde prête en cas de problèmes techniques imprévus.
 - Une session de questions-réponses de 10 minutes où vous pourrez répondre aux questions et clarifier tout point qui nécessite une explication supplémentaire.
 
+### 3. Diaporama
 
+Voici les points importants que vous pouvez inclure dans votre diaporama pour présenter le projet d'intégration avec ROS 2.
+
+- Objectifs du Projet
+- Architecture du système
+    - Présentation du système
+    - Schéma de l'architecture du système
+    - Descriptions de l'interaction entre les composants.
+- Difficultés rencontrés
+- Elements importants ou notable (fichier python, ...)
+- Conclusion
 
