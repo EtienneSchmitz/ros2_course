@@ -1,0 +1,1329 @@
+<!DOCTYPE HTML>
+<html lang="fr" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Workshop - ROS 2</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Workshop - ROS 2</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="bienvenue-au-workshop-ros-2"><a class="header" href="#bienvenue-au-workshop-ros-2">Bienvenue au Workshop ROS 2</a></h1>
+<p>Bienvenue au workshop sur le framework ROS 2.<br />
+Ce site contient un ensemble de ressources francophones pour l'apprentissage de la robotique opensource avec le framework <a href="http://ros.org">ROS 2</a> à travers un workshop interactif.</p>
+<h2 id="diaporama"><a class="header" href="#diaporama">Diaporama</a></h2>
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRLvLrDJLSkSl9fT8ZK1Rq12liuD_4t2OTo3UV5xBAakMa0sOa5mHku02_AKjeJUQwXBDKoAHMNXeIC/embed?start=true&loop=true&delayms=60000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<h2 id="structure-du-workshop"><a class="header" href="#structure-du-workshop">Structure du Workshop</a></h2>
+<p>Le workshop est divisé en cinq parties indépendantes :</p>
+<ol>
+<li><a href="./introduction/introduction_ros2.html">Introduction à ROS</a></li>
+<li><a href="./navigation/navigation_tb3_ros2.html">Navigation - Turtlebot3</a></li>
+<li><a href="./manipulation/manipulation_ros2.html">Manipulation</a></li>
+<li><a href="./vision_ia/vision_ia_ros2.html">Vision</a></li>
+<li><a href="./integration/integration_ros2.html">Intégration (Projet)</a></li>
+</ol>
+<p>Chaque partie se concentre sur un aspect précis de ROS 2, ce qui vous permet d'apprendre à votre rythme et de choisir les sujets qui vous intéressent le plus.<br />
+Il est possible de faire un workshop accéléré ou plus long en fonction des domaines voulus. La durée idéale est de 5 à 6 jours.</p>
+<h2 id="prérequis---comment-suivre-le-tp-"><a class="header" href="#prérequis---comment-suivre-le-tp-">Prérequis - Comment suivre le TP ?</a></h2>
+<p>📖 Vous devez avoir des notions de programmes informatiques, terminaux et commandes.</p>
+<p>💻 Vous devez disposer d'un ordinateur de type PC ainsi que <a href="https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html">Ubuntu 22.04 et ROS 2 Humble</a> installés.</p>
+<p>🤖  Si vous ne disposez pas de matériel, l'ensemble des journées peuvent être entièrement réalisées via simulation.</p>
+<h2 id="légende"><a class="header" href="#légende">Légende</a></h2>
+<p>Les pictogrammes suivants sont utilisés pour faciliter la lecture :</p>
+<ul>
+<li>💻 : Procédure à exécuter sur votre poste de travail Ubuntu</li>
+<li>🤖 : Procédure à exécuter sur le robot, en utilisant une connexion SSH</li>
+<li>🌐 : Liens à visiter pour suivre le workshop</li>
+<li>🐍 : Code Python à enregistrer et exécuter sur votre poste de travail</li>
+<li>📥 : Ressource(s) à télécharger</li>
+</ul>
+<h2 id="quiz"><a class="header" href="#quiz">Quiz</a></h2>
+<p>À la fin de chaque journée, il y a un quiz pour tester votre compréhension des concepts présentés. Ces quiz sont conçus pour renforcer ce que vous avez appris et vous aider à connaître votre niveau.</p>
+<h2 id="remerciement"><a class="header" href="#remerciement">Remerciement</a></h2>
+<p>Le site est une version amélioré de <a href="https://learn.ros4.pro/">ROS4Pro</a> qui n'est plus mis à jour et le workshop était sous ROS 1.</p>
+<p>Nous espérons que vous trouverez ce workshop utile et instructif. Bonne chance et amusez-vous bien !</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ressources"><a class="header" href="#ressources">Ressources</a></h1>
+<h2 id="diaporama-1"><a class="header" href="#diaporama-1">Diaporama</a></h2>
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSSoYwqM5ohF_HiH3w4UvgNovpV3fJmP0JIj6VZp37shDEkHJ_RoLr2pNeT_6Earxp9elp8pV5LceLo/embed?start=true&loop=true&delayms=60000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<h2 id="ressources-importantes"><a class="header" href="#ressources-importantes">Ressources importantes</a></h2>
+<ul>
+<li><a href="https://docs.ros.org/en/humble/index.html">ROS 2 Humble Hawksbill - Documentation</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation---ros-2"><a class="header" href="#installation---ros-2">Installation - ROS 2</a></h1>
+<p>Selon votre système d'exploitation, vous pouvez suivre l'une des instructions d'installation disponibles à <a href="https://docs.ros.org/en/humble/Installation.html">cette adresse</a>.</p>
+<p>Pour le workshop, il est recommandé l'utilisation d'Ubuntu 22.04 avec la distribution ROS 2 Humble. Les instructions pour l'installation de ROS 2 sur Ubuntu 22.04 sont disponibles à <a href="https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html">ce lien</a>.</p>
+<h2 id="installation---ubuntu-2204"><a class="header" href="#installation---ubuntu-2204">Installation - Ubuntu 22.04</a></h2>
+<p>Vous trouverez ici un guide condensé des étapes à suivre pour installer ROS 2 Humble Hawksbill sur Ubuntu 22.04.</p>
+<pre><code class="language-bash"># Ubuntu Universe repository
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+
+# Add ROS 2 GPG key with apt
+sudo apt update &amp;&amp; sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release &amp;&amp; echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list &gt; /dev/null
+
+# ROS 2 packages
+sudo apt update &amp;&amp; sudo apt upgrade
+
+sudo apt install ros-humble-desktop
+sudo apt install ros-dev-tools
+
+# Install on our .bashrc (if you use bash)
+echo "source /opt/ros/humble/setup.bash" &gt;&gt; ~/.bashrc
+source ~/.bashrc
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="atelier---introduction-à-ros-2"><a class="header" href="#atelier---introduction-à-ros-2">Atelier - Introduction à ROS 2</a></h1>
+<p>Avant de commencer, assurez-vous d'avoir correctement installé ROS 2 comme décrit dans <a href="introduction/./installation.html">la section précédente</a>.</p>
+<h2 id="-tutoriels"><a class="header" href="#-tutoriels">🧑‍🏫 Tutoriels</a></h2>
+<p>Turtlesim est un outil pédagogique inclus dans ROS 2 qui nous permettra de découvrir et de tester les concepts de base de ROS 2.<br />
+Pour cela, vous allez suivre une série de tutoriels de la documentation officielle de ROS 2.</p>
+<p>Voici une liste des tutoriels à suivre dans l'ordre :</p>
+<ol>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html">Using turtlesim, ros2, and rqt</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html">Understanding nodes</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html">Understanding topics</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html">Understanding services</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html">Understanding parameters</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html">Understanding actions</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Using-Rqt-Console/Using-Rqt-Console.html">Using rqt_console to view logs</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Launching-Multiple-Nodes/Launching-Multiple-Nodes.html">Launching nodes</a></li>
+<li>(Optionnel) <a href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html">Recording and playing back data</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html">Using colcon to build packages</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html">Creating a workspace</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html">Creating a package</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html">Writing a simple publisher and subscriber (Python)</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html">Writing a simple service and client (Python)</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html">Creating custom msg and srv files</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-Python.html">Using parameters in a class (Python)</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Creating-an-Action.html">Creating an action</a></li>
+<li><a href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Writing-an-Action-Server-Client/Py.html">Writing an action server and client (Python)</a></li>
+</ol>
+<p>N'hésitez pas à prendre le temps de bien comprendre chaque tutoriel avant de passer au suivant.<br />
+Bon apprentissage !</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="quiz---introduction-ros2"><a class="header" href="#quiz---introduction-ros2">Quiz - Introduction ROS2</a></h1>
+<div class="quiz-placeholder" data-quiz-name="&quot;quiz_intro&quot;" data-quiz-questions="{&quot;questions&quot;:[{&quot;context&quot;:&quot;Les nœuds sont les blocs de construction fondamentaux d'un système ROS 2, responsables de réaliser des calculs et de communiquer avec d'autres nœuds.&quot;,&quot;id&quot;:&quot;339fb93a-3ae8-4f28-8fac-8b96a7f80383&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Un processus qui effectue des calculs et des communications.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Une unité de stockage pour les données.&quot;,&quot;Un outil pour visualiser les états du robot.&quot;,&quot;Un fichier de configuration pour définir les paramètres.&quot;],&quot;prompt&quot;:&quot;Quel est le rôle d'un nœud dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;L'utilisation de nœuds permet de créer des composants logiciels modulaires et réutilisables, ce qui simplifie le développement et la maintenance des systèmes robotiques.&quot;,&quot;id&quot;:&quot;57736f09-d569-4246-93bc-93ed8a0df822&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Ils facilitent la modularité et la réutilisabilité du code.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Ils augmentent la mémoire disponible.&quot;,&quot;Ils permettent une meilleure sécurité des données.&quot;,&quot;Ils permettent une exécution plus rapide des algorithmes.&quot;],&quot;prompt&quot;:&quot;Quel est le principal avantage d'utiliser des nœuds dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Dans ROS 2, les nœuds publient des messages sur des topics et s'abonnent à des topics pour recevoir des messages de manière asynchrone.&quot;,&quot;id&quot;:&quot;42bfe4a7-359c-47d4-81cb-4fd0bed511af&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;En publiant et en s'abonnant à des bus nommés.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Par des paires de requêtes/réponses synchrones.&quot;,&quot;En lisant et en écrivant dans une mémoire partagée.&quot;,&quot;En appelant directement les fonctions des autres nœuds.&quot;],&quot;prompt&quot;:&quot;Comment les nœuds communiquent-ils en utilisant les topics dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Le modèle de communication Pub/Sub (Publish/Subscribe) est utilisé par les topics dans ROS 2, permettant une communication asynchrone entre les nœuds.&quot;,&quot;id&quot;:&quot;df4b2b27-eb68-41af-82b2-c09c15bc92a0&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pub/Sub (Publish/Subscribe)&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Client/Serveur&quot;,&quot;Peer-to-Peer&quot;,&quot;Broadcast&quot;],&quot;prompt&quot;:&quot;Quel modèle de communication est utilisé par les topics dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les services dans ROS 2 permettent aux nœuds de communiquer de manière synchrone en envoyant des requêtes et en recevant des réponses.&quot;,&quot;id&quot;:&quot;a92be084-c2ea-4379-99d8-824a5e457ddd&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Ils fournissent une communication synchrone par requête/réponse.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Ils sont utilisés pour une communication unidirectionnelle.&quot;,&quot;Ils ne peuvent être utilisés que pour des tâches en temps réel.&quot;,&quot;Ils ne supportent pas la communication par requête/réponse.&quot;],&quot;prompt&quot;:&quot;Quelle est la caractéristique des services dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les services ROS 2 supportent la communication synchrone, où une requête est envoyée par un nœud et une réponse est reçue de manière coordonnée.&quot;,&quot;id&quot;:&quot;bbf731db-2e17-4c06-8363-5f17ebd7a4e9&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Synchrone&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Unidirectionnelle&quot;,&quot;Asynchrone&quot;,&quot;En temps réel&quot;],&quot;prompt&quot;:&quot;Quel type de communication les services ROS 2 supportent-ils ?&quot;}},{&quot;context&quot;:&quot;Les actions dans ROS 2 sont adaptées aux tâches qui prennent plus de temps à compléter, en fournissant des mises à jour sur la progression et un résultat final.&quot;,&quot;id&quot;:&quot;a866340c-3000-46f3-b7c8-71a4baf4eaeb&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Elles permettent des tâches longues avec des retours périodiques et un résultat final.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Elles sont plus simples que les services.&quot;,&quot;Elles fournissent des résultats immédiats sans attendre.&quot;,&quot;Elles ne nécessitent aucun retour d'information.&quot;],&quot;prompt&quot;:&quot;Quel est un avantage de l'utilisation des actions dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les actions sont adaptées aux tâches longues et complexes qui nécessitent un suivi et des mises à jour sur la progression avant de fournir un résultat final.&quot;,&quot;id&quot;:&quot;98407ad1-a1e0-4cce-9ddd-856030ba6d82&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pour des tâches longues et complexes nécessitant des mises à jour périodiques.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Pour des tâches instantanées.&quot;,&quot;Pour des tâches qui nécessitent une réponse immédiate.&quot;,&quot;Pour des tâches nécessitant une faible latence.&quot;],&quot;prompt&quot;:&quot;Quand est-il approprié d'utiliser des actions dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les paramètres dans ROS 2 sont utilisés pour configurer dynamiquement le comportement des nœuds, permettant ainsi une flexibilité sans modifier le code source.&quot;,&quot;id&quot;:&quot;6ddd529b-0a12-487e-9678-cb8d57a9bb5f&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pour configurer le comportement des nœuds à l'exécution sans changer le code.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Pour stocker de grandes quantités de données.&quot;,&quot;Pour communiquer entre les nœuds de manière asynchrone.&quot;,&quot;Pour exécuter des boucles de contrôle en temps réel.&quot;],&quot;prompt&quot;:&quot;Pourquoi utilise-t-on les paramètres dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les paramètres permettent de configurer le comportement des nœuds de manière dynamique à l'exécution, offrant une flexibilité sans modifier le code.&quot;,&quot;id&quot;:&quot;85453591-de2e-448d-b54c-07a120dfe8be&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Configurer dynamiquement le comportement des nœuds.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Envoyer des messages entre nœuds.&quot;,&quot;Stocker des configurations de manière persistante.&quot;,&quot;Gérer la communication entre nœuds.&quot;],&quot;prompt&quot;:&quot;Quelle est la fonction principale des paramètres dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Changer le ROS_DOMAIN_ID aide à éviter les interférences entre différents groupes de nœuds s'exécutant sur le même réseau physique.&quot;,&quot;id&quot;:&quot;1ccce20e-a51c-4a29-83cc-fd0fab43a123&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pour séparer différents groupes de nœuds sur le même réseau.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Pour augmenter la vitesse de passage des messages.&quot;,&quot;Pour permettre aux nœuds de s'exécuter plus rapidement.&quot;,&quot;Pour rendre les nœuds détectables par défaut.&quot;],&quot;prompt&quot;:&quot;Pourquoi changer le `ROS_DOMAIN_ID` dans un réseau ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Le ROS_DOMAIN_ID peut être configuré en définissant la variable d'environnement ROS_DOMAIN_ID avant de lancer les nœuds ROS 2.&quot;,&quot;id&quot;:&quot;a7ad5671-75e9-4cce-ab74-443748551c3f&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;En définissant une variable d'environnement.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;En modifiant le code source des nœuds.&quot;,&quot;En utilisant une interface graphique.&quot;,&quot;En configurant un fichier de lancement.&quot;],&quot;prompt&quot;:&quot;Comment configure-t-on le `ROS_DOMAIN_ID` pour un groupe de nœuds ROS 2 ?&quot;}}]}"></div>
+<script type="text/javascript" src="../quiz/quiz-embed.iife.js"></script><link rel="stylesheet" type="text/css" href="../quiz/style.css"><div style="break-before: page; page-break-before: always;"></div><h1 id="ressources-1"><a class="header" href="#ressources-1">Ressources</a></h1>
+<h2 id="diaporama-2"><a class="header" href="#diaporama-2">Diaporama</a></h2>
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vT1IA3Y_TEX3UzWu3v39VrbveZ7LT5mx9eDiTYrf6ZfusyeknoCcjtpTt_m5ORYSMDyAkGgRfh6OW2V/embed?start=true&loop=true&delayms=60000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe><div style="break-before: page; page-break-before: always;"></div><h1 id="installation---turtlebot-3"><a class="header" href="#installation---turtlebot-3">Installation - Turtlebot 3</a></h1>
+<h2 id="assemblage-du-turtlebot-avec-un-robot-réel"><a class="header" href="#assemblage-du-turtlebot-avec-un-robot-réel">Assemblage du Turtlebot (avec un robot réel)</a></h2>
+<p>⚠️ <strong>Attention</strong> : vous ne pourrez faire aucune erreur de câblage sauf avec le câble d'alimentation de la Raspberry Pi qui doit impérativement être branché comme sur le schéma ci-dessous <strong>au risque de déteriorer définitivement le matériel</strong>.</p>
+<p align="center">
+  <img src="navigation/./images/tb3_power_cable.png" alt="Attention au câble d'alimentation"/>
+</p>
+<p>🌐 Suivez ce tutoriel pour assembler votre Turtlebot Burger : <a href="https://emanual.robotis.com/docs/en/platform/turtlebot3/hardware_setup/#hardware-assembly">https://emanual.robotis.com/docs/en/platform/turtlebot3/hardware_setup/#hardware-assembly</a></p>
+<h2 id="installation---robot"><a class="header" href="#installation---robot">Installation - Robot</a></h2>
+<h3 id="flashage-de-la-carte-sd"><a class="header" href="#flashage-de-la-carte-sd">Flashage de la carte SD</a></h3>
+<p>Pour installer l'image sur votre Raspberry Pi, vous pouvez utiliser l'un des deux outils suivants : <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a> ou <a href="https://etcher.balena.io/">Balena Etcher</a>.<br />
+L'image à flasher sera fournie par votre enseignant.</p>
+<p>Si vous préférez procéder à l'installation complète par vous-même, vous pouvez suivre les instructions détaillées disponibles sur les liens suivants :</p>
+<ul>
+<li><a href="https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/#sbc-setup">Configuration du Single Board Computer (SBC)</a></li>
+<li><a href="https://emanual.robotis.com/docs/en/platform/turtlebot3/opencr_setup/#opencr-setup">Configuration de l'OpenCR</a></li>
+</ul>
+<h3 id="wifi"><a class="header" href="#wifi">WIFI</a></h3>
+<p>Pour configurer le WiFi sur votre système Ubuntu via le fichier 50-cloud-init.yaml, suivez les étapes ci-dessous :</p>
+<ol>
+<li>Ouvrez le fichier 50-cloud-init.yaml dans un éditeur de texte avec des privilèges d'administrateur. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">sudo nano /media/$(whoami)/writable/etc/netplan
+</code></pre>
+<ol start="2">
+<li>Remplacer les informations de configuration de votre réseau WiFi à la fin du fichier.<br />
+Votre fichier finale devrait ressembler à ceci :</li>
+</ol>
+<pre><code class="language-yaml">network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            optional: true
+    version: 2
+    wifis:
+        wlan0:
+            dhcp4: true
+            optional: true
+            access-points:
+                your_wifi_ssid:
+                    password: your_wifi_password
+</code></pre>
+<ol start="3">
+<li>
+<p>Remplacez "your_wifi_ssid" par le SSID de votre réseau WiFi et "your_wifi_password" par le mot de passe de votre réseau WiFi.</p>
+</li>
+<li>
+<p>Enregistrez le fichier et quittez l'éditeur de texte. Si vous utilisez nano comme dans l'exemple ci-dessus, vous pouvez le faire en appuyant sur Ctrl+X, puis en appuyant sur Y pour confirmer l'enregistrement des modifications, et enfin en appuyant sur Enter pour quitter.</p>
+</li>
+</ol>
+<h2 id="connection---ssh"><a class="header" href="#connection---ssh">Connection - SSH</a></h2>
+<p>Pour établir une connexion SSH, exécutez la commande suivante dans votre terminal :</p>
+<pre><code class="language-bash">ssh ubuntu@turtlebot.local
+</code></pre>
+<p>On vous demandera d'entrer un mot de passe, qui est <strong>turtlebot</strong>.<br />
+Veuillez noter que pour des raisons de sécurité, les caractères du mot de passe ne s'afficheront pas à l'écran lors de la saisie.</p>
+<h2 id="mise-à-jour-de-lopencr"><a class="header" href="#mise-à-jour-de-lopencr">Mise à jour de l'OPENCR</a></h2>
+<p>🤖 En SSH, exécutez les commandes suivantes :</p>
+<pre><code class="language-bash">export OPENCR_PORT=/dev/ttyACM0
+export OPENCR_MODEL=burger
+cd ~/opencr_update
+./update.sh $OPENCR_PORT $OPENCR_MODEL.opencr
+</code></pre>
+<h2 id="installation---ordinateur"><a class="header" href="#installation---ordinateur">Installation - Ordinateur</a></h2>
+<p>💻 L'ensemble des procédures est à faire dans le terminal de votre pc.</p>
+<ol>
+<li>Installer <code>gazebo</code></li>
+</ol>
+<pre><code class="language-bash">sudo apt install ros-humble-gazebo-*
+</code></pre>
+<ol start="2">
+<li>Installer <code>cartographer</code></li>
+</ol>
+<pre><code class="language-bash">sudo apt install ros-humble-cartographer ros-humble-cartographer-ros
+</code></pre>
+<ol start="3">
+<li>Installer <code>navigation2</code></li>
+</ol>
+<pre><code class="language-bash">sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
+</code></pre>
+<ol start="4">
+<li>Compiler les paquets Turtlebot 3</li>
+</ol>
+<pre><code class="language-bash">sudo apt remove ros-humble-turtlebot3-msgs
+sudo apt remove ros-humble-turtlebot3
+mkdir -p ~/workshop_ws/src
+cd ~/workshop_ws/src/
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
+git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+cd ~/workshop_ws
+colcon build --symlink-install --parallel-workers 1
+echo 'source ~/workshop_ws/install/setup.bash' &gt;&gt; ~/.bashrc
+echo 'export TURTLEBOT3_MODEL=burger' &gt;&gt; ~/.bashrc
+source ~/.bashrc
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="atelier---navigation-turtlebot-3-avec-ros-2"><a class="header" href="#atelier---navigation-turtlebot-3-avec-ros-2">Atelier - Navigation (TurtleBot 3) avec ROS 2</a></h1>
+<h2 id="robot-réel"><a class="header" href="#robot-réel">Robot réel</a></h2>
+<p>🔍 Avant de commencer, assurez-vous que la configuration réseau de ROS 2 sur votre PC et sur le TB3 est correcte. La variable d'environnement <code>ROS_DOMAIN_ID</code> doit être définie de manière unique pour chaque robot pour éviter les conflits de communication. Vous pouvez le faire en ajoutant la ligne suivante à votre fichier <code>.bashrc</code> :</p>
+<pre><code class="language-bash">export ROS_DOMAIN_ID=&lt;votre_numéro_de_groupe&gt;
+</code></pre>
+<p>De plus, il est important de vérifier que le hostname de votre robot est unique, surtout si vous travaillez dans un environnement avec plusieurs groupes dans le même wifi.</p>
+<p>🤖 Vous pouvez modifier le hostname en utilisant la commande suivante :</p>
+<pre><code class="language-bash">sudo hostnamectl set-hostname &lt;nouveau_hostname&gt;
+</code></pre>
+<p>Remplacez &lt;nouveau_hostname&gt; par le nouveau nom d'hôte que vous souhaitez utiliser pour votre robot. Par exemple, si vous êtes dans le groupe 8, vous pourriez choisir burger8 comme hostname.</p>
+<h3 id="1-bringup-du-robot"><a class="header" href="#1-bringup-du-robot">1. Bringup du robot</a></h3>
+<p>🤖 En ssh sur le TB3 lancez la commande <code>ros2 launch turtlebot3_bringup robot.launch.py</code>.<br />
+Le programme doit rester ouvert pendant toute la durée de la manipulation. S'il n'y a aucune erreur vous êtes prêt à piloter le robot depuis votre poste de travail, que ce soit pour la téléopération, la cartographie ou la navigation autonome.</p>
+<h3 id="2-téléopération-du-robot"><a class="header" href="#2-téléopération-du-robot">2. Téléopération du robot</a></h3>
+<p>🎮 La première étape pour piloter votre robot consiste à vérifier que votre poste de travail peut effectivement prendre le contrôle du Turtlebot, en le téléopérant via les touches du clavier.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour controler le robot avec le clavier grâce aux touches indiquées. Vérifiez que vous pouvez avancer, reculer, tourner à gauche et à droite. Vous pouvez tuer ce dernier avec Ctrl+C lorsque vous avez terminé.</p>
+<h3 id="3-cartographie"><a class="header" href="#3-cartographie">3. Cartographie</a></h3>
+<p>🗺️ Nous allons désormais créer la carte de l'environnement dans lequel votre Turtlebot évoluera lorsqu'il naviguera de manière autonome.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_cartographer cartographer.launch.py</code>. RViz se lance et vous devriez apercevoir le robot, les scans du LIDAR et la carte en construction.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour contrôler le robot avec le clavier comme précédemment. Cependant cette fois-ci, votre carte est en cours d'enregistrement. Quand la carte est terminée <strong>ne quittez ni RViz ni le terminal de la cartographie</strong>.</p>
+<p>💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver.<br />
+Lancez la commande <code>mkdir ~/map</code> et <code>ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop</code> qui va sauvegarder la carte dans le dossier <code>$HOME/.map</code> (fichiers maps.yaml et maps.pgm).</p>
+<h3 id="4-navigation"><a class="header" href="#4-navigation">4. Navigation</a></h3>
+<p>Arrêtez l'ensemble des terminaux hormis le bringup du robot.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_workshop.yaml</code> pour lancer la localisation et la navigation autonome.</p>
+<p>👀 Sur RViz vous devez voir le robot, les scans du LIDAR, les particules de AMCL et la carte que vous avez enregistrée.</p>
+<p>📍 Si le robot est mal localisé, utilisez l'outil <em>2D Pose Estimate</em> sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.</p>
+<p>📍 Pour donner des ordres de navigation, utilisez l'outil <em>Nav2 Goal</em> sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.</p>
+<h3 id="5-scenario-de-navigation"><a class="header" href="#5-scenario-de-navigation">5. Scenario de navigation</a></h3>
+<p>🚗 L'objectif final du TP est de faire passer le robot par une suite de 2 ou 3 points de passage, comme pour une patrouille, avec un retour au point de départ. Si cela n'est pas déjà fait, choisissez plusieurs points de passage faciles à mesurer avec un mètre depuis le point de départ, avec un grand nombre d'obstacles sur le chemin. Si l'environnement a fortement changé, pensez à enregistrer une nouvelle carte.</p>
+<p>Pour réaliser cet objectif, suivez les étapes ci-dessous :</p>
+<ol>
+<li>Créez un nouvel espace de travail ROS, que vous pouvez nommer <code>workshop_ws</code> par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">mkdir -p ~/workshop_ws/src
+</code></pre>
+<ol start="2">
+<li>Créez un nouveau package Python nommé <code>simple_navigation_goals</code> avec le fichier principale <code>simple_navigation_goals</code>. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python simple_navigation_goals --node-name simple_navigation_goals
+</code></pre>
+<ol start="3">
+<li>
+<p>Dans le dossier <code>simple_navigation_goals</code> du package, ajouter le fichier <a href="navigation/./assets/robot_navigator.py"><code>robot_navigator.py</code></a>.</p>
+</li>
+<li>
+<p>Ouvrez le fichier <code>simple_navigation_goal</code> dans un éditeur de texte et copiez les lignes de code fournies.</p>
+</li>
+</ol>
+<pre><code class="language-python">#! /usr/bin/env python3
+# Copyright 2021 Samsung Research America
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Modified by AutomaticAddison.com
+
+import time  # Time library
+ 
+from geometry_msgs.msg import PoseStamped # Pose with ref frame and timestamp
+from rclpy.duration import Duration # Handles time for ROS 2
+import rclpy # Python client library for ROS 2
+ 
+from .robot_navigator import BasicNavigator, NavigationResult # Helper module
+ 
+'''
+Navigates a robot from an initial pose to a goal pose.
+'''
+def main():
+ 
+  # Start the ROS 2 Python Client Library
+  rclpy.init()
+ 
+  # Launch the ROS 2 Navigation Stack
+  navigator = BasicNavigator()
+ 
+  # Set the robot's initial pose if necessary
+  # initial_pose = PoseStamped()
+  # initial_pose.header.frame_id = 'map'
+  # initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+  # initial_pose.pose.position.x = 0.0
+  # initial_pose.pose.position.y = 0.0
+  # initial_pose.pose.position.z = 0.0
+  # initial_pose.pose.orientation.x = 0.0
+  # initial_pose.pose.orientation.y = 0.0
+  # initial_pose.pose.orientation.z = 0.0
+  # initial_pose.pose.orientation.w = 1.0
+  # navigator.setInitialPose(initial_pose)
+ 
+  # Activate navigation, if not autostarted. This should be called after setInitialPose()
+  # or this will initialize at the origin of the map and update the costmap with bogus readings.
+  # If autostart, you should `waitUntilNav2Active()` instead.
+  # navigator.lifecycleStartup()
+ 
+  # Wait for navigation to fully activate. Use this line if autostart is set to true.
+  navigator.waitUntilNav2Active()
+ 
+  # If desired, you can change or load the map as well
+  # navigator.changeMap('/path/to/map.yaml')
+ 
+  # You may use the navigator to clear or obtain costmaps
+  # navigator.clearAllCostmaps()  # also have clearLocalCostmap() and clearGlobalCostmap()
+  # global_costmap = navigator.getGlobalCostmap()
+  # local_costmap = navigator.getLocalCostmap()
+ 
+  # Set the robot's goal pose
+  goal_pose = PoseStamped()
+  goal_pose.header.frame_id = 'map'
+  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+  goal_pose.pose.position.x = 0.50
+  goal_pose.pose.position.y = -0.8
+  goal_pose.pose.position.z = 0.0
+  goal_pose.pose.orientation.x = 0.0
+  goal_pose.pose.orientation.y = 0.0
+  goal_pose.pose.orientation.z = 0.0
+  goal_pose.pose.orientation.w = 1.0
+ 
+  # sanity check a valid path exists
+  # path = navigator.getPath(initial_pose, goal_pose)
+ 
+  # Go to the goal pose
+  navigator.goToPose(goal_pose)
+ 
+  i = 0
+ 
+  # Keep doing stuff as long as the robot is moving towards the goal
+  while not navigator.isNavComplete():
+    ################################################
+    #
+    # Implement some code here for your application!
+    #
+    ################################################
+ 
+    # Do something with the feedback
+    i = i + 1
+    feedback = navigator.getFeedback()
+    if feedback and i % 5 == 0:
+      print('Distance remaining: ' + '{:.2f}'.format(
+            feedback.distance_remaining) + ' meters.')
+ 
+      # Some navigation timeout to demo cancellation
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=600.0):
+        navigator.cancelNav()
+ 
+      # Some navigation request change to demo preemption
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=120.0):
+        goal_pose.pose.position.x = -3.0
+        navigator.goToPose(goal_pose)
+ 
+  # Do something depending on the return code
+  result = navigator.getResult()
+  if result == NavigationResult.SUCCEEDED:
+      print('Goal succeeded!')
+  elif result == NavigationResult.CANCELED:
+      print('Goal was canceled!')
+  elif result == NavigationResult.FAILED:
+      print('Goal failed!')
+  else:
+      print('Goal has an invalid return status!')
+ 
+  # Shut down the ROS 2 Navigation Stack
+  navigator.lifecycleShutdown()
+ 
+  exit(0)
+ 
+if __name__ == '__main__':
+  main()
+</code></pre>
+<ol start="5">
+<li>
+<p>Assurez-vous de remplacer les valeurs de x, y et z pour correspondre à une valeur que vous avez définie.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install --parallel-workers 1
+</code></pre>
+<ol start="7">
+<li>En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.</li>
+</ol>
+<h2 id="-challenge-additionnel--carry-my-luggage"><a class="header" href="#-challenge-additionnel--carry-my-luggage">🧳 Challenge additionnel : Carry my luggage</a></h2>
+<p>Challenge inspiré de l'épreuve "Carry my luggage" de la RoboCup @Home.
+Pour info, le réglement de la compétition se trouve ici (mais ça n'apporte rien pour votre projet) :
+<a href="https://athome.robocup.org/wp-content/uploads/2019_rulebook.pdf">https://athome.robocup.org/wp-content/uploads/2019_rulebook.pdf</a></p>
+<p>🗺️ <strong>Prérequis :</strong> avoir une carte représentative de l'environnement.</p>
+<h3 id="-phase-1--follow-me"><a class="header" href="#-phase-1--follow-me">➡️ Phase 1 : Follow me</a></h3>
+<p>Vous avez toute liberté pour préparer le début de l'épreuve (ex. comment faire que le robot soit bien localisé dès le début ?).</p>
+<p>Le robot part d'un point connu et doit suivre un humain qui va à un endroit inconnu par le robot (mais à l'intérieur de la carte). L'humain commence l'épreuve en étant en face du robot à une distance de 50 cm.</p>
+<p>Le robot doit suivre l'humain en maintenant une distance comprise entre 20cm minimum et 1m maximum.</p>
+<p>Pour être valide, l'humain doit avoir un déplacement non trivial : il ne va pas toujours tout droit et il fait varier sa vitesse de marche dans la limite du raisonnable. Distance minimum de marche demandée 4 mètres (mais vous êtes libres de faire plus si ça vous arrange, ça n'impactera pas directement la note). Il faut obligatoirement que le robot traverse une porte.</p>
+<p>Lorsque l'humain est arrivé à sa destination, il s'arrête pendant une durée d'au moins 3 secondes. Le robot doit alors comprendre que la phase 1 est terminée et passer à la phase 2.</p>
+<h3 id="-phase-2--go-home"><a class="header" href="#-phase-2--go-home">↩️ Phase 2 : Go home</a></h3>
+<p>Le robot doit repartir et naviguer en totale autonomie jusqu'à son point de départ. Sur le retour, vous rajouterez jusqu'à :</p>
+<ul>
+<li>1 obstacle statique sur son chemin de retour</li>
+<li>1 obstacle dynamique (typiquement un humain qui lui coupe la route)</li>
+<li>1 obstacle qui bloque complètement le passage prévu par le robot (il faut qu'il ait la possiblité d'arriver à destination par un autre chemin)</li>
+</ul>
+<p>Si le robot arrive à destination (à +-20cm, +-15°) la phase 2 est validée.</p>
+<h3 id="-phase-3--dock"><a class="header" href="#-phase-3--dock">↙️ Phase 3 : Dock</a></h3>
+<p>Si le robot arrive à destination (à +-20cm, +-15°) la phase 2 est validée.</p>
+<p>Le robot doit chercher où se trouve sa base et s'y accoster. La position grossière de la base est connue mais cette partie n'est validée que si le robot réussi un accostage précis sans contact : la distance entre le robot et la base soit être supériere à 5mm et inférieure à 2cm.</p>
+<p>Vous avez toute liberté pour choisir un objet qui représentera la base du robot. Un pot de peinture par exemple serait un choix pertinent (la symétrie radiale peut simplifier la détection).</p>
+<h2 id="simulation"><a class="header" href="#simulation">Simulation</a></h2>
+<p>⚠️ <strong>Attention</strong> la simulation du TB3 n'est à utiliser qu'en dernier recours pour remplacer votre robot s'il ne fonctionne pas. Avant de passer en simulation demandez de l'aide pour réparer votre robot.</p>
+<p>Dans le ̀ .bashrc`, pour que gazebo se lance bien, il faut mettre les lignes suivantes :</p>
+<pre><code class="language-bash">stat /usr/share/gazebo/setup.sh &amp;&gt; /dev/null
+if [ $? -eq 0 ]; then
+    source /usr/share/gazebo/setup.sh
+fi
+</code></pre>
+<h3 id="1-lancement-de-la-simulation"><a class="header" href="#1-lancement-de-la-simulation">1. Lancement de la simulation</a></h3>
+<p>Le paquet <code>Turtlebot3</code> propose plusieurs environnement de simulation.</p>
+<p>💻 Lancer une des deux commandes suivantes en fonction de l'environnement que vous voulez lancer.</p>
+<ul>
+<li>Monde simple : <code>ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py</code></li>
+<li>Warehouse : <code>ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py</code></li>
+</ul>
+<p>Le simulateur gazebo doit rester ouvert pendant toute la durée de la manipulation. S'il n'y a aucune erreur vous êtes prêt à piloter le robot depuis votre poste de travail, que ce soit pour la téléopération, la cartographie ou la navigation autonome.</p>
+<h3 id="2-téléopération-du-robot-1"><a class="header" href="#2-téléopération-du-robot-1">2. Téléopération du robot</a></h3>
+<p>🎮 La première étape pour piloter votre robot consiste à vérifier que votre poste de travail peut effectivement prendre le contrôle du Turtlebot, en le téléopérant via les touches du clavier.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour controler le robot avec le clavier grâce aux touches indiquées. Vérifiez que vous pouvez avancer, reculer, tourner à gauche et à droite. Vous pouvez tuer ce dernier avec Ctrl+C lorsque vous avez terminé.</p>
+<h3 id="3-cartographie-1"><a class="header" href="#3-cartographie-1">3. Cartographie</a></h3>
+<p>🗺️ Nous allons désormais créer la carte de l'environnement dans lequel votre Turtlebot évoluera lorsqu'il naviguera de manière autonome.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True</code>. RViz se lance et vous devriez apercevoir le robot, les scans du LIDAR et la carte en construction.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour contrôler le robot avec le clavier comme précédemment. Cependant cette fois-ci, votre carte est en cours d'enregistrement. Quand la carte est terminée <strong>ne quittez ni RViz ni le terminal de la cartographie</strong>.</p>
+<p>💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver. Lancez la commande <code>mkdir ~/map</code> puis <code>ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop</code> qui va sauvegarder la carte dans le dossier <code>$HOME/.map</code> (fichiers maps.yaml et maps.pgm).</p>
+<h3 id="4-navigation-1"><a class="header" href="#4-navigation-1">4. Navigation</a></h3>
+<p>Arrêtez l'ensemble des terminaux hormis la simulation.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=$HOME/map/map_workshop.yaml</code> pour lancer la localisation et la navigation autonome.</p>
+<p>👀 Sur RViz vous devez voir le robot, les scans du LIDAR, les particules de AMCL et la carte que vous avez enregistrée.</p>
+<p>📍 Si le robot est mal localisé, utilisez l'outil <em>2D Pose Estimate</em> sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.</p>
+<p>📍 Pour donner des ordres de navigation, utilisez l'outil <em>Nav2 Goal</em> sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.</p>
+<h3 id="5-scenario-de-navigation-1"><a class="header" href="#5-scenario-de-navigation-1">5. Scenario de navigation</a></h3>
+<p>🚗 L'objectif final du TP est de faire passer le robot par une suite de 2 ou 3 points de passage, comme pour une patrouille, avec un retour au point de départ. Si cela n'est pas déjà fait, choisissez plusieurs points de passage faciles à mesurer avec un mètre depuis le point de départ, avec un grand nombre d'obstacles sur le chemin. Si l'environnement a fortement changé, pensez à enregistrer une nouvelle carte.</p>
+<p>Pour réaliser cet objectif, suivez les étapes ci-dessous :</p>
+<ol>
+<li>Créez un nouvel espace de travail ROS, que vous pouvez nommer <code>workshop_ws</code> par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">mkdir -p ~/workshop_ws/src
+</code></pre>
+<ol start="2">
+<li>Créez un nouveau package Python nommé <code>simple_navigation_goals</code> avec le fichier principale <code>simple_navigation_goals</code>. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python simple_navigation_goals --node-name simple_navigation_goals
+</code></pre>
+<ol start="3">
+<li>
+<p>Dans le dossier <code>simple_navigation_goals</code> du package, ajouter le fichier <a href="navigation/./assets/robot_navigator.py"><code>robot_navigator.py</code></a>.</p>
+</li>
+<li>
+<p>Ouvrez le fichier <code>simple_navigation_goal</code> dans un éditeur de texte et copiez les lignes de code fournies.</p>
+</li>
+</ol>
+<pre><code class="language-python">#! /usr/bin/env python3
+# Copyright 2021 Samsung Research America
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Modified by AutomaticAddison.com
+
+import time  # Time library
+ 
+from geometry_msgs.msg import PoseStamped # Pose with ref frame and timestamp
+from rclpy.duration import Duration # Handles time for ROS 2
+import rclpy # Python client library for ROS 2
+ 
+from .robot_navigator import BasicNavigator, NavigationResult # Helper module
+ 
+'''
+Navigates a robot from an initial pose to a goal pose.
+'''
+def main():
+ 
+  # Start the ROS 2 Python Client Library
+  rclpy.init()
+ 
+  # Launch the ROS 2 Navigation Stack
+  navigator = BasicNavigator()
+ 
+  # Set the robot's initial pose if necessary
+  # initial_pose = PoseStamped()
+  # initial_pose.header.frame_id = 'map'
+  # initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+  # initial_pose.pose.position.x = 0.0
+  # initial_pose.pose.position.y = 0.0
+  # initial_pose.pose.position.z = 0.0
+  # initial_pose.pose.orientation.x = 0.0
+  # initial_pose.pose.orientation.y = 0.0
+  # initial_pose.pose.orientation.z = 0.0
+  # initial_pose.pose.orientation.w = 1.0
+  # navigator.setInitialPose(initial_pose)
+ 
+  # Activate navigation, if not autostarted. This should be called after setInitialPose()
+  # or this will initialize at the origin of the map and update the costmap with bogus readings.
+  # If autostart, you should `waitUntilNav2Active()` instead.
+  # navigator.lifecycleStartup()
+ 
+  # Wait for navigation to fully activate. Use this line if autostart is set to true.
+  navigator.waitUntilNav2Active()
+ 
+  # If desired, you can change or load the map as well
+  # navigator.changeMap('/path/to/map.yaml')
+ 
+  # You may use the navigator to clear or obtain costmaps
+  # navigator.clearAllCostmaps()  # also have clearLocalCostmap() and clearGlobalCostmap()
+  # global_costmap = navigator.getGlobalCostmap()
+  # local_costmap = navigator.getLocalCostmap()
+ 
+  # Set the robot's goal pose
+  goal_pose = PoseStamped()
+  goal_pose.header.frame_id = 'map'
+  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+  goal_pose.pose.position.x = 0.50
+  goal_pose.pose.position.y = -0.8
+  goal_pose.pose.position.z = 0.0
+  goal_pose.pose.orientation.x = 0.0
+  goal_pose.pose.orientation.y = 0.0
+  goal_pose.pose.orientation.z = 0.0
+  goal_pose.pose.orientation.w = 1.0
+ 
+  # sanity check a valid path exists
+  # path = navigator.getPath(initial_pose, goal_pose)
+ 
+  # Go to the goal pose
+  navigator.goToPose(goal_pose)
+ 
+  i = 0
+ 
+  # Keep doing stuff as long as the robot is moving towards the goal
+  while not navigator.isNavComplete():
+    ################################################
+    #
+    # Implement some code here for your application!
+    #
+    ################################################
+ 
+    # Do something with the feedback
+    i = i + 1
+    feedback = navigator.getFeedback()
+    if feedback and i % 5 == 0:
+      print('Distance remaining: ' + '{:.2f}'.format(
+            feedback.distance_remaining) + ' meters.')
+ 
+      # Some navigation timeout to demo cancellation
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=600.0):
+        navigator.cancelNav()
+ 
+      # Some navigation request change to demo preemption
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=120.0):
+        goal_pose.pose.position.x = -3.0
+        navigator.goToPose(goal_pose)
+ 
+  # Do something depending on the return code
+  result = navigator.getResult()
+  if result == NavigationResult.SUCCEEDED:
+      print('Goal succeeded!')
+  elif result == NavigationResult.CANCELED:
+      print('Goal was canceled!')
+  elif result == NavigationResult.FAILED:
+      print('Goal failed!')
+  else:
+      print('Goal has an invalid return status!')
+ 
+  # Shut down the ROS 2 Navigation Stack
+  navigator.lifecycleShutdown()
+ 
+  exit(0)
+ 
+if __name__ == '__main__':
+  main()
+</code></pre>
+<ol start="5">
+<li>
+<p>Assurez-vous de remplacer les valeurs de x, y et z pour correspondre à une valeur que vous avez définie.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install --parallel-workers 1
+``` 
+
+7. En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ressources-2"><a class="header" href="#ressources-2">Ressources</a></h1>
+<h2 id="diaporama-3"><a class="header" href="#diaporama-3">Diaporama</a></h2>
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vToHnLvVXOGaMXPhkQRx4CXOAGjzx7R1ZZPBFvMgcs0Y22ixgmiyI6zg1Xo1Qer8W0Ox-fxwswBq5bz/embed?start=false&loop=false&delayms=60000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe><div style="break-before: page; page-break-before: always;"></div><h1 id="atelier---vision-et-ia-avec-ros-2"><a class="header" href="#atelier---vision-et-ia-avec-ros-2">Atelier - Vision et IA avec ROS 2</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ateliers---perceptions-avec-opencv"><a class="header" href="#ateliers---perceptions-avec-opencv">Ateliers - Perceptions avec OpenCV</a></h1>
+<p>Le domaine de "Computer Vision" (CV, ou vision par ordinateur) est une branche de l'intelligence artificielle, qui traite des techniques permettant d'extraire des informations de "haut niveau" utiles à partir d'images. Donc ce domaine développé depuis les années 60, on retrouve généralement des techniques provenant des mathématiques, du traitement d'images, des neurosciences, de l'apprentissage artificiel… Nous allons ici effleurer ce domaine en nous familiarisant avec <a href="https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_tutorials.html">OpenCV</a>.</p>
+<h2 id="1-introduction-à-opencv"><a class="header" href="#1-introduction-à-opencv">1. Introduction à OpenCV</a></h2>
+<p>OpenCV est une bibliothèque logicielle qui est devenue le "standard" du domaine. Cette bibliothèque fournit un énorme ensemble de fonctionnalités et d'algorithmes à la pointe de l'état de l'art. Entre autres sont disponibles :</p>
+<ul>
+<li>Des mécanismes d'entrées/sorties des images et flux vidéos (caméras, fichiers…)</li>
+<li>Des mécanismes de traitement d'images (gestion des formats, couleurs, déformations… )</li>
+<li>Des milliers d'algorithmes développés par la communauté et les industriels (reconnaissance d'image, suivi d'objet, vision 3D, apprentissage…)</li>
+</ul>
+<h2 id="2-ouverture-dune-image"><a class="header" href="#2-ouverture-dune-image">2. Ouverture d'une image</a></h2>
+<ul>
+<li>
+<p>Téléchargez l'image :<br />
+<img src="vision_ia/activities/./img/ergo_cubes.jpg" alt="img" /></p>
+</li>
+<li>
+<p>Créez un fichier <code>couleurs.py</code></p>
+<pre><code class="language-python">import numpy as np
+import cv2 as cv
+img = cv.imread('ergo_cubes.jpg')
+</code></pre>
+</li>
+<li>
+<p>Quelle information nous donne <code>print(img.shape)</code> ?</p>
+</li>
+</ul>
+<p><img src="vision_ia/activities/./img/canaux.png" alt="img" /></p>
+<ul>
+<li>On peut accéder à chaque pixel par indexation du tableau <code>img</code> avec <code>img[LIGNE, COLONNE]</code> (ce qui est très inefficace), que représente la valeurs données par <code>img[170,255]</code> ?</li>
+<li>Pour accéder au différents canaux de couleur on peut de même utiliser: <code>img[:,:,CANAL]</code> avec <code>CANAL</code> la couleur voulue.</li>
+<li>On peut facilement créer des régions d'intérêt (ROI) en utilisant les mécanismes disponibles dans python :</li>
+</ul>
+<pre><code class="language-python">roi=img[140:225, 210:310]
+</code></pre>
+<ul>
+<li>OpenCV offre également quelques fonctionnalités pratiques d'interface utilisateur (GUI). Pour afficher une image :</li>
+</ul>
+<pre><code class="language-python">cv.imshow("Mon image", roi) #on donne un nom unique à chaque fenêtre
+cv.waitKey(0) #permet d'attendre à a l'infini
+</code></pre>
+<ul>
+<li>Enfin, on peut écrire les images dans des fichiers :</li>
+</ul>
+<pre><code class="language-python">cv.imwrite("roi.png", roi)
+</code></pre>
+<ul>
+<li>Affichez les trois canaux de couleur dans des fenêtres différentes</li>
+</ul>
+<h2 id="3-seuil-sur-la-couleur"><a class="header" href="#3-seuil-sur-la-couleur">3. Seuil sur la couleur</a></h2>
+<p>Nous avons vu que les images sont généralement représentés dans l'espace <code>BGR</code>, ce qui est cohérent avec le fonctionnement du pixel de l'écran (et du capteur), mais moins évidant lorsque l'on souhaite travailler sur les couleurs. Comment par exemple définir le volume 3D dans l'espace BGR représentant le "rose"? C'est pourquoi pour traiter la couleur, il est recommandé de convertir l'encodage de l'image dans un autre espace. L'espace le plus couramment utilisé est le <a href="https://fr.wikipedia.org/wiki/Teinte_Saturation_Valeur">HSV</a> (Hue, Saturation, Value ou Teinte, Saturation, Valeur).</p>
+<ul>
+<li>Pour convertir une image de BGR vers HSV il suffit d'utiliser :</li>
+</ul>
+<pre><code class="language-python">img_HSV = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+</code></pre>
+<p>On notera que l'espace HSV est encodé avec H dans [0, 179], S dans [0,255] et V dans [0,255]</p>
+<ul>
+<li>On peut ensuite appliquer un seuil avec :</li>
+</ul>
+<pre><code class="language-python">img_seuil = cv.inRange(img_HSV, (MIN_H, MIN_S, MIN_V), (MAX_H, MAX_S, MAX_V)
+</code></pre>
+<p>Le résultat de la fonction de seuil <code>inRange</code> est une image binaire</p>
+<ul>
+<li>Expérimentez avec les valeurs de seuil pour ne faire apparaître que le cube rouge. Note : il est facile de créer des "trackbars" pour changer en temps réel les valeurs, voir le <a href="https://docs.opencv.org/master/d9/dc8/tutorial_py_trackbar.html">tutoriel</a></li>
+</ul>
+<h2 id="4-détection-des-cubes"><a class="header" href="#4-détection-des-cubes">4. Détection des cubes</a></h2>
+<p>Nous sommes maintenant capable de sélectionner des pixels en fonction de leur couleur, il nous faut encore "regrouper" ces informations afin de détecter et reconnaître les cubes.</p>
+<ul>
+<li>Une méthode simple consiste à considérer que les pixels d'une couleur choisie font partie d'un "blob" (une région de pixels voisins) représentant le même objet. Dans l'image binaire résultat du seuil, il nous suffit de chercher le <code>contour</code> des zones blanches. Pour cela nous allons utiliser la fonction <code>findContours()</code> (voir le <a href="https://docs.opencv.org/master/d4/d73/tutorial_py_contours_begin.html">tutoriel</a>)</li>
+</ul>
+<pre><code class="language-python">contours, hierarchy = cv.findContours(
+   img_seuil, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+</code></pre>
+<p><code>contours</code> est une liste contenant tous les contours trouvés <code>hierarchy</code> contient les informations sur la hiérarchie des contours (les contours à l'intérieur des contours)</p>
+<ul>
+<li>Sur une image "naturelle" (avec du bruit) les contours trouvés seront rarement parfaits. Il est possible de "filtrer" ces contours en ne considérant par exemple que ceux dons la surface est cohérente avec les objets recherchés (voir le <a href="https://docs.opencv.org/3.4/dd/d49/tutorial_py_contour_features.html">tutoriel</a>)</li>
+<li>Parcourez la liste des contours et dessinez les contours dont la surface est comprise entre 2500 et 3700 On utilisera une boucle sur <code>contours</code>, la fonction <code>contourArea()</code> retournant la surface d'un contour, ainsi que la fonction de dessin <code>drawContours()</code> (dessinez sur l'image d'origine)</li>
+<li>Une fois le contour du cube trouvé, nous pouvons chercher son centre avec la fonction <code>moments()</code> avec une fonction telle que:</li>
+</ul>
+<pre><code class="language-python">def trouver_centroid(cnt):
+    M = cv.moments(cnt)
+    if M['m00'] &gt; 0.0:
+       cx = int(M['m10']/M['m00'])
+       cy = int(M['m01']/M['m00'])
+       return (x, y)
+    else:
+       return (0, 0)
+</code></pre>
+<p>Nous pouvons ensuite utiliser la position obtenue pour écrire un texte :</p>
+<pre><code class="language-python">cv.putText(img, 'cube', (x, y), cv.FONT_HERSHEY_SIMPLEX, 1,(255, 255, 255),1, cv.LINE_AA)
+</code></pre>
+<p><img src="vision_ia/activities/./img/cube_rouge.png" alt="img" /></p>
+<ul>
+<li>Maintenant que nous sommes capable de détecter un cube d'une couleur, étendez le programme pour détecter la présence et la position des 3 cubes</li>
+</ul>
+<h2 id="5-intégration-avec-ros"><a class="header" href="#5-intégration-avec-ros">5. Intégration avec ROS</a></h2>
+<p>Pour intégrer la détection de cube coloré à ROS 2 en utilisant l'image de la caméra de votre ordinateur ou une image statique, vous pouvez créer un nœud ROS qui offre un service. Ce service prendra en entrée un string indiquant la source de l'image (caméra ou image statique) et renverra la position et le label du cube détecté. Voici comment vous pouvez le faire :</p>
+<ol>
+<li>Créez un nouveau package ROS nommé color_cube_detection. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python color_cube_detection --node-name color_cube_detector
+</code></pre>
+<ol start="2">
+<li>
+<p>Ouvrez le fichier color_cube_detector.py dans un éditeur de texte et ajoutez le code pour créer un nœud ROS qui offre un service. Le service doit prendre en entrée un string indiquant la source de l'image (caméra ou image statique) et renvoyer la position et le label du cube détecté.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install
+</code></pre>
+<p>Maintenant, vous devriez être prêt à lancer votre nœud color_cube_detector et à voir votre robot détecter des cubes colorés.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ateliers---pytorch"><a class="header" href="#ateliers---pytorch">Ateliers - PyTorch</a></h1>
+<p>Torch est une bilbiothèque opensource d’apprentissage machine et en particulier d’apprentissage profond. Depuis 2018 seule sa version Python nommée PyTorch est maintenue. Nous allons l’utiliser ici sur des imagettes sur lesquelles sont inscrites des chiffres marqués manuellement au feutre avec différentes calligraphies. Le réseau de neurones que vous allez créer devra apprendre lui-même à déterminer quel chiffre est marqué, ce que l’on appelle classifier.</p>
+<p>Pour effectuer cet atelier, vous devez installer quelques packages :</p>
+<pre><code class="language-bash">pip install torchvision
+</code></pre>
+<h2 id="entraînement-de-lia"><a class="header" href="#entraînement-de-lia">Entraînement de l'IA</a></h2>
+<h3 id="1-importation-des-bibliothèques-et-téléchargement-des-données"><a class="header" href="#1-importation-des-bibliothèques-et-téléchargement-des-données">1. Importation des Bibliothèques et Téléchargement des Données</a></h3>
+<pre><code class="language-python">from torchvision import datasets
+from torchvision.transforms import ToTensor
+# Ignore deprecated warnings
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+train_data = datasets.MNIST(
+    root = 'data',
+    train = True,
+    transform = ToTensor(),
+    download = True
+)
+
+test_data = datasets.MNIST(
+    root = 'data',
+    train = False,
+    transform = ToTensor(),
+    download = True
+)
+
+print(train_data)
+print(test_data)
+print(train_data.data.shape)
+print(test_data.data.shape)
+print(train_data.targets.shape)
+print(train_data.targets)
+</code></pre>
+<p>Quelles sont les données affichés via les <code>print</code> ?</p>
+<h3 id="2-chargement-des-données-avec-dataloader"><a class="header" href="#2-chargement-des-données-avec-dataloader">2. Chargement des Données avec DataLoader</a></h3>
+<pre><code class="language-python">from torch.utils.data import DataLoader
+
+loaders = {
+    'train' : DataLoader(train_data,
+                         batch_size=100,
+                         shuffle=True,
+                         num_workers=1),
+    'test' : DataLoader(test_data,
+                        batch_size=100,
+                        shuffle=True,
+                        num_workers=1)
+}
+
+print(loaders)
+</code></pre>
+<h3 id="3-définition-du-modèle-cnn"><a class="header" href="#3-définition-du-modèle-cnn">3. Définition du Modèle CNN</a></h3>
+<pre><code class="language-python">import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
+class CNN(nn.Module):
+
+    def __init__(self):
+        super(CNN, self).__init__()
+        
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = x.view(-1, 320)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+
+        return F.softmax(x)
+</code></pre>
+<h3 id="4-configuration-du-dispositif-du-modèle-de-loptimiseur-et-de-la-fonction-de-perte"><a class="header" href="#4-configuration-du-dispositif-du-modèle-de-loptimiseur-et-de-la-fonction-de-perte">4. Configuration du Dispositif, du Modèle, de l'Optimiseur et de la Fonction de Perte</a></h3>
+<pre><code class="language-python">import torch
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = CNN().to(device)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+loss_fn = nn.CrossEntropyLoss()
+</code></pre>
+<h3 id="5-définition-des-fonctions-dentraînement-et-de-test"><a class="header" href="#5-définition-des-fonctions-dentraînement-et-de-test">5. Définition des Fonctions d'Entraînement et de Test</a></h3>
+<pre><code class="language-python">def train(epoch):
+    model.train()
+    for batch_idx, (data, target) in enumerate(loaders['train']):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = loss_fn(output, target)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % 20 == 0:
+            print(f"Train Epoch: {epoch} [{batch_idx * len(data)} / {len(loaders['train'].dataset)} ({100 * batch_idx / len(loaders['train']):0f}%)]\t{loss.item():.6f}")
+
+
+def test():
+    model.eval()
+    test_loss = 0
+    correct = 0
+    with torch.no_grad():
+        for data, target in loaders['test']:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += loss_fn(output, target).item()
+            pred = output.argmax(dim=1, keepdim=True)
+            correct += pred.eq(target.view_as(pred)).sum().item()
+    test_loss /= len(loaders['test'].dataset)
+    print(f"\nTest set: Average loss: {test_loss: 0.4f}, Accuracy {correct}/{len(loaders['test'].dataset)}  ({100 * correct / len(loaders['test'].dataset):.0f}%\n")
+</code></pre>
+<h3 id="6-entraînement-et-Évaluation-du-modèle"><a class="header" href="#6-entraînement-et-Évaluation-du-modèle">6. Entraînement et Évaluation du Modèle</a></h3>
+<pre><code class="language-python">for epoch in range(1, 10):
+    train(epoch)
+    test()
+</code></pre>
+<h3 id="7-sauvegarde-du-modèle-entraîné"><a class="header" href="#7-sauvegarde-du-modèle-entraîné">7. Sauvegarde du Modèle Entraîné</a></h3>
+<pre><code class="language-python">torch.save(model.state_dict(), 'mnist_cnn.pth')
+</code></pre>
+<h2 id="utilisation-de-lia-entrainé"><a class="header" href="#utilisation-de-lia-entrainé">Utilisation de l'IA entrainé</a></h2>
+<h3 id="1-importation-des-bibliothèques-et-téléchargement-des-données-1"><a class="header" href="#1-importation-des-bibliothèques-et-téléchargement-des-données-1">1. Importation des Bibliothèques et Téléchargement des Données</a></h3>
+<pre><code class="language-python">from torchvision import datasets
+from torchvision.transforms import ToTensor
+from torch.utils.data import DataLoader
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+import cv2
+
+# Ignore deprecated warnings
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+test_data = datasets.MNIST(
+    root='data',
+    train=False,
+    transform=ToTensor(),
+    download=True
+)
+
+test_loader = DataLoader(test_data, batch_size=100, shuffle=True, num_workers=1)
+
+print(test_data)
+print(test_data.data.shape)
+print(test_data.targets.shape)
+</code></pre>
+<h2 id="définition-du-modèle-cnn"><a class="header" href="#définition-du-modèle-cnn">Définition du Modèle CNN</a></h2>
+<pre><code class="language-python">import torch.nn as nn
+import torch.nn.functional as F
+
+class CNN(nn.Module):
+    def __init__(self):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = x.view(-1, 320)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
+</code></pre>
+<p>### 3. Chargement du modèle entraîné</p>
+<pre><code class="language-python">device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Créer une instance du modèle
+model = CNN().to(device)
+
+# Charger l'état du modèle
+model.load_state_dict(torch.load('mnist_cnn.pth'))
+
+# S'assurer que le modèle est en mode évaluation
+model.eval()
+</code></pre>
+<h3 id="4-prédiction-et-visualisation"><a class="header" href="#4-prédiction-et-visualisation">4. Prédiction et Visualisation</a></h3>
+<pre><code class="language-python"># Example code to test the loaded model
+test_data = datasets.MNIST(
+    root='data',
+    train=False,
+    transform=ToTensor(),
+    download=True
+)
+
+test_loader = DataLoader(test_data, batch_size=100, shuffle=True, num_workers=1)
+
+# Get a batch of test data
+data, target = next(iter(test_loader))
+data, target = data.to(device), target.to(device)
+
+# Perform prediction
+output = model(data)
+predictions = output.argmax(dim=1, keepdim=True)
+
+# Number of images to display
+num_images = 10
+
+# Plot the selected images
+for i in range(num_images):
+    image = data[i].cpu().squeeze(0).numpy()
+    plt.figure()
+    plt.imshow(image, cmap='gray')
+    plt.title(f"Prediction: {predictions[i].item()}")
+    plt.show()
+
+</code></pre>
+<h2 id="intégration-avec-ros"><a class="header" href="#intégration-avec-ros">Intégration avec ROS</a></h2>
+<p>Pour intégrer la détection de cube numéroté à ROS 2 en utilisant l'image de la caméra de votre ordinateur ou une image statique, vous pouvez créer un nœud ROS qui offre un service. Ce service prendra en entrée un string indiquant la source de l'image (caméra ou image statique) et renverra la position et le label du cube détecté.<br />
+Pour détecter la position du cube, utiliser l'activité précédente avec la méthode <code>find_contours</code>.</p>
+<p>Voici comment vous pouvez le faire :</p>
+<ol>
+<li>Créez un nouveau package ROS nommé color_cube_detection. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python cube_pytorch --node-name cube_pytorch
+</code></pre>
+<ol start="2">
+<li>
+<p>Ouvrez le fichier cube_pytorch.py dans un éditeur de texte et ajoutez le code pour créer un nœud ROS qui offre un service. Le service doit prendre en entrée un string indiquant la source de l'image (caméra ou image statique) et renvoyer la position et le label du cube détecté.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install
+</code></pre>
+<p>Maintenant, vous devriez être prêt à lancer votre nœud color_cube_detector et à voir votre robot détecter des cubes colorés.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ressources-3"><a class="header" href="#ressources-3">Ressources</a></h1>
+<h2 id="diaporama-4"><a class="header" href="#diaporama-4">Diaporama</a></h2>
+<p>Vous trouverez le diaporama à cette adresse : <a href="https://files.ros4.pro/manipulation.pdf">https://files.ros4.pro/manipulation.pdf</a></p>
+<h2 id="liens"><a class="header" href="#liens">Liens</a></h2>
+<ul>
+<li><a href="https://docs.trossenrobotics.com/interbotix_xsarms_docs/index.html">Documentation du bras</a></li>
+<li><a href="https://docs.trossenrobotics.com/interbotix_xsarms_docs/ros_interface/ros2.html">Documentation du bras - ROS 2 Interface</a></li>
+<li><a href="https://docs.trossenrobotics.com/interbotix_xsarms_docs/python_ros_interface.html">Documentation du bras - ROS 2 Python ROS Interface</a></li>
+<li><a href="https://docs.trossenrobotics.com/interbotix_xsarms_docs/ros2_packages.html">Documentation du bras - ROS2</a></li>
+<li><a href="https://docs.trossenrobotics.com/interbotix_xsarms_docs/ros2_packages/python_demos.html">Demo python robot</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<p>Installer les paquets suivants :</p>
+<pre><code class="language-bash">sudo apt install ros-humble-moveit ros-${ROS_DISTRO}-urdf-tutorial
+sudo apt install curl
+curl 'https://raw.githubusercontent.com/Interbotix/interbotix_ros_manipulators/main/interbotix_ros_xsarms/install/amd64/xsarm_amd64_install.sh' &gt; xsarm_amd64_install.sh
+chmod +x xsarm_amd64_install.sh
+./xsarm_amd64_install.sh -d humble -n
+</code></pre>
+<p>Dans le ̀<code>.bashrc</code>, pour que gazebo se lance bien, il faut mettre les lignes suivantes :</p>
+<pre><code class="language-bash">stat /usr/share/gazebo/setup.sh &amp;&gt; /dev/null
+if [ $? -eq 0 ]; then
+    source /usr/share/gazebo/setup.sh
+fi
+</code></pre>
+<p>Lancer la commande suivante pour que les modifications soient prise en compte :</p>
+<pre><code class="language-bash">source ~/.bashrc
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="atelier---manipulation-avec-ros-2"><a class="header" href="#atelier---manipulation-avec-ros-2">Atelier - Manipulation avec ROS 2</a></h1>
+<p>Le bras robotisé WidowX-250 6DOF appartient à la famille des bras de la série X d'Interbotix, équipée des actionneurs DYNAMIXEL de la série X de Robotis.<br />
+Les servomoteurs DYNAMIXEL XM430-W350 et DYNAMIXEL XL430-W250 offrent une haute résolution de 4096 positions et des paramètres PID définissables par l'utilisateur, ainsi que la surveillance de la température, le retour de position, les niveaux de tension, la charge et les paramètres de conformité accessibles à l'utilisateur. Au cœur du WidowX-250 6DOF se trouve le Robotis DYNAMIXEL U2D2 qui permet un accès facile au logiciel DYNAMIXEL Wizard ainsi qu'à ROS. Le WidowX-250 6DOF offre 6 degrés de liberté et une rotation complète de 360 degrés.</p>
+<h2 id="1-comprendre-la-représentation-dun-robot-ros"><a class="header" href="#1-comprendre-la-représentation-dun-robot-ros">1. Comprendre la représentation d’un robot ROS</a></h2>
+<p>Un robot intégré à ROS est composé d’au minimum :</p>
+<ul>
+<li>un descripteur URDF</li>
+<li>un contrôleur qui gère les E/S avec le robot</li>
+</ul>
+<h4 id="11-comprendre-le-descripteur-urdf"><a class="header" href="#11-comprendre-le-descripteur-urdf">1.1. Comprendre le descripteur URDF</a></h4>
+<p>Pour visualiser l'URDF du robot <code>wx250s</code>, lancer la commande suivante :</p>
+<pre><code class="language-bash">ros2 launch urdf_tutorial display.launch.py model:=/home/$USER/interbotix_ws/src/interbotix_ros_manipulators/interbotix_ros_xsarms/interbotix_xsarm_descriptions/urdf/wx250s.urdf.xacro
+</code></pre>
+<p>⚠️ Dans <code>Global Options</code>, mettez la valeur de fixed frame à <code>wx250s/base_link</code> au lieu de <code>base_link</code>.</p>
+<p>Vous pouvez aussi visualiser l'arbre du robot URDF :</p>
+<pre><code class="language-bash">cd /home/$USER/interbotix_ws/src/interbotix_ros_manipulators/interbotix_ros_xsarms/interbotix_xsarm_descriptions/urdf/
+ros2 run xacro xacro -o wx250s.urdf wx250s.urdf.xacro
+urdf_to_graphviz wx250s.urdf
+</code></pre>
+<p>Ouvrez le PDF obtenu dans le dossier des descriptions du robot (<code>wx250s.pdf</code>) puis déterminez :</p>
+<ul>
+<li>Que représentent les rectangles ?</li>
+<li>Que représentent les bulles ?</li>
+<li>Que représentent les flèches et surtout les valeurs <code>xyz</code> et <code>rpy</code> associées ?</li>
+</ul>
+<h4 id="12-comprendre-les-es-du-contrôleur"><a class="header" href="#12-comprendre-les-es-du-contrôleur">1.2 Comprendre les E/S du contrôleur</a></h4>
+<p>Lancer le robot avec la commande suivante :</p>
+<pre><code class="language-bash">LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_description.launch.py robot_model:=wx250s use_joint_pub_gui:=true
+</code></pre>
+<h5 id="12a-topics-du-robot"><a class="header" href="#12a-topics-du-robot">1.2.a. Topics du robot</a></h5>
+<p>✍ Avec l’utilitaire <code>ros2 topic</code>, lister les topics disponibles puis consultez celui qui décrit l’état courant des joints, en particulier :</p>
+<ul>
+<li>Quel est son nom ?</li>
+<li>Quel est le type de message qu'il transmet ?</li>
+<li>A quelle fréquence (en Hertz) est-ce qu'il met à jour l'état des joints ?</li>
+</ul>
+<h4 id="13-tracer-la-courbe-des-positions-des-moteurs-en-temps-réel"><a class="header" href="#13-tracer-la-courbe-des-positions-des-moteurs-en-temps-réel">1.3 Tracer la courbe des positions des moteurs en temps réel</a></h4>
+<p>Lancer le robot avec la commande suivante :</p>
+<pre><code class="language-bash">LC_NUMERIC=en_US.UTF-8 ros2 launch interbotix_xsarm_descriptions xsarm_description.launch.py robot_model:=wx250s use_joint_pub_gui:=true
+</code></pre>
+<p>✍  Démarrez <code>ros2 run rqt_graph rqt_graph</code>, démarrez le streaming <code>ROS Topic Subscriber</code>, et sélectionnez <code>/wx250s/joint_states</code>. Sélectionnez la position et la vitesse angulaire du moteur <code>m6</code> puis faîtes-les glisser sur le graphe. Bougez les moteurs à la main et vérifiez que les valeurs sont tracées en temps réel.</p>
+<h3 id="2-cinématique-et-planification-avec-moveit-dans-rviz"><a class="header" href="#2-cinématique-et-planification-avec-moveit-dans-rviz">2. Cinématique, et planification avec MoveIt dans RViz</a></h3>
+<p>Il y a une erreur dans le groupe <code>interbotix_gripper</code> pour MoveIt 2!</p>
+<p>Modifier le fichier <code>~/interbotix_ws/src/interbotix_ros_manipulators/interbotix_ros_xsarms/interbotix_xsarm_moveit/config/controllers/wx250s_controllers.yaml</code>
+Dans le group  <code>/wx250s/gripper_controller</code>, ajouter <code>right_finger</code>.</p>
+<pre><code class="language-yaml">/wx250s/gripper_controller:
+  action_ns: follow_joint_trajectory
+  type: FollowJointTrajectory
+  default: true
+  joints:
+    - left_finger
+    - right_finger
+</code></pre>
+<h4 id="21-démarrer-avec-moveit-avec-un-robot-réel"><a class="header" href="#21-démarrer-avec-moveit-avec-un-robot-réel">2.1. Démarrer avec MoveIt avec un robot réel</a></h4>
+<p>Démarrez MoveIt et Gazebo avec la commande suivante :</p>
+<pre><code class="language-bash">LC_NUMERIC=en_EN.UTF-8 ros2 launch interbotix_xsarm_moveit xsarm_moveit.launch.py robot_model:=wx250s hardware_type:=gz_classic
+</code></pre>
+<p>Rviz doit démarrer avec un WidowX-250 6DOF en simulation gazebo.
+<img src="manipulation/./images/rviz.png" alt="Move it2" />.</p>
+<h4 id="211-planification"><a class="header" href="#211-planification">2.1.1. Planification</a></h4>
+<p>💻 Dans l'onglet Planning, section <strong>Query</strong> puis <strong>Planning group</strong>, sélectionnez le groupe <code>interbotix_arm</code>, bougez le goal (la sphère 3D bleue) en position et en orientation puis cliquez sur <strong>Plan</strong>.</p>
+<p>✍ Une représentation orange 3D de robots se superposent avec le robot, déterminez son rôle de celui-ci eux en testant également la fonctionnalité <strong>Plan and Execute</strong>.</p>
+<h4 id="212-planning-groups"><a class="header" href="#212-planning-groups">2.1.2. Planning groups</a></h4>
+<p>💻✍ Testez également le groupe <code>interbotix_arm</code> en plus du premier <code>interbotix_gripper</code> et lancez des planifications de mouvement pour tester :</p>
+<ul>
+<li>Quelle est la différence entre ces 2 groupes ?</li>
+<li>Quel est le groupe pour lequel le goal est le plus facilement manipulable ?</li>
+<li>Pourquoi ce groupe est-il plus facilement manipulable que l'autre ?</li>
+<li>Déduisez-en ce que désigne exactement un <code>planning group</code></li>
+</ul>
+<h4 id="213-interroger-larbre-des-transformations-tf-en-ligne-de-commande"><a class="header" href="#213-interroger-larbre-des-transformations-tf-en-ligne-de-commande">2.1.3. Interroger l'arbre des transformations <code>tf</code> en ligne de commande</a></h4>
+<p>Nous allons visualiser et interroger l'arbre des transformations nommé <code>tf</code>.</p>
+<p>💻✍ Démarrer MoveIt puis dans un autre terminal lancer <code>ros2 run tf2_tools view_frames</code>. Un fichier PDF nommé <code>frames.pdf</code> a été créé : les <code>frames</code> (repères géométriques) qu'ils contient sont les mêmes que ceux dessinés par Rviz en rouge-vert-bleu.</p>
+<ul>
+<li>Comment est nommé le repère de base ?</li>
+<li>Comment sont nommés les deux effecteurs finaux possibles ?</li>
+<li>La commande <code>ros2 run tf2_ros tf2_echo frameA frameB</code> renvoie la transformation actuelle de frameB dans frameA. Modifiez cette commande pour déterminer quelle est la position actuelle d'un des effecteurs dans le repère de base. Ses coordonnées peuvent vous servir par la suite, pour les définir comme cible à atteindre.</li>
+</ul>
+<h3 id="23-ecrire-un-noeud-python-ros"><a class="header" href="#23-ecrire-un-noeud-python-ros">2.3. Ecrire un noeud Python ROS</a></h3>
+<p>Avec la documentation suivante : <a href="https://docs.trossenrobotics.com/interbotix_xsarms_docs/ros2_packages/python_demos.html">https://docs.trossenrobotics.com/interbotix_xsarms_docs/ros2_packages/python_demos.html</a>,
+créer un monde gazebo où vous allez attraper un objet avec le robot WidowX-250.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="atelier---intégration-avec-ros-2"><a class="header" href="#atelier---intégration-avec-ros-2">Atelier - Intégration avec ROS 2</a></h1>
+<p>L'intégration consiste à intégrer dans une même cellule robotique les 3 briques logicielles travaillées les autres jours, à savoir :</p>
+<ul>
+<li>La manipulation par le bras robotique</li>
+<li>La navigation avec le robot roulant</li>
+<li>La vision avec le réseau de neurones</li>
+</ul>
+<p>Le scenario de l'intégration est un système de tri robotisé de cubes dans trois bacs différents selon leur marquage au feutre.</p>
+<h2 id="1-actions-séquentielles-de-la-cellule-robotique"><a class="header" href="#1-actions-séquentielles-de-la-cellule-robotique">1. Actions séquentielles de la cellule robotique</a></h2>
+<p>Les actions minimale de la cellule robotique sont les suivantes :</p>
+<ol>
+<li>
+<p>Le bras WidowX-250 6DOF est utilisé pour récupérer un cube. Cette action est réalisée par le nœud de manipulation qui contrôle le bras robotique.</p>
+</li>
+<li>
+<p>Le bras effectue une tâche de pick-and-place pour déplacer le cube récupéré vers un emplacement temporaire.</p>
+</li>
+<li>
+<p>Une fois que le cube a été déplacés, le bras récupère un cube chiffré. Le chiffre sur le cube peut varier de 1 à 3, mais il est possible d'aller jusqu'à 9 (via un modulo).<br />
+La détection du chiffre peut être effectuée soit par une webcam, soit par une photo prise en réel.  Cette photo est envoyée au réseau de neurones qui va effectuer une prédiction sur le label marqué à la main.</p>
+</li>
+<li>
+<p>Le nœud de navigation récupère les coordonnées du cube chiffré et son label. Le Turtlebot lit le label du cube et se rend à la case correspondante (1, 2 ou 3).</p>
+</li>
+<li>
+<p>Il effectue une rotation de 360° pour faire chuter le cube dans la zone de tri à l'aide du mât.</p>
+</li>
+</ol>
+<p>Le robot fais cette opération trois fois (égale au nombre de cube sur la table dans la simulation).</p>
+<p><u>Note importante :</u> Pour une gestion plus efficace et organisée, il est recommandé d'utiliser un fichier <code>.launch</code> pour démarrer l'intégralité de la démonstration.</p>
+<h2 id="2-présentation-orale"><a class="header" href="#2-présentation-orale">2. Présentation Orale</a></h2>
+<p>La présentation orale comprendra les éléments suivants :</p>
+<ul>
+<li>Une présentation de 15 minutes, accompagnée d'un diaporama, pour expliquer et illustrer votre travail.</li>
+<li>Une démonstration en direct de 5 minutes pour montrer votre projet en action. Assurez-vous d'avoir une vidéo de sauvegarde prête en cas de problèmes techniques imprévus.</li>
+<li>Une session de questions-réponses de 10 minutes où vous pourrez répondre aux questions et clarifier tout point qui nécessite une explication supplémentaire.</li>
+</ul>
+<h3 id="3-diaporama"><a class="header" href="#3-diaporama">3. Diaporama</a></h3>
+<p>Voici les points importants que vous pouvez inclure dans votre diaporama pour présenter le projet d'intégration avec ROS 2.</p>
+<ul>
+<li>Objectifs du Projet</li>
+<li>Architecture du système
+<ul>
+<li>Présentation du système</li>
+<li>Schéma de l'architecture du système</li>
+<li>Descriptions de l'interaction entre les composants.</li>
+</ul>
+</li>
+<li>Difficultés rencontrés</li>
+<li>Elements importants ou notable (fichier python, ...)</li>
+<li>Conclusion</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

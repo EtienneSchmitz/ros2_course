@@ -1,0 +1,455 @@
+<!DOCTYPE HTML>
+<html lang="fr" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Ateliers - PyTorch - Workshop - ROS 2</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Workshop - ROS 2</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="ateliers---pytorch"><a class="header" href="#ateliers---pytorch">Ateliers - PyTorch</a></h1>
+<p>Torch est une bilbiothèque opensource d’apprentissage machine et en particulier d’apprentissage profond. Depuis 2018 seule sa version Python nommée PyTorch est maintenue. Nous allons l’utiliser ici sur des imagettes sur lesquelles sont inscrites des chiffres marqués manuellement au feutre avec différentes calligraphies. Le réseau de neurones que vous allez créer devra apprendre lui-même à déterminer quel chiffre est marqué, ce que l’on appelle classifier.</p>
+<p>Pour effectuer cet atelier, vous devez installer quelques packages :</p>
+<pre><code class="language-bash">pip install torchvision
+</code></pre>
+<h2 id="entraînement-de-lia"><a class="header" href="#entraînement-de-lia">Entraînement de l'IA</a></h2>
+<h3 id="1-importation-des-bibliothèques-et-téléchargement-des-données"><a class="header" href="#1-importation-des-bibliothèques-et-téléchargement-des-données">1. Importation des Bibliothèques et Téléchargement des Données</a></h3>
+<pre><code class="language-python">from torchvision import datasets
+from torchvision.transforms import ToTensor
+# Ignore deprecated warnings
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+train_data = datasets.MNIST(
+    root = 'data',
+    train = True,
+    transform = ToTensor(),
+    download = True
+)
+
+test_data = datasets.MNIST(
+    root = 'data',
+    train = False,
+    transform = ToTensor(),
+    download = True
+)
+
+print(train_data)
+print(test_data)
+print(train_data.data.shape)
+print(test_data.data.shape)
+print(train_data.targets.shape)
+print(train_data.targets)
+</code></pre>
+<p>Quelles sont les données affichés via les <code>print</code> ?</p>
+<h3 id="2-chargement-des-données-avec-dataloader"><a class="header" href="#2-chargement-des-données-avec-dataloader">2. Chargement des Données avec DataLoader</a></h3>
+<pre><code class="language-python">from torch.utils.data import DataLoader
+
+loaders = {
+    'train' : DataLoader(train_data,
+                         batch_size=100,
+                         shuffle=True,
+                         num_workers=1),
+    'test' : DataLoader(test_data,
+                        batch_size=100,
+                        shuffle=True,
+                        num_workers=1)
+}
+
+print(loaders)
+</code></pre>
+<h3 id="3-définition-du-modèle-cnn"><a class="header" href="#3-définition-du-modèle-cnn">3. Définition du Modèle CNN</a></h3>
+<pre><code class="language-python">import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
+class CNN(nn.Module):
+
+    def __init__(self):
+        super(CNN, self).__init__()
+        
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = x.view(-1, 320)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+
+        return F.softmax(x)
+</code></pre>
+<h3 id="4-configuration-du-dispositif-du-modèle-de-loptimiseur-et-de-la-fonction-de-perte"><a class="header" href="#4-configuration-du-dispositif-du-modèle-de-loptimiseur-et-de-la-fonction-de-perte">4. Configuration du Dispositif, du Modèle, de l'Optimiseur et de la Fonction de Perte</a></h3>
+<pre><code class="language-python">import torch
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = CNN().to(device)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+loss_fn = nn.CrossEntropyLoss()
+</code></pre>
+<h3 id="5-définition-des-fonctions-dentraînement-et-de-test"><a class="header" href="#5-définition-des-fonctions-dentraînement-et-de-test">5. Définition des Fonctions d'Entraînement et de Test</a></h3>
+<pre><code class="language-python">def train(epoch):
+    model.train()
+    for batch_idx, (data, target) in enumerate(loaders['train']):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = loss_fn(output, target)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % 20 == 0:
+            print(f"Train Epoch: {epoch} [{batch_idx * len(data)} / {len(loaders['train'].dataset)} ({100 * batch_idx / len(loaders['train']):0f}%)]\t{loss.item():.6f}")
+
+
+def test():
+    model.eval()
+    test_loss = 0
+    correct = 0
+    with torch.no_grad():
+        for data, target in loaders['test']:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += loss_fn(output, target).item()
+            pred = output.argmax(dim=1, keepdim=True)
+            correct += pred.eq(target.view_as(pred)).sum().item()
+    test_loss /= len(loaders['test'].dataset)
+    print(f"\nTest set: Average loss: {test_loss: 0.4f}, Accuracy {correct}/{len(loaders['test'].dataset)}  ({100 * correct / len(loaders['test'].dataset):.0f}%\n")
+</code></pre>
+<h3 id="6-entraînement-et-Évaluation-du-modèle"><a class="header" href="#6-entraînement-et-Évaluation-du-modèle">6. Entraînement et Évaluation du Modèle</a></h3>
+<pre><code class="language-python">for epoch in range(1, 10):
+    train(epoch)
+    test()
+</code></pre>
+<h3 id="7-sauvegarde-du-modèle-entraîné"><a class="header" href="#7-sauvegarde-du-modèle-entraîné">7. Sauvegarde du Modèle Entraîné</a></h3>
+<pre><code class="language-python">torch.save(model.state_dict(), 'mnist_cnn.pth')
+</code></pre>
+<h2 id="utilisation-de-lia-entrainé"><a class="header" href="#utilisation-de-lia-entrainé">Utilisation de l'IA entrainé</a></h2>
+<h3 id="1-importation-des-bibliothèques-et-téléchargement-des-données-1"><a class="header" href="#1-importation-des-bibliothèques-et-téléchargement-des-données-1">1. Importation des Bibliothèques et Téléchargement des Données</a></h3>
+<pre><code class="language-python">from torchvision import datasets
+from torchvision.transforms import ToTensor
+from torch.utils.data import DataLoader
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+import cv2
+
+# Ignore deprecated warnings
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+test_data = datasets.MNIST(
+    root='data',
+    train=False,
+    transform=ToTensor(),
+    download=True
+)
+
+test_loader = DataLoader(test_data, batch_size=100, shuffle=True, num_workers=1)
+
+print(test_data)
+print(test_data.data.shape)
+print(test_data.targets.shape)
+</code></pre>
+<h2 id="définition-du-modèle-cnn"><a class="header" href="#définition-du-modèle-cnn">Définition du Modèle CNN</a></h2>
+<pre><code class="language-python">import torch.nn as nn
+import torch.nn.functional as F
+
+class CNN(nn.Module):
+    def __init__(self):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = x.view(-1, 320)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
+</code></pre>
+<p>### 3. Chargement du modèle entraîné</p>
+<pre><code class="language-python">device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Créer une instance du modèle
+model = CNN().to(device)
+
+# Charger l'état du modèle
+model.load_state_dict(torch.load('mnist_cnn.pth'))
+
+# S'assurer que le modèle est en mode évaluation
+model.eval()
+</code></pre>
+<h3 id="4-prédiction-et-visualisation"><a class="header" href="#4-prédiction-et-visualisation">4. Prédiction et Visualisation</a></h3>
+<pre><code class="language-python"># Example code to test the loaded model
+test_data = datasets.MNIST(
+    root='data',
+    train=False,
+    transform=ToTensor(),
+    download=True
+)
+
+test_loader = DataLoader(test_data, batch_size=100, shuffle=True, num_workers=1)
+
+# Get a batch of test data
+data, target = next(iter(test_loader))
+data, target = data.to(device), target.to(device)
+
+# Perform prediction
+output = model(data)
+predictions = output.argmax(dim=1, keepdim=True)
+
+# Number of images to display
+num_images = 10
+
+# Plot the selected images
+for i in range(num_images):
+    image = data[i].cpu().squeeze(0).numpy()
+    plt.figure()
+    plt.imshow(image, cmap='gray')
+    plt.title(f"Prediction: {predictions[i].item()}")
+    plt.show()
+
+</code></pre>
+<h2 id="intégration-avec-ros"><a class="header" href="#intégration-avec-ros">Intégration avec ROS</a></h2>
+<p>Pour intégrer la détection de cube numéroté à ROS 2 en utilisant l'image de la caméra de votre ordinateur ou une image statique, vous pouvez créer un nœud ROS qui offre un service. Ce service prendra en entrée un string indiquant la source de l'image (caméra ou image statique) et renverra la position et le label du cube détecté.<br />
+Pour détecter la position du cube, utiliser l'activité précédente avec la méthode <code>find_contours</code>.</p>
+<p>Voici comment vous pouvez le faire :</p>
+<ol>
+<li>Créez un nouveau package ROS nommé color_cube_detection. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python cube_pytorch --node-name cube_pytorch
+</code></pre>
+<ol start="2">
+<li>
+<p>Ouvrez le fichier cube_pytorch.py dans un éditeur de texte et ajoutez le code pour créer un nœud ROS qui offre un service. Le service doit prendre en entrée un string indiquant la source de l'image (caméra ou image statique) et renvoyer la position et le label du cube détecté.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install
+</code></pre>
+<p>Maintenant, vous devriez être prêt à lancer votre nœud color_cube_detector et à voir votre robot détecter des cubes colorés.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../vision_ia/activities/opencv.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../manipulation/ressources.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../vision_ia/activities/opencv.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../manipulation/ressources.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

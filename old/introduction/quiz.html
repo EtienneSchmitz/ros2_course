@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html lang="fr" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Quiz - Introduction ROS2 - Workshop - ROS 2</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Workshop - ROS 2</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="quiz---introduction-ros2"><a class="header" href="#quiz---introduction-ros2">Quiz - Introduction ROS2</a></h1>
+<div class="quiz-placeholder" data-quiz-name="&quot;quiz_intro&quot;" data-quiz-questions="{&quot;questions&quot;:[{&quot;context&quot;:&quot;Les nœuds sont les blocs de construction fondamentaux d'un système ROS 2, responsables de réaliser des calculs et de communiquer avec d'autres nœuds.&quot;,&quot;id&quot;:&quot;339fb93a-3ae8-4f28-8fac-8b96a7f80383&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Un processus qui effectue des calculs et des communications.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Une unité de stockage pour les données.&quot;,&quot;Un outil pour visualiser les états du robot.&quot;,&quot;Un fichier de configuration pour définir les paramètres.&quot;],&quot;prompt&quot;:&quot;Quel est le rôle d'un nœud dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;L'utilisation de nœuds permet de créer des composants logiciels modulaires et réutilisables, ce qui simplifie le développement et la maintenance des systèmes robotiques.&quot;,&quot;id&quot;:&quot;57736f09-d569-4246-93bc-93ed8a0df822&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Ils facilitent la modularité et la réutilisabilité du code.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Ils augmentent la mémoire disponible.&quot;,&quot;Ils permettent une meilleure sécurité des données.&quot;,&quot;Ils permettent une exécution plus rapide des algorithmes.&quot;],&quot;prompt&quot;:&quot;Quel est le principal avantage d'utiliser des nœuds dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Dans ROS 2, les nœuds publient des messages sur des topics et s'abonnent à des topics pour recevoir des messages de manière asynchrone.&quot;,&quot;id&quot;:&quot;42bfe4a7-359c-47d4-81cb-4fd0bed511af&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;En publiant et en s'abonnant à des bus nommés.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Par des paires de requêtes/réponses synchrones.&quot;,&quot;En lisant et en écrivant dans une mémoire partagée.&quot;,&quot;En appelant directement les fonctions des autres nœuds.&quot;],&quot;prompt&quot;:&quot;Comment les nœuds communiquent-ils en utilisant les topics dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Le modèle de communication Pub/Sub (Publish/Subscribe) est utilisé par les topics dans ROS 2, permettant une communication asynchrone entre les nœuds.&quot;,&quot;id&quot;:&quot;df4b2b27-eb68-41af-82b2-c09c15bc92a0&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pub/Sub (Publish/Subscribe)&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Client/Serveur&quot;,&quot;Peer-to-Peer&quot;,&quot;Broadcast&quot;],&quot;prompt&quot;:&quot;Quel modèle de communication est utilisé par les topics dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les services dans ROS 2 permettent aux nœuds de communiquer de manière synchrone en envoyant des requêtes et en recevant des réponses.&quot;,&quot;id&quot;:&quot;a92be084-c2ea-4379-99d8-824a5e457ddd&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Ils fournissent une communication synchrone par requête/réponse.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Ils sont utilisés pour une communication unidirectionnelle.&quot;,&quot;Ils ne peuvent être utilisés que pour des tâches en temps réel.&quot;,&quot;Ils ne supportent pas la communication par requête/réponse.&quot;],&quot;prompt&quot;:&quot;Quelle est la caractéristique des services dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les services ROS 2 supportent la communication synchrone, où une requête est envoyée par un nœud et une réponse est reçue de manière coordonnée.&quot;,&quot;id&quot;:&quot;bbf731db-2e17-4c06-8363-5f17ebd7a4e9&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Synchrone&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Unidirectionnelle&quot;,&quot;Asynchrone&quot;,&quot;En temps réel&quot;],&quot;prompt&quot;:&quot;Quel type de communication les services ROS 2 supportent-ils ?&quot;}},{&quot;context&quot;:&quot;Les actions dans ROS 2 sont adaptées aux tâches qui prennent plus de temps à compléter, en fournissant des mises à jour sur la progression et un résultat final.&quot;,&quot;id&quot;:&quot;a866340c-3000-46f3-b7c8-71a4baf4eaeb&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Elles permettent des tâches longues avec des retours périodiques et un résultat final.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Elles sont plus simples que les services.&quot;,&quot;Elles fournissent des résultats immédiats sans attendre.&quot;,&quot;Elles ne nécessitent aucun retour d'information.&quot;],&quot;prompt&quot;:&quot;Quel est un avantage de l'utilisation des actions dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les actions sont adaptées aux tâches longues et complexes qui nécessitent un suivi et des mises à jour sur la progression avant de fournir un résultat final.&quot;,&quot;id&quot;:&quot;98407ad1-a1e0-4cce-9ddd-856030ba6d82&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pour des tâches longues et complexes nécessitant des mises à jour périodiques.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Pour des tâches instantanées.&quot;,&quot;Pour des tâches qui nécessitent une réponse immédiate.&quot;,&quot;Pour des tâches nécessitant une faible latence.&quot;],&quot;prompt&quot;:&quot;Quand est-il approprié d'utiliser des actions dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les paramètres dans ROS 2 sont utilisés pour configurer dynamiquement le comportement des nœuds, permettant ainsi une flexibilité sans modifier le code source.&quot;,&quot;id&quot;:&quot;6ddd529b-0a12-487e-9678-cb8d57a9bb5f&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pour configurer le comportement des nœuds à l'exécution sans changer le code.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Pour stocker de grandes quantités de données.&quot;,&quot;Pour communiquer entre les nœuds de manière asynchrone.&quot;,&quot;Pour exécuter des boucles de contrôle en temps réel.&quot;],&quot;prompt&quot;:&quot;Pourquoi utilise-t-on les paramètres dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Les paramètres permettent de configurer le comportement des nœuds de manière dynamique à l'exécution, offrant une flexibilité sans modifier le code.&quot;,&quot;id&quot;:&quot;85453591-de2e-448d-b54c-07a120dfe8be&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Configurer dynamiquement le comportement des nœuds.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Envoyer des messages entre nœuds.&quot;,&quot;Stocker des configurations de manière persistante.&quot;,&quot;Gérer la communication entre nœuds.&quot;],&quot;prompt&quot;:&quot;Quelle est la fonction principale des paramètres dans ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Changer le ROS_DOMAIN_ID aide à éviter les interférences entre différents groupes de nœuds s'exécutant sur le même réseau physique.&quot;,&quot;id&quot;:&quot;1ccce20e-a51c-4a29-83cc-fd0fab43a123&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;Pour séparer différents groupes de nœuds sur le même réseau.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;Pour augmenter la vitesse de passage des messages.&quot;,&quot;Pour permettre aux nœuds de s'exécuter plus rapidement.&quot;,&quot;Pour rendre les nœuds détectables par défaut.&quot;],&quot;prompt&quot;:&quot;Pourquoi changer le `ROS_DOMAIN_ID` dans un réseau ROS 2 ?&quot;}},{&quot;context&quot;:&quot;Le ROS_DOMAIN_ID peut être configuré en définissant la variable d'environnement ROS_DOMAIN_ID avant de lancer les nœuds ROS 2.&quot;,&quot;id&quot;:&quot;a7ad5671-75e9-4cce-ab74-443748551c3f&quot;,&quot;type&quot;:&quot;MultipleChoice&quot;,&quot;answer&quot;:{&quot;answer&quot;:&quot;En définissant une variable d'environnement.&quot;},&quot;prompt&quot;:{&quot;distractors&quot;:[&quot;En modifiant le code source des nœuds.&quot;,&quot;En utilisant une interface graphique.&quot;,&quot;En configurant un fichier de lancement.&quot;],&quot;prompt&quot;:&quot;Comment configure-t-on le `ROS_DOMAIN_ID` pour un groupe de nœuds ROS 2 ?&quot;}}]}"></div>
+<script type="text/javascript" src="../quiz/quiz-embed.iife.js"></script><link rel="stylesheet" type="text/css" href="../quiz/style.css">
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../introduction/activites.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../navigation/ressources.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../introduction/activites.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../navigation/ressources.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

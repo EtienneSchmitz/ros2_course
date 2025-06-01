@@ -1,0 +1,627 @@
+<!DOCTYPE HTML>
+<html lang="fr" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Atelier - Navigation (TurtleBot 3) avec ROS 2 - Workshop - ROS 2</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Workshop - ROS 2</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="atelier---navigation-turtlebot-3-avec-ros-2"><a class="header" href="#atelier---navigation-turtlebot-3-avec-ros-2">Atelier - Navigation (TurtleBot 3) avec ROS 2</a></h1>
+<h2 id="robot-réel"><a class="header" href="#robot-réel">Robot réel</a></h2>
+<p>🔍 Avant de commencer, assurez-vous que la configuration réseau de ROS 2 sur votre PC et sur le TB3 est correcte. La variable d'environnement <code>ROS_DOMAIN_ID</code> doit être définie de manière unique pour chaque robot pour éviter les conflits de communication. Vous pouvez le faire en ajoutant la ligne suivante à votre fichier <code>.bashrc</code> :</p>
+<pre><code class="language-bash">export ROS_DOMAIN_ID=&lt;votre_numéro_de_groupe&gt;
+</code></pre>
+<p>De plus, il est important de vérifier que le hostname de votre robot est unique, surtout si vous travaillez dans un environnement avec plusieurs groupes dans le même wifi.</p>
+<p>🤖 Vous pouvez modifier le hostname en utilisant la commande suivante :</p>
+<pre><code class="language-bash">sudo hostnamectl set-hostname &lt;nouveau_hostname&gt;
+</code></pre>
+<p>Remplacez &lt;nouveau_hostname&gt; par le nouveau nom d'hôte que vous souhaitez utiliser pour votre robot. Par exemple, si vous êtes dans le groupe 8, vous pourriez choisir burger8 comme hostname.</p>
+<h3 id="1-bringup-du-robot"><a class="header" href="#1-bringup-du-robot">1. Bringup du robot</a></h3>
+<p>🤖 En ssh sur le TB3 lancez la commande <code>ros2 launch turtlebot3_bringup robot.launch.py</code>.<br />
+Le programme doit rester ouvert pendant toute la durée de la manipulation. S'il n'y a aucune erreur vous êtes prêt à piloter le robot depuis votre poste de travail, que ce soit pour la téléopération, la cartographie ou la navigation autonome.</p>
+<h3 id="2-téléopération-du-robot"><a class="header" href="#2-téléopération-du-robot">2. Téléopération du robot</a></h3>
+<p>🎮 La première étape pour piloter votre robot consiste à vérifier que votre poste de travail peut effectivement prendre le contrôle du Turtlebot, en le téléopérant via les touches du clavier.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour controler le robot avec le clavier grâce aux touches indiquées. Vérifiez que vous pouvez avancer, reculer, tourner à gauche et à droite. Vous pouvez tuer ce dernier avec Ctrl+C lorsque vous avez terminé.</p>
+<h3 id="3-cartographie"><a class="header" href="#3-cartographie">3. Cartographie</a></h3>
+<p>🗺️ Nous allons désormais créer la carte de l'environnement dans lequel votre Turtlebot évoluera lorsqu'il naviguera de manière autonome.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_cartographer cartographer.launch.py</code>. RViz se lance et vous devriez apercevoir le robot, les scans du LIDAR et la carte en construction.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour contrôler le robot avec le clavier comme précédemment. Cependant cette fois-ci, votre carte est en cours d'enregistrement. Quand la carte est terminée <strong>ne quittez ni RViz ni le terminal de la cartographie</strong>.</p>
+<p>💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver.<br />
+Lancez la commande <code>mkdir ~/map</code> et <code>ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop</code> qui va sauvegarder la carte dans le dossier <code>$HOME/.map</code> (fichiers maps.yaml et maps.pgm).</p>
+<h3 id="4-navigation"><a class="header" href="#4-navigation">4. Navigation</a></h3>
+<p>Arrêtez l'ensemble des terminaux hormis le bringup du robot.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_workshop.yaml</code> pour lancer la localisation et la navigation autonome.</p>
+<p>👀 Sur RViz vous devez voir le robot, les scans du LIDAR, les particules de AMCL et la carte que vous avez enregistrée.</p>
+<p>📍 Si le robot est mal localisé, utilisez l'outil <em>2D Pose Estimate</em> sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.</p>
+<p>📍 Pour donner des ordres de navigation, utilisez l'outil <em>Nav2 Goal</em> sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.</p>
+<h3 id="5-scenario-de-navigation"><a class="header" href="#5-scenario-de-navigation">5. Scenario de navigation</a></h3>
+<p>🚗 L'objectif final du TP est de faire passer le robot par une suite de 2 ou 3 points de passage, comme pour une patrouille, avec un retour au point de départ. Si cela n'est pas déjà fait, choisissez plusieurs points de passage faciles à mesurer avec un mètre depuis le point de départ, avec un grand nombre d'obstacles sur le chemin. Si l'environnement a fortement changé, pensez à enregistrer une nouvelle carte.</p>
+<p>Pour réaliser cet objectif, suivez les étapes ci-dessous :</p>
+<ol>
+<li>Créez un nouvel espace de travail ROS, que vous pouvez nommer <code>workshop_ws</code> par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">mkdir -p ~/workshop_ws/src
+</code></pre>
+<ol start="2">
+<li>Créez un nouveau package Python nommé <code>simple_navigation_goals</code> avec le fichier principale <code>simple_navigation_goals</code>. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python simple_navigation_goals --node-name simple_navigation_goals
+</code></pre>
+<ol start="3">
+<li>
+<p>Dans le dossier <code>simple_navigation_goals</code> du package, ajouter le fichier <a href="./assets/robot_navigator.py"><code>robot_navigator.py</code></a>.</p>
+</li>
+<li>
+<p>Ouvrez le fichier <code>simple_navigation_goal</code> dans un éditeur de texte et copiez les lignes de code fournies.</p>
+</li>
+</ol>
+<pre><code class="language-python">#! /usr/bin/env python3
+# Copyright 2021 Samsung Research America
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Modified by AutomaticAddison.com
+
+import time  # Time library
+ 
+from geometry_msgs.msg import PoseStamped # Pose with ref frame and timestamp
+from rclpy.duration import Duration # Handles time for ROS 2
+import rclpy # Python client library for ROS 2
+ 
+from .robot_navigator import BasicNavigator, NavigationResult # Helper module
+ 
+'''
+Navigates a robot from an initial pose to a goal pose.
+'''
+def main():
+ 
+  # Start the ROS 2 Python Client Library
+  rclpy.init()
+ 
+  # Launch the ROS 2 Navigation Stack
+  navigator = BasicNavigator()
+ 
+  # Set the robot's initial pose if necessary
+  # initial_pose = PoseStamped()
+  # initial_pose.header.frame_id = 'map'
+  # initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+  # initial_pose.pose.position.x = 0.0
+  # initial_pose.pose.position.y = 0.0
+  # initial_pose.pose.position.z = 0.0
+  # initial_pose.pose.orientation.x = 0.0
+  # initial_pose.pose.orientation.y = 0.0
+  # initial_pose.pose.orientation.z = 0.0
+  # initial_pose.pose.orientation.w = 1.0
+  # navigator.setInitialPose(initial_pose)
+ 
+  # Activate navigation, if not autostarted. This should be called after setInitialPose()
+  # or this will initialize at the origin of the map and update the costmap with bogus readings.
+  # If autostart, you should `waitUntilNav2Active()` instead.
+  # navigator.lifecycleStartup()
+ 
+  # Wait for navigation to fully activate. Use this line if autostart is set to true.
+  navigator.waitUntilNav2Active()
+ 
+  # If desired, you can change or load the map as well
+  # navigator.changeMap('/path/to/map.yaml')
+ 
+  # You may use the navigator to clear or obtain costmaps
+  # navigator.clearAllCostmaps()  # also have clearLocalCostmap() and clearGlobalCostmap()
+  # global_costmap = navigator.getGlobalCostmap()
+  # local_costmap = navigator.getLocalCostmap()
+ 
+  # Set the robot's goal pose
+  goal_pose = PoseStamped()
+  goal_pose.header.frame_id = 'map'
+  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+  goal_pose.pose.position.x = 0.50
+  goal_pose.pose.position.y = -0.8
+  goal_pose.pose.position.z = 0.0
+  goal_pose.pose.orientation.x = 0.0
+  goal_pose.pose.orientation.y = 0.0
+  goal_pose.pose.orientation.z = 0.0
+  goal_pose.pose.orientation.w = 1.0
+ 
+  # sanity check a valid path exists
+  # path = navigator.getPath(initial_pose, goal_pose)
+ 
+  # Go to the goal pose
+  navigator.goToPose(goal_pose)
+ 
+  i = 0
+ 
+  # Keep doing stuff as long as the robot is moving towards the goal
+  while not navigator.isNavComplete():
+    ################################################
+    #
+    # Implement some code here for your application!
+    #
+    ################################################
+ 
+    # Do something with the feedback
+    i = i + 1
+    feedback = navigator.getFeedback()
+    if feedback and i % 5 == 0:
+      print('Distance remaining: ' + '{:.2f}'.format(
+            feedback.distance_remaining) + ' meters.')
+ 
+      # Some navigation timeout to demo cancellation
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=600.0):
+        navigator.cancelNav()
+ 
+      # Some navigation request change to demo preemption
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=120.0):
+        goal_pose.pose.position.x = -3.0
+        navigator.goToPose(goal_pose)
+ 
+  # Do something depending on the return code
+  result = navigator.getResult()
+  if result == NavigationResult.SUCCEEDED:
+      print('Goal succeeded!')
+  elif result == NavigationResult.CANCELED:
+      print('Goal was canceled!')
+  elif result == NavigationResult.FAILED:
+      print('Goal failed!')
+  else:
+      print('Goal has an invalid return status!')
+ 
+  # Shut down the ROS 2 Navigation Stack
+  navigator.lifecycleShutdown()
+ 
+  exit(0)
+ 
+if __name__ == '__main__':
+  main()
+</code></pre>
+<ol start="5">
+<li>
+<p>Assurez-vous de remplacer les valeurs de x, y et z pour correspondre à une valeur que vous avez définie.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install --parallel-workers 1
+</code></pre>
+<ol start="7">
+<li>En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.</li>
+</ol>
+<h2 id="-challenge-additionnel--carry-my-luggage"><a class="header" href="#-challenge-additionnel--carry-my-luggage">🧳 Challenge additionnel : Carry my luggage</a></h2>
+<p>Challenge inspiré de l'épreuve "Carry my luggage" de la RoboCup @Home.
+Pour info, le réglement de la compétition se trouve ici (mais ça n'apporte rien pour votre projet) :
+<a href="https://athome.robocup.org/wp-content/uploads/2019_rulebook.pdf">https://athome.robocup.org/wp-content/uploads/2019_rulebook.pdf</a></p>
+<p>🗺️ <strong>Prérequis :</strong> avoir une carte représentative de l'environnement.</p>
+<h3 id="-phase-1--follow-me"><a class="header" href="#-phase-1--follow-me">➡️ Phase 1 : Follow me</a></h3>
+<p>Vous avez toute liberté pour préparer le début de l'épreuve (ex. comment faire que le robot soit bien localisé dès le début ?).</p>
+<p>Le robot part d'un point connu et doit suivre un humain qui va à un endroit inconnu par le robot (mais à l'intérieur de la carte). L'humain commence l'épreuve en étant en face du robot à une distance de 50 cm.</p>
+<p>Le robot doit suivre l'humain en maintenant une distance comprise entre 20cm minimum et 1m maximum.</p>
+<p>Pour être valide, l'humain doit avoir un déplacement non trivial : il ne va pas toujours tout droit et il fait varier sa vitesse de marche dans la limite du raisonnable. Distance minimum de marche demandée 4 mètres (mais vous êtes libres de faire plus si ça vous arrange, ça n'impactera pas directement la note). Il faut obligatoirement que le robot traverse une porte.</p>
+<p>Lorsque l'humain est arrivé à sa destination, il s'arrête pendant une durée d'au moins 3 secondes. Le robot doit alors comprendre que la phase 1 est terminée et passer à la phase 2.</p>
+<h3 id="-phase-2--go-home"><a class="header" href="#-phase-2--go-home">↩️ Phase 2 : Go home</a></h3>
+<p>Le robot doit repartir et naviguer en totale autonomie jusqu'à son point de départ. Sur le retour, vous rajouterez jusqu'à :</p>
+<ul>
+<li>1 obstacle statique sur son chemin de retour</li>
+<li>1 obstacle dynamique (typiquement un humain qui lui coupe la route)</li>
+<li>1 obstacle qui bloque complètement le passage prévu par le robot (il faut qu'il ait la possiblité d'arriver à destination par un autre chemin)</li>
+</ul>
+<p>Si le robot arrive à destination (à +-20cm, +-15°) la phase 2 est validée.</p>
+<h3 id="-phase-3--dock"><a class="header" href="#-phase-3--dock">↙️ Phase 3 : Dock</a></h3>
+<p>Si le robot arrive à destination (à +-20cm, +-15°) la phase 2 est validée.</p>
+<p>Le robot doit chercher où se trouve sa base et s'y accoster. La position grossière de la base est connue mais cette partie n'est validée que si le robot réussi un accostage précis sans contact : la distance entre le robot et la base soit être supériere à 5mm et inférieure à 2cm.</p>
+<p>Vous avez toute liberté pour choisir un objet qui représentera la base du robot. Un pot de peinture par exemple serait un choix pertinent (la symétrie radiale peut simplifier la détection).</p>
+<h2 id="simulation"><a class="header" href="#simulation">Simulation</a></h2>
+<p>⚠️ <strong>Attention</strong> la simulation du TB3 n'est à utiliser qu'en dernier recours pour remplacer votre robot s'il ne fonctionne pas. Avant de passer en simulation demandez de l'aide pour réparer votre robot.</p>
+<p>Dans le ̀ .bashrc`, pour que gazebo se lance bien, il faut mettre les lignes suivantes :</p>
+<pre><code class="language-bash">stat /usr/share/gazebo/setup.sh &amp;&gt; /dev/null
+if [ $? -eq 0 ]; then
+    source /usr/share/gazebo/setup.sh
+fi
+</code></pre>
+<h3 id="1-lancement-de-la-simulation"><a class="header" href="#1-lancement-de-la-simulation">1. Lancement de la simulation</a></h3>
+<p>Le paquet <code>Turtlebot3</code> propose plusieurs environnement de simulation.</p>
+<p>💻 Lancer une des deux commandes suivantes en fonction de l'environnement que vous voulez lancer.</p>
+<ul>
+<li>Monde simple : <code>ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py</code></li>
+<li>Warehouse : <code>ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py</code></li>
+</ul>
+<p>Le simulateur gazebo doit rester ouvert pendant toute la durée de la manipulation. S'il n'y a aucune erreur vous êtes prêt à piloter le robot depuis votre poste de travail, que ce soit pour la téléopération, la cartographie ou la navigation autonome.</p>
+<h3 id="2-téléopération-du-robot-1"><a class="header" href="#2-téléopération-du-robot-1">2. Téléopération du robot</a></h3>
+<p>🎮 La première étape pour piloter votre robot consiste à vérifier que votre poste de travail peut effectivement prendre le contrôle du Turtlebot, en le téléopérant via les touches du clavier.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour controler le robot avec le clavier grâce aux touches indiquées. Vérifiez que vous pouvez avancer, reculer, tourner à gauche et à droite. Vous pouvez tuer ce dernier avec Ctrl+C lorsque vous avez terminé.</p>
+<h3 id="3-cartographie-1"><a class="header" href="#3-cartographie-1">3. Cartographie</a></h3>
+<p>🗺️ Nous allons désormais créer la carte de l'environnement dans lequel votre Turtlebot évoluera lorsqu'il naviguera de manière autonome.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True</code>. RViz se lance et vous devriez apercevoir le robot, les scans du LIDAR et la carte en construction.</p>
+<p>💻 Dans un nouveau terminal lancez la commande <code>ros2 run turtlebot3_teleop teleop_keyboard</code> et gardez le focus sur le terminal pour contrôler le robot avec le clavier comme précédemment. Cependant cette fois-ci, votre carte est en cours d'enregistrement. Quand la carte est terminée <strong>ne quittez ni RViz ni le terminal de la cartographie</strong>.</p>
+<p>💾 La commande qui va suivre va supprimer la carte précédente s'il y en a une, le cas échéant faites-en une copie si vous souhaitez la conserver. Lancez la commande <code>mkdir ~/map</code> puis <code>ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop</code> qui va sauvegarder la carte dans le dossier <code>$HOME/.map</code> (fichiers maps.yaml et maps.pgm).</p>
+<h3 id="4-navigation-1"><a class="header" href="#4-navigation-1">4. Navigation</a></h3>
+<p>Arrêtez l'ensemble des terminaux hormis la simulation.</p>
+<p>💻 Lancez le commande <code>ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=$HOME/map/map_workshop.yaml</code> pour lancer la localisation et la navigation autonome.</p>
+<p>👀 Sur RViz vous devez voir le robot, les scans du LIDAR, les particules de AMCL et la carte que vous avez enregistrée.</p>
+<p>📍 Si le robot est mal localisé, utilisez l'outil <em>2D Pose Estimate</em> sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.</p>
+<p>📍 Pour donner des ordres de navigation, utilisez l'outil <em>Nav2 Goal</em> sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.</p>
+<h3 id="5-scenario-de-navigation-1"><a class="header" href="#5-scenario-de-navigation-1">5. Scenario de navigation</a></h3>
+<p>🚗 L'objectif final du TP est de faire passer le robot par une suite de 2 ou 3 points de passage, comme pour une patrouille, avec un retour au point de départ. Si cela n'est pas déjà fait, choisissez plusieurs points de passage faciles à mesurer avec un mètre depuis le point de départ, avec un grand nombre d'obstacles sur le chemin. Si l'environnement a fortement changé, pensez à enregistrer une nouvelle carte.</p>
+<p>Pour réaliser cet objectif, suivez les étapes ci-dessous :</p>
+<ol>
+<li>Créez un nouvel espace de travail ROS, que vous pouvez nommer <code>workshop_ws</code> par exemple. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">mkdir -p ~/workshop_ws/src
+</code></pre>
+<ol start="2">
+<li>Créez un nouveau package Python nommé <code>simple_navigation_goals</code> avec le fichier principale <code>simple_navigation_goals</code>. Vous pouvez le faire en utilisant la commande suivante dans le terminal :</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/src
+ros2 pkg create --build-type ament_python simple_navigation_goals --node-name simple_navigation_goals
+</code></pre>
+<ol start="3">
+<li>
+<p>Dans le dossier <code>simple_navigation_goals</code> du package, ajouter le fichier <a href="./assets/robot_navigator.py"><code>robot_navigator.py</code></a>.</p>
+</li>
+<li>
+<p>Ouvrez le fichier <code>simple_navigation_goal</code> dans un éditeur de texte et copiez les lignes de code fournies.</p>
+</li>
+</ol>
+<pre><code class="language-python">#! /usr/bin/env python3
+# Copyright 2021 Samsung Research America
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Modified by AutomaticAddison.com
+
+import time  # Time library
+ 
+from geometry_msgs.msg import PoseStamped # Pose with ref frame and timestamp
+from rclpy.duration import Duration # Handles time for ROS 2
+import rclpy # Python client library for ROS 2
+ 
+from .robot_navigator import BasicNavigator, NavigationResult # Helper module
+ 
+'''
+Navigates a robot from an initial pose to a goal pose.
+'''
+def main():
+ 
+  # Start the ROS 2 Python Client Library
+  rclpy.init()
+ 
+  # Launch the ROS 2 Navigation Stack
+  navigator = BasicNavigator()
+ 
+  # Set the robot's initial pose if necessary
+  # initial_pose = PoseStamped()
+  # initial_pose.header.frame_id = 'map'
+  # initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+  # initial_pose.pose.position.x = 0.0
+  # initial_pose.pose.position.y = 0.0
+  # initial_pose.pose.position.z = 0.0
+  # initial_pose.pose.orientation.x = 0.0
+  # initial_pose.pose.orientation.y = 0.0
+  # initial_pose.pose.orientation.z = 0.0
+  # initial_pose.pose.orientation.w = 1.0
+  # navigator.setInitialPose(initial_pose)
+ 
+  # Activate navigation, if not autostarted. This should be called after setInitialPose()
+  # or this will initialize at the origin of the map and update the costmap with bogus readings.
+  # If autostart, you should `waitUntilNav2Active()` instead.
+  # navigator.lifecycleStartup()
+ 
+  # Wait for navigation to fully activate. Use this line if autostart is set to true.
+  navigator.waitUntilNav2Active()
+ 
+  # If desired, you can change or load the map as well
+  # navigator.changeMap('/path/to/map.yaml')
+ 
+  # You may use the navigator to clear or obtain costmaps
+  # navigator.clearAllCostmaps()  # also have clearLocalCostmap() and clearGlobalCostmap()
+  # global_costmap = navigator.getGlobalCostmap()
+  # local_costmap = navigator.getLocalCostmap()
+ 
+  # Set the robot's goal pose
+  goal_pose = PoseStamped()
+  goal_pose.header.frame_id = 'map'
+  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+  goal_pose.pose.position.x = 0.50
+  goal_pose.pose.position.y = -0.8
+  goal_pose.pose.position.z = 0.0
+  goal_pose.pose.orientation.x = 0.0
+  goal_pose.pose.orientation.y = 0.0
+  goal_pose.pose.orientation.z = 0.0
+  goal_pose.pose.orientation.w = 1.0
+ 
+  # sanity check a valid path exists
+  # path = navigator.getPath(initial_pose, goal_pose)
+ 
+  # Go to the goal pose
+  navigator.goToPose(goal_pose)
+ 
+  i = 0
+ 
+  # Keep doing stuff as long as the robot is moving towards the goal
+  while not navigator.isNavComplete():
+    ################################################
+    #
+    # Implement some code here for your application!
+    #
+    ################################################
+ 
+    # Do something with the feedback
+    i = i + 1
+    feedback = navigator.getFeedback()
+    if feedback and i % 5 == 0:
+      print('Distance remaining: ' + '{:.2f}'.format(
+            feedback.distance_remaining) + ' meters.')
+ 
+      # Some navigation timeout to demo cancellation
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=600.0):
+        navigator.cancelNav()
+ 
+      # Some navigation request change to demo preemption
+      if Duration.from_msg(feedback.navigation_time) &gt; Duration(seconds=120.0):
+        goal_pose.pose.position.x = -3.0
+        navigator.goToPose(goal_pose)
+ 
+  # Do something depending on the return code
+  result = navigator.getResult()
+  if result == NavigationResult.SUCCEEDED:
+      print('Goal succeeded!')
+  elif result == NavigationResult.CANCELED:
+      print('Goal was canceled!')
+  elif result == NavigationResult.FAILED:
+      print('Goal failed!')
+  else:
+      print('Goal has an invalid return status!')
+ 
+  # Shut down the ROS 2 Navigation Stack
+  navigator.lifecycleShutdown()
+ 
+  exit(0)
+ 
+if __name__ == '__main__':
+  main()
+</code></pre>
+<ol start="5">
+<li>
+<p>Assurez-vous de remplacer les valeurs de x, y et z pour correspondre à une valeur que vous avez définie.</p>
+</li>
+<li>
+<p>Une fois que vous avez terminé, n'oubliez pas de reconstruire votre espace de travail ROS en utilisant la commande suivante dans le terminal :</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd ~/workshop_ws/
+colcon build --symlink-install --parallel-workers 1
+``` 
+
+7. En analysant le code donnée, modifier votre programme pour faire l'objectif du TP.
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../navigation/installation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../vision_ia/ressources.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../navigation/installation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../vision_ia/ressources.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
