@@ -1,1 +1,0 @@
-# Workshop - ROS 2
