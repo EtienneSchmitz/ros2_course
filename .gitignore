@@ -18,3 +18,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ignore all generated files in the slides directory
+static/slides/**/*.html
+static/slides/**/*.pdf
+
