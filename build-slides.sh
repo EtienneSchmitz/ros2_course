@@ -1,9 +1,11 @@
 #!/bin/bash
 
-set -e
+# Crée le dossier cible
+mkdir -p static/slides
 
-for file in slides/**/*.md; do
-    # Supprime 'slides/' du chemin et remplace .md par .pdf/.html
+# Trouve tous les fichiers .md dans slides/ récursivement
+find slides -type f -name "*.md" | while read file; do
+    # Supprime 'slides/' du chemin
     relative_path="${file#slides/}"
     output_path_pdf="static/slides/${relative_path%.md}.pdf"
     output_path_html="static/slides/${relative_path%.md}.html"
@@ -19,3 +21,4 @@ for file in slides/**/*.md; do
 done
 
 echo "✅ Tous les slides ont été convertis."
+
