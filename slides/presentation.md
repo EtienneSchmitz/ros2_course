@@ -8,15 +8,15 @@ footer : 'ROS 2 - Etienne Schmitz'
 <style>
     footer {
         text-align: right;
-        margin-right : 30px;
+        margin-right : 50px;
     }
 </style>
 
 <!-- _class: lead -->
 <!-- _paginate: false -->
 <!-- _footer: "" -->
-
-# ROS 2  - Workshop
+ 
+# ROS 2 - Présentation du déroulement du workshop
 
 ## Etienne Schmitz
 
@@ -53,25 +53,32 @@ footer : 'ROS 2 - Etienne Schmitz'
 **Jour 5** : Intégration  
 **Jour 6** : Intégration (matin) / Oraux (après-midi)
 
+Horaires : **8h15 – 17h15** avec une pause déjeuner de **12h00 – 13h30**
+
 ---
 
 ## 📅 Organisation d’une séance
 
-- Horaires : **8h15 – 17h15** avec une pause déjeuner : **12h00 – 13h30**
-- Quiz (début de séance) sur la journée précédente  
-- Présentation théorique (30 min à 1h)  
-- Activités pratiques en groupe
-- Travail libre sur le projet ou activités précédentes en fin de séance
+- Quiz en début de séance sur la journée précédente 
+    - Introduction à ROS 2
+    - Navigation
+    - Manipulation
+    - Vision
+- Présentation théorique (30 min à 1h) par l'enseignant.
+- Travail libre sur l'activité de la journée, le projet et ou les activités précédentes.
 
 --- 
 
-## 📦 Consignes projets
+## 📝 Système de notation
 
-- Quiz réguliers (toute les séances)
-- Évaluation d’assiduité et de participation (individuelle)
-- **Bilan de navigation autonome et de la manipulation** (Jour 2 et 3)
-- **Oral final** (Jour 6 après-midi)  
-- Rendu final **rapport PDF** présentant les différentes phases du projet.
+- 🎯 Évaluations individuelles
+    - **Quiz** : QCM, QCU sous Moodle
+    - **Assiduité et participation** : implication, questions, entraide
+- 👥 Évaluations en groupe
+    - Atteinte des **objectifs techniques** des journées **navigation** (Jour 2) et **manipulation** (Jour 3)
+    - 🗣️ Évaluation orale (Jour 6 après-midi) : Présentation synthétique du projet et démonstration
+    - **Rapport PDF** présentant l’ensemble des étapes du projet
+
 
 ---
 
@@ -84,26 +91,16 @@ L’objectif est de concevoir un **système robotique intelligent complet** avec
 2. **Manipulation (simulation bras robotique)**  
    → Le bras saisit l’objet analysé et le dépose à une position cible
 
-3. **Déplacement (TurtleBot 3)**  
-   → Le robot mobile récupère l’objet et le transporte selon sa nature
+3. **Navigation (TurtleBot 3)**  
+   → Le robot mobile récupère l’objet et le transporte à un point donnée.
 
 ---
 
 ## 🧪 Contraintes techniques
 
-- Utilisation exclusive de **ROS 2**.
-- Communication entre composants via :
-  - Topics
-  - Services
-  - Actions
-
----
-
-## 🧰 Matériel utilisé
-
 - PC avec Ubuntu 24.04 ou Docker + ROS 2 Jazzy.
-- Simulateurs ROS 2 pour TurtleBot 3 et bras robotique. 
-- **Outils :** RViz, Gazebo, ROS 2 CLI.
+- Utilisation exclusive des composants (topics, services, ...) et des outils (RViz, Gazebo, ROS 2 CLI, ...) de **ROS 2 Jazzy**.
+- Turtlebot 3 (Réel) et OpenMANIPULATOR-X (Simulation). 
 
 ---
 
@@ -111,15 +108,34 @@ L’objectif est de concevoir un **système robotique intelligent complet** avec
 
 - Le workshop est accessible en ligne :  
   👉 **https://ros2.etienne-schmitz.com**
-
 - Certaines journées sont plus chargées (ex : Navigation)  
   → Vous pouvez y revenir plus tard si nécessaire
+- Vous êtes encouragés à ajouter des éléments bonus pour personnaliser et enrichir votre projet.
+- Le projet peut être réalisé entièrement en simulation.
+
 
 ---
+<!-- _class: lead -->
+
+## 🧭 Légende des pictogrammes du site
+
+| Icône | Signification                                         |
+| :---: | ----------------------------------------------------- |
+|   💻  | Action à réaliser sur votre machine Ubuntu ou Docker  |
+|   🤖  | Action à réaliser sur le robot via SSH                |
+|   🌐  | Lien web utile ou documentation                       |
+|   🐍  | Code Python à exécuter localement                     |
+|   📥  | Ressource à télécharger                               |
+
+---
+
+<!-- _class: lead -->
+<!-- _paginate: false -->
+<!-- _footer: "" -->
 
 ## 🎤 Bonne chance à tous !
 
 Soyez curieux, testez, explorez…  
-Et surtout, **amusez-vous en robotique !**
+Et surtout, **amusez-vous avec ROS 2 !**
 
 
