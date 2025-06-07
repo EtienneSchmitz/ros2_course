@@ -5,6 +5,5 @@
     "type": "generated-index",
     "title": "Jour 2 – Navigation",
     "description": "Apprenez à faire naviguer un robot mobile avec ROS 2 en utilisant SLAM, la planification de trajectoire et la pile Navigation2.",
-    "slug": "/navigation"
   }
 }

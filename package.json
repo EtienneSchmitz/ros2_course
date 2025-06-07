@@ -6,7 +6,10 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
-    "build:slides": "bash build-slides.sh",
+    "build:pdf": "marp --input-dir slides --pdf --output static/slides",
+    "build:html": "marp --input-dir slides --html --output static/slides",
+    "build:slides": "npm run build:pdf && npm run build:html",
+    "dev:slides": "marp --watch --input-dir slides --html --output static/slides",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -16,8 +19,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "3.8.0",
-    "@docusaurus/preset-classic": "3.8.0",
+    "@docusaurus/core": "^3.8.1",
+    "@docusaurus/preset-classic": "^3.8.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.3.0",
@@ -25,9 +28,9 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.8.0",
-    "@docusaurus/tsconfig": "3.8.0",
-    "@docusaurus/types": "3.8.0",
+    "@docusaurus/module-type-aliases": "^3.8.1",
+    "@docusaurus/tsconfig": "^3.8.1",
+    "@docusaurus/types": "^3.8.1",
     "@marp-team/marp-cli": "^4.1.2",
     "typescript": "~5.6.2"
   },

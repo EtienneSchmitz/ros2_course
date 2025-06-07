@@ -3,9 +3,88 @@ sidebar_position: 2
 slug: /install
 ---
 
-# Installation
+# 🛠️ Installation
 
-## Installation native
+Cette page vous guide dans la mise en place de l'environnement requis pour suivre le workshop ROS 2.
 
-## Installation sous Docker
+:::info
+Nous recommandons d’utiliser **🐧 Ubuntu 24.04 LTS** avec l’installation de **ROS 2 Jazzy**.
+:::
+
+## 💻 Installation de ROS 2 Jazzy sur Ubuntu 24.04
+
+:::tip
+Vous trouverez les instructions officielles sur [🌐 docs.ros.org – Ubuntu Install (Jazzy)](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debians.html)
+:::
+
+#### 1. Mettre à jour votre système :
+
+```bash
+sudo apt update && sudo apt upgrade
+```
+
+#### 2. Activer le dépôt universe :
+
+```bash
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+```
+
+#### 3. Installer curl et préparer le dépôt ROS :
+
+```bash
+sudo apt update && sudo apt install curl -y
+export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')
+curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" # If using Ubuntu derivates use $UBUNTU_CODENAME
+sudo apt install /tmp/ros2-apt-source.deb
+```
+
+#### 4. Installer les outils et l’environnement complet de ROS 2 Jazzy :
+
+```bash
+sudo apt update && sudo apt install ros-dev-tools
+sudo apt install ros-jazzy-desktop
+```
+
+#### 5. Configurer l’environnement ROS :
+
+:::tip
+Pour éviter de devoir exécuter cette commande à chaque fois, ajoutez-la automatiquement à la fin de votre fichier `~/.bashrc` :
+
+```bash
+echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+``` 
+Ensuite, rechargez votre shell ou redémarrez votre terminal :
+```bash
+source ~/.bashrc
+``` 
+:::
+
+
+Vous devez sourcer ROS à chaque ouverture de terminal :
+
+```bash
+source /opt/ros/jazzy/setup.bash
+```
+
+#### 6. Tester l'installation :
+
+Lance un nœud éditeur (talker), puis un nœud lecteur (listener) dans deux terminaux séparés :
+
+Terminal 1 — Lancer le talker (C++) :
+```bash 
+# Terminal 1 — Lancer le talker (C++) :
+
+ros2 run demo_nodes_cpp talker
+
+# Terminal 2 — Lancer le listener (Python) :
+ros2 run demo_nodes_py listener
+```
+
+Si tout fonctionne correctement, vous devriez voir le talker publier des messages et le listener les afficher.  
+Si vous rencontrez des problèmes, consultez la [🌐 documentation officielle de ROS 2 Jazzy](https://docs.ros.org/en/jazzy/).
+
+## 🤖 Navigation (TurtleBot 3)
+
+## ✋ Manipulation : OpenMANIPULATOR-X
 
