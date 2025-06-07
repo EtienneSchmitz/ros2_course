@@ -75,11 +75,6 @@ Vous pouvez aussi tester ROS 2 sous **WSL 2** ou avec **Docker**.
 🎯 **Déconseillé pour les manipulations réelles**.
 :::
 
-Ces solutions sont utiles pour :
-- les tests de code,
-- l’exécution de nodes simples,
-- ou des simulations légères.
-
 Nous ne mettons pas actuellement en place de guide pour ces alternatives, mais vous pouvez trouver des ressources en ligne.
 
 ---
@@ -116,6 +111,10 @@ sudo apt install /tmp/ros2-apt-source.deb
 
 #### 4. Installer les outils et l’environnement complet de ROS 2 Jazzy
 
+:::info
+Cette étape peut prendre un certain temps, car elle télécharge et installe de nombreux paquets.
+:::
+
 ```bash
 sudo apt update && sudo apt install ros-dev-tools
 sudo apt install ros-jazzy-desktop
@@ -134,7 +133,6 @@ Ensuite, rechargez votre shell ou redémarrez votre terminal :
 source ~/.bashrc
 ``` 
 :::
-
 
 Vous devez sourcer ROS à chaque ouverture de terminal :
 
