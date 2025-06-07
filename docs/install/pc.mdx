@@ -1,9 +1,8 @@
 ---
-sidebar_position: 2
-slug: /install
+sidebar_position: 1
 ---
 
-# 🛠️ Installation
+# 🖥️ Préparation du PC
 
 Cette page vous guide dans la mise en place de l'environnement requis pour suivre le workshop ROS 2.
 
@@ -144,12 +143,12 @@ source /opt/ros/jazzy/setup.bash
 
 Lance un nœud éditeur (talker), puis un nœud lecteur (listener) dans deux terminaux séparés :
 
-Terminal 1 — Lancer le talker (C++) :
 ```bash 
 # Terminal 1 — Lancer le talker (C++) :
-
 ros2 run demo_nodes_cpp talker
+```
 
+```bash 
 # Terminal 2 — Lancer le listener (Python) :
 ros2 run demo_nodes_py listener
 ```

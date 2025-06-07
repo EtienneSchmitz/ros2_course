@@ -1,0 +1,138 @@
+---
+sidebar_position: 2
+---
+
+# 🤖 Préparation du TurtleBot
+
+## 🧩 Assemblage
+
+:::warning Risque de détérioration matérielle
+Le seul câblage critique est celui de l'alimentation de la Raspberry Pi.  
+Il doit impérativement être connecté **exactement comme indiqué dans le schéma ci-dessous**, sous peine de **détériorer définitivement le matériel**.
+:::
+
+<p align="center">
+  <img src="/img/tb3_power_cable.png" alt="TurtleBot 3" width="400" />
+</p>
+
+
+🔧 Pour assembler votre TurtleBot Burger, suivez le tutoriel officiel :  [emanual.robotis.com – Hardware Setup](https://emanual.robotis.com/docs/en/platform/turtlebot3/hardware_setup/#hardware-assembly)
+
+---
+
+## 💾 Installation logicielle – Robot
+
+### 📥 Flashage de la carte SD
+
+:::info Image système fournie
+💾 L’image à flasher est **préconfigurée** et vous sera fournie par votre enseignant.  
+Elle contient déjà :
+- **Ubuntu 24.04 Server**  
+- **ROS 2 Jazzy**  
+- les **dépendances nécessaires** au fonctionnement du TurtleBot 3
+- une configuration réseau de base
+:::
+
+
+
+Pour flasher l’image système sur la carte SD de la Raspberry Pi, utilisez l’un des outils suivants :
+- [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+- [Balena Etcher](https://etcher.balena.io/)
+
+:::tip Vous préférez tout installer manuellement ?
+Suivez les instructions officielles sur le site de robotis :
+- [Configuration du SBC (Single Board Computer)](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/#sbc-setup)
+- [Configuration de l’OpenCR](https://emanual.robotis.com/docs/en/platform/turtlebot3/opencr_setup/#opencr-setup)
+:::
+
+---
+
+### 📶 Configuration Wi-Fi
+
+Pour configurer la connexion Wi-Fi sur Ubuntu (présent sur la carte SD), vous devez modifier le fichier `50-cloud-init.yaml` situé dans `/etc/netplan`.
+
+#### 📝 1. Ouvrir le fichier de configuration
+
+Le fichier se trouve ici une fois la carte montée :
+```bash
+/media/$(whoami)/writable/etc/netplan/50-cloud-init.yaml
+```
+
+Vous pouvez l’éditer avec un outil en ligne de commande ou graphique :
+
+##### 🔧 Exemple avec `nano` :
+
+```bash
+sudo nano /media/$(whoami)/writable/etc/netplan/50-cloud-init.yaml
+```
+
+##### 💡 Exemple avec un éditeur graphique :
+
+```bash
+sudo gedit /media/$(whoami)/writable/etc/netplan/50-cloud-init.yaml
+# ou
+sudo code /media/$(whoami)/writable/etc/netplan/50-cloud-init.yaml
+```
+
+#### 🛠️ 2. Modifier la configuration Wi-Fi
+
+Remplacez le contenu du fichier par la configuration suivante :
+
+```yaml
+network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            optional: true
+    version: 2
+    wifis:
+        wlan0:
+            dhcp4: true
+            optional: true
+            access-points:
+                YOUR_WIFI_SSID:
+                    password: YOUR_WIFI_PASSWORD
+```
+
+Remplacez :
+- `YOUR_WIFI_SSID` par le nom de votre réseau Wi-Fi (SSID)
+-  `YOUR_WIFI_PASSWORD` par votre mot de passe Wi-Fi
+
+:::tip Enregistrer dans nano
+Ctrl + X pour quitter
+Y pour confirmer
+Entrée pour valider le nom du fichier
+:::
+
+--- 
+
+### 🔐 Connexion SSH
+
+Une fois la carte insérée et le robot allumé, connectez-vous à distance avec :
+
+```bash
+ssh ubuntu@turtlebot.local
+```
+
+:::info Mot de passe
+Le mot de passe par défaut est : turtlebot
+
+Aucun caractère ne s’affiche à l’écran pendant la saisie — c’est normal.
+:::
+
+--- 
+
+### 🔄 Mise à jour de l’OpenCR
+
+:::warning Important
+Assurez-vous que la carte OpenCR est bien connectée avant d'exécuter ces commandes.
+:::
+
+🤖 Une fois connecté en SSH, exécutez la séquence suivante :
+
+```bash
+export OPENCR_PORT=/dev/ttyACM0
+export OPENCR_MODEL=burger
+cd ~/opencr_update
+./update.sh $OPENCR_PORT $OPENCR_MODEL.opencr
+```
