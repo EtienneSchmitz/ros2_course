@@ -65,6 +65,10 @@ const config: Config = {
         hideable: true,
       },
     },
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 4,
+    },
     navbar: {
       title: 'Workshop ROS 2',
       logo: {

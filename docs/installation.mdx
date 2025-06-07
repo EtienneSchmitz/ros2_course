@@ -11,26 +11,101 @@ Cette page vous guide dans la mise en place de l'environnement requis pour suivr
 Nous recommandons d’utiliser **🐧 Ubuntu 24.04 LTS** avec l’installation de **ROS 2 Jazzy**.
 :::
 
-## 💻 Installation de ROS 2 Jazzy sur Ubuntu 24.04
+--- 
+## 🖥️ 1. Installation du système d’exploitation
+
+### 🐧 Ubuntu 24.04 (recommandé)
+
+Si vous utilisez Windows, vous pouvez créer une **clé USB bootable avec Ubuntu 24.04**, soit pour l’installer en dual-boot, soit pour utiliser une session **live persistante**.
+
+#### 1. Télécharger Ubuntu 24.04
+
+👉 Rendez-vous sur le site officiel : [ubuntu.com/download/desktop](https://ubuntu.com/download/desktop)
+
+Téléchargez l’image `.iso` de la version 24.04 LTS.
+
+#### 2. Créer une clé USB bootable (avec ou sans persistance)
+
+:::info 
+**Rufus** est un outil gratuit pour créer une clé USB bootable Ubuntu.  Il permet aussi d’activer la **persistance**, c’est-à-dire la **capacité de conserver vos fichiers et configurations** d'une session à l'autre.
+:::
+
+:::tip
+Si vous souhaitez suivre le workshop avec une clé USB persistante plutôt qu'un dual-boot, nous vous recommandons une clé USB de **32 Go minimum** pour une expérience fluide.
+:::
+
+:::warning Clé USB persistante
+Une **clé USB avec persistance** peut sembler pratique, mais **elle reste beaucoup plus lente et moins fiable qu’un vrai système installé** sur le PC en dual-boot.
+:::
+
+1. Télécharger Rufus : [rufus.ie](https://rufus.ie)
+2. Lancer Rufus et choisir :
+   - **Image ISO** : `ubuntu-24.04-desktop-amd64.iso`
+   - **Mode de démarrage** : *Disque ou image ISO (mode DD)*
+   - **Type de partition** : *GPT* (pour UEFI) ou *MBR* (anciens BIOS)
+   - **Stockage persistant** : activer et allouer un espace (ex. 4 Go ou plus) (optionnel)
+3. Cliquer sur **Démarrer** et attendre la fin du processus.
+
+
+#### 3. Démarrer l’ordinateur sur la clé USB
+
+Pour utiliser Ubuntu :
+1. Redémarrez votre PC **avec la clé USB branchée**
+2. Accédez au **menu de démarrage (boot menu)** :
+   - Appuyez rapidement sur `F12`, `F10`, `ESC` ou `DEL` selon votre PC (souvent affiché au démarrage)
+3. Sélectionnez votre **clé USB** comme périphérique de démarrage
+4. Choisissez :
+   - **"Try Ubuntu"** pour une session temporaire ou persistante
+   - ou **"Install Ubuntu"** pour créer un dual-boot
+
+---
+
+### 🐳 Alternatives (WSL 2 / Docker)
+
+:::info
+Vous pouvez aussi tester ROS 2 sous **WSL 2** ou avec **Docker**.
+:::
+
+:::warning Limites sérieuses
+- ❌ Ports série / USB non fonctionnels
+- ❌ Caméras, LiDAR, périphériques inaccessibles
+- ❌ Multicast / DDS / ROS 2 réseau instable
+- ❌ RViz, Gazebo limités
+
+🎯 **Déconseillé pour les manipulations réelles**.
+:::
+
+Ces solutions sont utiles pour :
+- les tests de code,
+- l’exécution de nodes simples,
+- ou des simulations légères.
+
+Nous ne mettons pas actuellement en place de guide pour ces alternatives, mais vous pouvez trouver des ressources en ligne.
+
+---
+
+## 💻 2. Installation de ROS 2 Jazzy
+
+### 🐧 Installation sur Ubuntu 24.04
 
 :::tip
 Vous trouverez les instructions officielles sur [🌐 docs.ros.org – Ubuntu Install (Jazzy)](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debians.html)
 :::
 
-#### 1. Mettre à jour votre système :
+#### 1. Mettre à jour votre système
 
 ```bash
 sudo apt update && sudo apt upgrade
 ```
 
-#### 2. Activer le dépôt universe :
+#### 2. Activer le dépôt universe
 
 ```bash
 sudo apt install software-properties-common
 sudo add-apt-repository universe
 ```
 
-#### 3. Installer curl et préparer le dépôt ROS :
+#### 3. Installer curl et préparer le dépôt ROS
 
 ```bash
 sudo apt update && sudo apt install curl -y
@@ -39,14 +114,14 @@ curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-a
 sudo apt install /tmp/ros2-apt-source.deb
 ```
 
-#### 4. Installer les outils et l’environnement complet de ROS 2 Jazzy :
+#### 4. Installer les outils et l’environnement complet de ROS 2 Jazzy
 
 ```bash
 sudo apt update && sudo apt install ros-dev-tools
 sudo apt install ros-jazzy-desktop
 ```
 
-#### 5. Configurer l’environnement ROS :
+#### 5. Configurer l’environnement ROS
 
 :::tip
 Pour éviter de devoir exécuter cette commande à chaque fois, ajoutez-la automatiquement à la fin de votre fichier `~/.bashrc` :
@@ -67,7 +142,7 @@ Vous devez sourcer ROS à chaque ouverture de terminal :
 source /opt/ros/jazzy/setup.bash
 ```
 
-#### 6. Tester l'installation :
+#### 6. Tester l'installation
 
 Lance un nœud éditeur (talker), puis un nœud lecteur (listener) dans deux terminaux séparés :
 
@@ -84,7 +159,14 @@ ros2 run demo_nodes_py listener
 Si tout fonctionne correctement, vous devriez voir le talker publier des messages et le listener les afficher.  
 Si vous rencontrez des problèmes, consultez la [🌐 documentation officielle de ROS 2 Jazzy](https://docs.ros.org/en/jazzy/).
 
-## 🤖 Navigation (TurtleBot 3)
+--- 
 
-## ✋ Manipulation : OpenMANIPULATOR-X
+## 🧭 Navigation
+
+### 🤖 TurtleBot 3 Burger (Robotics)
+
+--- 
+## ✋ Manipulation
+
+### 🦾 OpenMANIPULATOR-X (Robotics)
 
