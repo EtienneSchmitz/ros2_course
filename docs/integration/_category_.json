@@ -1,9 +1,10 @@
 {
-  "label": "🔧 Jour 5 – Intégration",
+  "label": "🔧 Intégration",
   "position": 7,
   "link": {
     "type": "generated-index",
-    "title": "Jour 1 – Introduction à ROS 2",
+    "title": "Intégration",
     "description": "Explorez les bases de ROS 2 à travers un cours et un atelier pratique.",
+    "slug": "/integration"
   }
 }

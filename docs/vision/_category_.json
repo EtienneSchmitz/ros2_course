@@ -3,7 +3,8 @@
   "position": 5,
   "link": {
     "type": "generated-index",
-    "title": "Jour 4 – Vision",
+    "title": "Vision",
     "description": "Découvrez la vision par ordinateur avec ROS 2 à travers un atelier pratique sur le traitement d’image et la détection d’objets.",
+    "slug": "/vision"
   }
 }
