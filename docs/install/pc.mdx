@@ -172,14 +172,14 @@ Assurez-vous d’avoir :
 #### 1. Installation de Gazebo Harmonic
 
 ```bash
-sudo apt-get update
-sudo apt-get install curl lsb-release gnupg
+sudo apt update
+sudo apt install curl lsb-release gnupg
 
 sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-sudo apt-get update
-sudo apt-get install gz-harmonic
+sudo apt update
+sudo apt install gz-harmonic
 ```
 
 #### 2. Installation de Cartographer
@@ -198,21 +198,31 @@ sudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup
 ```bash
 mkdir -p ~/turtlebot3_ws/src
 cd ~/turtlebot3_ws/src/
+
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git
 git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
 git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3.git
+
 sudo apt install python3-colcon-common-extensions
+
 cd ~/turtlebot3_ws
 colcon build --symlink-install
+
 echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 #### 5. Configuration de l'environnement TurtleBot3
 
+:::note
+Assurez-vous de remplacer `<votre_numéro_de_groupe>` par le **ROS_DOMAIN_ID correspondant à votre groupe**.  
+Ce numéro doit être **identique sur le PC et le TurtleBot3**, mais **différent des autres groupes** travaillant sur le même réseau Wi-Fi.
+:::
+
 ```bash
-echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
-echo 'source /opt/ros/jazzy/setup.bash' >> ~/.bashrc
+echo 'export ROS_DOMAIN_ID=<votre_numéro_de_groupe> ' >> ~/.bashrc
+echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
+
 source ~/.bashrc
 ```
 

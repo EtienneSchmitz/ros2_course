@@ -133,6 +133,15 @@ Assurez-vous que la carte OpenCR est bien connectée avant d'exécuter ces comma
 ```bash
 export OPENCR_PORT=/dev/ttyACM0
 export OPENCR_MODEL=burger
+
 cd ~/opencr_update
 ./update.sh $OPENCR_PORT $OPENCR_MODEL.opencr
+```
+
+### 🛠️ Configuration du robot
+
+Pour configurer le TurtleBot3, changer les lignes suivantes à votre fichier `~/.bashrc` :
+
+```bash
+export ROS_DOMAIN_ID=<votre_numéro_de_groupe>
 ```
