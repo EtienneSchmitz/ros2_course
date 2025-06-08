@@ -160,10 +160,64 @@ Si vous rencontrez des problèmes, consultez la [🌐 documentation officielle d
 
 ## 🧭 Navigation
 
-### 🤖 TurtleBot 3 Burger (Robotics)
+### 🤖 TurtleBot 3 Burger (Robotis)
+
+Cette section vous guide pour configurer votre PC afin de contrôler un TurtleBot3 avec ROS 2 Jazzy.  
+Cela inclut la simulation Gazebo, Cartographer pour le SLAM, Navigation2 pour la navigation autonome, et les packages spécifiques TurtleBot3.
+
+Assurez-vous d’avoir :
+- Une installation de **Ubuntu 24.04** (ou compatible)
+- ROS 2 Jazzy correctement installé
+
+#### 1. Installation de Gazebo Harmonic
+
+```bash
+sudo apt-get update
+sudo apt-get install curl lsb-release gnupg
+
+sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install gz-harmonic
+```
+
+#### 2. Installation de Cartographer
+
+```bash
+sudo apt install ros-jazzy-cartographer ros-jazzy-cartographer-ros
+```
+
+#### 3. Installation de Navigation2
+```bash
+sudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup
+```
+
+#### 4. Installation des packages TurtleBot3
+
+```bash
+mkdir -p ~/turtlebot3_ws/src
+cd ~/turtlebot3_ws/src/
+git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3.git
+sudo apt install python3-colcon-common-extensions
+cd ~/turtlebot3_ws
+colcon build --symlink-install
+echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+source ~/.bashrc
+```
+
+#### 5. Configuration de l'environnement TurtleBot3
+
+```bash
+echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
+echo 'source /opt/ros/jazzy/setup.bash' >> ~/.bashrc
+source ~/.bashrc
+```
 
 --- 
 ## ✋ Manipulation
 
-### 🦾 OpenMANIPULATOR-X (Robotics)
+### 🦾 OpenMANIPULATOR-X (Robotis)
 

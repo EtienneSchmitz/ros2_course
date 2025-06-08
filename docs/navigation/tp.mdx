@@ -1,8 +1,68 @@
 ---
 sidebar_position: 3
+sidebar_label: "🛠️ Travaux Pratiques"
 ---
 
+# 🛠️ TP : Navigation avec TurtleBot3
 
+## Partie 1 — Mise en route du TurtleBot3 et téléopération
 
-# 🛠️ Travaux pratique
+:::caution Configuration réseau
+Avant toute manipulation, assurez-vous que votre **PC (Remote PC)** et votre **TurtleBot3** est connecté au même réseau.
+:::
+
+:::tip Évitez les conflits réseau entre groupes
+ROS 2 utilise un système de communication basé sur le multicast.  
+Si **deux groupes** utilisent la **même configuration réseau** (même `ROS_DOMAIN_ID`, même nom d'hôte, etc.), cela provoque des interférences entre leurs robots : téléopération instable, messages croisés, contrôles partagés...
+
+Pour éviter cela, chaque groupe doit utiliser un `ROS_DOMAIN_ID` unique et un nom d'hôte différent.
+
+💻 🤖 Ajoutez la ligne suivante dans le fichier `~/.bashrc` de votre **PC** *et* du **TurtleBot3** :
+```bash
+export ROS_DOMAIN_ID=<votre_numéro_de_groupe>
+```
+
+🤖 Pour changer le nom d'hote du robot :
+```bash
+sudo hostnamectl set-hostname burger_<votre_numéro_de_groupe>
+```
+:::
+
+### 🤖 1. Bringup du robot (TB3)
+
+:::info Prérequis à l’installation
+
+Avant de commencer, assurez-vous que le TurtleBot3 est correctement configuré avec l’image système recommandée et que toutes les dépendances nécessaires pour ROS 2 sont bien installées sur les deux machines.
+
+- 💻 [Instructions pour votre PC](../install/pc#turtlebot-3-burger-robotis)  
+- 🤖 [Instructions pour le TurtleBot3](../install/turtlebot)
+:::
+
+:::note
+Le terminal doit rester ouvert pendant toute la session avant de continuer les manipulations suivantes.
+:::
+
+🤖 Sur le TurtleBot3 (via SSH), lancez :
+```
+ros2 launch turtlebot3_bringup robot.launch.py
+```
+
+### 🎮 2. Téléopération clavier
+
+💻 Depuis votre PC, ouvrez un nouveau terminal et lancez :
+```bash
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+Gardez le terminal sélectionné (focus) pour pouvoir envoyer les commandes. 
+Vous pouvez :
+- Avancer, reculer
+- Tourner à gauche / droite
+- Quittez avec Ctrl+C une fois les tests terminés
+
+##### ✅ À vérifier :
+
+- Le robot se déplace bien dans les quatre directions
+- Le délai de réaction est faible
+- Aucune perte de connexion
 
