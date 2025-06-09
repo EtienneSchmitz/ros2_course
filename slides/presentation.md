@@ -2,7 +2,7 @@
 marp: true
 paginate: true
 theme: gaia
-footer : 'ROS 2 - Etienne Schmitz'
+footer : 'ROS 2 - Étienne Schmitz'
 ---
 
 <style>
