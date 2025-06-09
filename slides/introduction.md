@@ -336,6 +336,113 @@ Parmi les outils clés ROS :
 
 --- 
 
+# Concepts de base ROS 2
+
+---
+
+## Nœuds
+
+- Un **nœud** est une unité de calcul, typiquement un exécutable (C++, Python...)
+- Chaque nœud exécute une tâche précise 
+- Les nœuds communiquent entre eux via des **topics,** des **services** ou des **actions**
+
+##### Exemple de système à 3 nœuds
+
+- 🧠 **Nœud 1 (Python)** : Analyse de l’image de la caméra (OpenCV)
+- 📍 **Nœud 2 (Python)** : Calcul de la trajectoire pour aller à l'objectif
+- ⚙️ **Nœud 3 (C++)** : Pilotage des moteurs du robot
+
+> Un système ROS 2 est composé de **plusieurs nœuds coopérants**
+
+---
+
+TODO : Image - Noeuds
+
+---
+
+## Topics & Messages
+
+- Les **topics** sont des canaux de communication utilisés pour les échanges **asynchrones**
+- Modèle **Publish / Subscribe**
+  - Un nœud publie un message sur un topic
+  - Un ou plusieurs nœuds peuvent s’y abonner
+
+Ex : `/camera/image_raw` transporte des images  
+Type du message : `sensor_msgs/msg/Image`
+
+---
+
+TODO : Image - Topics
+
+---
+
+## Services
+
+- Permettent une **communication synchrone** (requête ↔ réponse)
+- Ex : demander la position actuelle d’un robot
+- Modèle : un client envoie une **requête**, un serveur répond
+
+> Un service ne peut avoir **qu’un seul fournisseur**, mais plusieurs clients
+
+---
+
+TODO : Image - Services
+
+---
+
+## Actions
+
+- Pour les **tâches longues** : navigation, manipulation...
+- Basé sur 3 éléments :
+  - 🎯 Un objectif
+  - 🔄 Un retour intermédiaire (feedback)
+  - ✅ Un résultat
+
+Ex : atteindre une destination en renvoyant l’avancement à chaque étape
+
+---
+
+TODO : Image - Actions
+
+---
+
+## Paramètres
+
+- Variables **configurables dynamiquement** pour un nœud
+- Accessibles via le code ou en ligne de commande
+
+Exemples :
+- Vitesse maximale
+- Nom du robot
+- Choix du contrôleur
+
+🔧 Utiles pour personnaliser un comportement **sans modifier le code**
+
+---
+
+## Packages ROS 2
+
+- Un **package** est une unité de base dans un projet ROS 2
+- Il regroupe tous les fichiers liés à une fonctionnalité :
+  - Code source des **nœuds** (Python ou C++)
+  - Fichiers de configuration (YAML, launch, param...)
+  - Ressources : URDF, images, bagfiles...
+
+> Un package = un **dossier structuré**, versionnable et réutilisable
+
+---
+
+## Workspace ROS 2
+
+Un **workspace** est un dossier qui regroupe vos **packages en développement**.
+
+Il contient :
+- 📂 Un sous-dossier `src/` où vivent vos packages
+- ⚙️ Les dossiers `build/`, `install/` et `log/` générés après compilation
+
+> Un workspace permet de **compiler, tester et exécuter** vos packages localement
+
+---
 
 ## TODO :
 
