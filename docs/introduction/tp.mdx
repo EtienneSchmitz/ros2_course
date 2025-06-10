@@ -2,5 +2,84 @@
 sidebar_position: 3
 ---
 
-# 🛠️ Travaux pratique
+# 🛠️ Travaux pratique 
 
+## 🎯 Objectifs
+
+- Comprendre les concepts de base de ROS 2 : **nœuds**, **topics**, **services**, **paramètres**, **actions**
+- Manipuler les outils `ros2`, `rqt`, `rqt_console`
+- Concevoir un système robotique simulé en utilisant les primitives de ROS 2
+
+---
+
+## 🐢 Partie 1 — Tutoriels avec `turtlesim`
+
+`turtlesim` est un simulateur simple inclus dans ROS 2.  
+Il permet de se familiariser rapidement avec les bases du système : communication entre nœuds, échanges de messages, appel de services, utilisation de paramètres et d’actions.
+
+### 📚 Tutoriels de base
+
+1. [Utiliser turtlesim, ros2 et rqt](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html)
+2. [Comprendre les nœuds](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html)
+3. [Comprendre les topics](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html)
+4. [Comprendre les services](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html)
+5. [Comprendre les paramètres](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html)
+6. [Comprendre les actions](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html)
+7. [Visualiser les logs avec rqt_console](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Using-Rqt-Console/Using-Rqt-Console.html)
+8. [Lancer plusieurs nœuds avec `ros2 launch`](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Launching-Multiple-Nodes/Launching-Multiple-Nodes.html)
+9. *(Optionnel)* [Enregistrer et rejouer des données](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html)
+
+
+## 🤖 Partie 2 — Projet de fin de semaine : Système de transport autonome
+
+### 🔍 Contexte
+
+Vous allez simuler un système robotique autonome combinant trois entités coopérantes :
+
+- Une **caméra** détecte un **code** ou identifiant visuel associé à un objet.
+- Un **bras robotisé** est activé pour **saisir l’objet** détecté et le **placer sur un robot mobile**.
+- Une fois l’objet déposé, le **robot mobile** se **déplace automatiquement vers une position cible prédéfinie**.
+
+Ce système distribuée devra exploiter les primitives fondamentales de ROS 2 :
+- **Topics** pour publier les détections et les ordres d’exécution
+- **Paramètres dynamiques** pour configurer les comportements en temps réel
+- **Services** pour fournir des requêtes ponctuelles
+- **Actions** pour gérer les processus longs et monitorables (ex. déplacement ou manipulation)
+
+> Ce projet constitue une base extensible pour intégrer par la suite des outils tels que MoveIt 2, NAV2, Foxglove ou Gazebo.
+
+---
+
+### 🧠 Tutoriels recommandés pour vous aider à développer le système
+
+Utilisez les tutoriels suivants pour créer vos nœuds, messages personnalisés, services, actions et fichiers de lancement :
+
+#### 📦 Création de l'environnement de développement
+
+1. [Créer un espace de travail](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html)
+2. [Créer un package](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)
+3. [Utiliser `colcon` pour compiler](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
+
+#### 🔁 Communication de base
+
+4. [Écrire un publisher et un subscriber (Python)](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html)
+5. [Écrire un client et un service (Python)](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html)
+6. [Créer des messages et services personnalisés](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html)
+
+#### ⚙️ Paramètres et actions
+
+7. [Utiliser des paramètres dans une classe Python](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-Python.html)
+8. [Créer une action personnalisée](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Creating-an-Action.html)
+9. [Écrire un serveur et un client d’action (Python)](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-an-Action-Server-Client/Py.html)
+
+#### 🚀 Déploiement
+
+10. [Créer un fichier de lancement (`launch.py`)](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html)
+11. *(Optionnel)* [Surveiller les changements de paramètres dynamiquement](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Monitoring-For-Parameter-Changes-Python.html)
+
+---
+
+### 📌 Remarques
+
+- L’intégration de MoveIt 2, NAV2 se fera ultérieurement dans ce projet, une fois les fondations mises en place.
+- Vous êtes libres de simuler certaines actions par des délais ou impressions console comme les aspects physiques ne sont pas encore modélisés.

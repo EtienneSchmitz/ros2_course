@@ -36,15 +36,6 @@ Etienne Schmitz
 
 ---
 
-<!-- # Objectifs
-
-- Comprendre les principes fondamentaux de ROS 2
-- Explorer les composants de l’écosystème ROS
-- Identifier les cas d’usage et les limitations
-- Préparer son environnement de développement
-
---- -->
-
 <!-- _class: lead -->
 
 # ROS 2 : un écosystème open-source pour la robotique
@@ -60,8 +51,6 @@ Plutôt que de multiplier les SDKs pour chaque robot, ROS 2 propose une infrastr
 --- 
 
 ## Les principales fonctionnalités de ROS 2
-
-Voici **quelques fonctionnalités principaux** de ROS 2 :
 
 - 🧰 **Bibliothèques** : communication inter-processus, calcul de trajectoires, asservissement moteur, gestion des capteurs, etc.  
 - 🖥️ **Applications** : simulation physique (*Gazebo, Ignition*), visualisation de données (*RViz*), enregistrement et rejeu de données (*rosbag*), outils de débogage, etc.  
@@ -85,10 +74,12 @@ Voici **quelques fonctionnalités principaux** de ROS 2 :
 
 - **Évolution naturelle de ROS 1** pour répondre aux **besoins modernes** : temps réel, fiabilité, ...
 - **Plus de flexibilité**, sécurité, modularité, performance  
-- Architecture **distribuée (ROS 2)** vs **centralisée Master-Slave (ROS 1)**  
+- Passage d’une architecture **centralisée (ROS 1)** à une architecture **distribuée (ROS 2)**
 - Meilleure gestion du **temps réel** grâce au middleware DDS  
-- **Rétrocompatibilité partielle** : des ponts existent, mais **ROS 2 ≠ ROS 1**  
-  → Un package ROS 2 fonctionne uniquement avec d'autres packages ROS 2
+
+> ⚠️ **Rétrocompatibilité partielle** : des ponts existent, mais **ROS 2 ≠ ROS 1**. 
+Un package ROS 2 **ne peut interagir qu’avec d’autres packages ROS 2**
+
 
 ---
 
@@ -161,18 +152,6 @@ Pour qu’un robot soit compatible ROS :
 ---
 
 # Ecosystème de ROS 2
-
----
-
-## Middleware – RMW (ROS Middleware Interface)
-
-ROS 2 repose sur une **abstraction de middleware** : la couche RMW (*ROS Middleware Interface*), qui assure une communication logicielle robuste entre les composants ROS 2, via un réseau **Ethernet** ou **Wi-Fi**.
-
-- Interface entre ROS et le middleware DDS
-- Plusieurs fournisseurs compatibles : **FastDDS**, **CycloneDDS**, **Connext**
-- Permet la communication temps réel, distribuée, fiable et typée
-
-> RMW permet à ROS 2 de rester **indépendant du middleware sous-jacent**
 
 ---
 
@@ -356,7 +335,7 @@ Parmi les outils clés ROS :
 
 ---
 
-TODO : Image - Noeuds
+![bg cover](./images/introduction/nodes.gif)
 
 ---
 
@@ -364,29 +343,31 @@ TODO : Image - Noeuds
 
 - Les **topics** sont des canaux de communication utilisés pour les échanges **asynchrones**
 - Modèle **Publish / Subscribe**
-  - Un nœud publie un message sur un topic
+  - Un ou plusieurs nœuds publie un message sur un topic
   - Un ou plusieurs nœuds peuvent s’y abonner
 
-Ex : `/camera/image_raw` transporte des images  
-Type du message : `sensor_msgs/msg/Image`
+Exemple : 
+> `/camera/image_raw` transporte des images  
+> Type du message : `sensor_msgs/msg/Image`
 
 ---
 
-TODO : Image - Topics
+![bg cover](./images/introduction/topics.gif)
 
 ---
+
 
 ## Services
 
 - Permettent une **communication synchrone** (requête ↔ réponse)
-- Ex : demander la position actuelle d’un robot
+- Exemple : demander la position actuelle d’un robot
 - Modèle : un client envoie une **requête**, un serveur répond
 
 > Un service ne peut avoir **qu’un seul fournisseur**, mais plusieurs clients
 
 ---
 
-TODO : Image - Services
+![bg cover](./images/introduction/services.gif)
 
 ---
 
@@ -398,13 +379,14 @@ TODO : Image - Services
   - 🔄 Un retour intermédiaire (feedback)
   - ✅ Un résultat
 
-Ex : atteindre une destination en renvoyant l’avancement à chaque étape
+Exemple : atteindre une destination en renvoyant l’avancement à chaque étape
 
 ---
 
-TODO : Image - Actions
+![bg cover](./images/introduction/actions.gif)
 
 ---
+
 
 ## Paramètres
 
@@ -444,13 +426,29 @@ Il contient :
 
 ---
 
+## Travaux pratiques
+
+- [Installation ROS 2 - Jazzy (PC)](https://ros2.etienne-schmitz.com/docs/install/pc)
+- [TP 1 - Introduction ROS 2](https://ros2.etienne-schmitz.com/docs/introduction/tp)
+- Si vous avez le temps, débuter la deuxième journée par l'installation du robot [TurtleBot 3](https://ros2.etienne-schmitz.com/docs/install/turtlebot).
+
+---
+
+## Ressources
+
+---
+
 ## TODO :
 
 - Donnée des liens vers les ressources
 - Système de REP
-- Avantages de ROS 2
-- Ajouter des liens vers les images de la distributions
-- https://robots.ros.org : 
+- Avantages de ROS 2 : Réecrire une partie
+- Chiffre sur ROS 2
+- Ajouter un lien vers les images de la distributions
+- ROS Domain ID
+- Partie MiddleWare : On ne comprends bien ce qu’est le dds ? Où sont les actions ? Si rmw ?
+- Slide RWM avant l'écosystème
+- Launch files
 
 --- 
 
