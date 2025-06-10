@@ -196,8 +196,8 @@ sudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup
 #### 4. Installation des packages TurtleBot3
 
 ```bash
-mkdir -p ~/turtlebot3_ws/src
-cd ~/turtlebot3_ws/src/
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src/
 
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git
 git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
@@ -205,10 +205,10 @@ git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3.git
 
 sudo apt install python3-colcon-common-extensions
 
-cd ~/turtlebot3_ws
+cd ~/ros2_ws
 colcon build --symlink-install
 
-echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+echo 'source ~/ros2_ws/install/setup.bash' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -227,7 +227,50 @@ source ~/.bashrc
 ```
 
 --- 
+
 ## ✋ Manipulation
 
 ### 🦾 OpenMANIPULATOR-X (Robotis)
 
+Cette section vous permet de configurer la simulation du bras OpenMANIPULATOR-X.
+
+#### 1. Définir le modèle de robot
+
+Pour utiliser le modèle OpenMANIPULATOR-X, ajoutez la configuration suivante à votre `~/.bashrc` :
+
+```bash
+echo 'export ROBOT_MODEL=om_x' >> ~/.bashrc
+source ~/.bashrc
+```
+
+#### 2. Installer les dépendances nécessaires
+
+```bash
+sudo apt update && sudo apt install -y \
+    libboost-all-dev \
+    ros-jazzy-hardware-interface \
+    ros-jazzy-controller-manager \
+    ros-jazzy-ros2-controllers \
+    ros-jazzy-tf-transformations \
+    ros-jazzy-gz* \
+    ros-jazzy-pal-statistics \
+    ros-jazzy-moveit-* --no-install-recommends
+``` 
+
+### 3. Cloner les sources nécessaires
+
+```bash
+cd ~/ros2_ws/src
+
+git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
+``` 
+
+#### 4. Compiler les packages
+
+```bash
+cd ~/ros2_ws
+colcon build --symlink-install
+source ~/ros2_ws/install/setup.bash
+```
