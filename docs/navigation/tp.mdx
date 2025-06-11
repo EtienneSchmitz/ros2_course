@@ -66,3 +66,72 @@ Vous pouvez :
 - Le délai de réaction est faible
 - Aucune perte de connexion
 
+## Partie 2 — Création de la carte avec Cartographer
+
+Nous allons désormais créer la carte de l’environnement dans lequel votre TurtleBot3 évoluera lorsqu’il naviguera de manière autonome.
+
+### 🧭 1. Lancer le système de cartographie
+
+💻 Sur **votre PC**, ouvrez un terminal et lancez :
+```bash
+ros2 launch turtlebot3_cartographer cartographer.launch.py
+```
+
+Cela va démarrer : 
+- Le système **SLAM** (Cartographer)
+- L’affichage RViz avec la carte en cours de construction
+- La visualisation des scans du LIDAR
+
+Vous devriez voir : 
+- Le robot (en vert)
+- Les données du LIDAR (points noirs)
+- La carte qui se construit en gris au fur et à mesure des déplacements
+
+### 🚶‍♂️ 2. Déplacement du robot pour cartographier
+
+💻 Dans un nouveau terminal, lancez la téléopération :
+
+```bash
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+Gardez ce terminal sélectionné (focus clavier) pour pouvoir déplacer le robot avec les touches.
+
+➡️ Faites circuler doucement le robot pour explorer toutes les zones de la pièce.
+La carte s’affine en temps réel grâce au SLAM.
+
+:::warning Ne quittez pas RViz ou le terminal !
+La carte n’est pas sauvegardée automatiquement. Gardez tous les terminaux ouverts jusqu’à la sauvegarde.
+:::
+
+### 💾 3. Sauvegarder la carte
+
+Une fois la cartographie terminée, vous pouvez sauvegarder la carte pour une utilisation ultérieure.
+💻 Dans le terminal où vous avez lancé Cartographer, exécutez :
+
+```bash
+mkdir ~/map 
+ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop` 
+```
+
+Cela va créer un fichier `map_workshop.pgm` et un fichier `map_workshop.yaml` dans le dossier `~/map`.
+
+Vous pouvez arrêtez l'ensemble des terminaux hormis le bringup du robot.
+
+## Partie 3 — Navigation autonome avec Nav2
+
+💻 Lancez le commande suivante pour lancer la localisation et la navigation autonome :
+```bash 
+ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_workshop.yaml
+```
+
+👀 Sur RViz vous devez voir le robot, les scans du LIDAR, les particules de AMCL et la carte que vous avez enregistrée.
+
+📍 Si le robot est mal localisé, utilisez l'outil *2D Pose Estimate* sur RViz. Cliquez et Glissez avec la souris pour positionner le robot sur la carte.
+
+📍 Pour donner des ordres de navigation, utilisez l'outil *Nav2 Goal* sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.
+
+## Partie 4 — TP : Exploration autonome
+
+🎯 L'objectif final du TP est de faire passer le robot par une suite de 2 ou 3 points de passage, comme pour une patrouille, avec un retour au point de départ. 
+

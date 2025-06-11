@@ -17,7 +17,7 @@ footer : 'ROS 2 - Etienne Schmitz'
 <!-- _footer: "" -->
  
 # Robot Operating System 2 :
-# Presentation
+# Navigation
 
 ### Etienne SCHMITZ
 
