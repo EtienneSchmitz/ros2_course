@@ -77,7 +77,7 @@ Horaires : **8h15 – 17h15** avec une pause déjeuner de **12h00 – 13h30**
     - **Assiduité et participation** : implication, questions, entraide
 - 👥 Évaluations en groupe
     - Atteinte des **objectifs techniques** des journées **navigation** (Jour 2) et **manipulation** (Jour 3)
-    - 🗣️ Évaluation orale (Jour 6 après-midi) : Présentation synthétique du projet et démonstration
+    - 🗣️ Évaluation orale (Jour 6) : Présentation synthétique du projet et démonstration
     - **Rapport PDF** présentant l’ensemble des étapes du projet
 
 
@@ -87,11 +87,9 @@ Horaires : **8h15 – 17h15** avec une pause déjeuner de **12h00 – 13h30**
 
 L’objectif est de concevoir un **système robotique intelligent complet** avec ROS 2.
 1. **Analyse d’objet par caméra**  
-   → Reconnaissance d’un objet ou d’un cube numéroté via IA
-
-2. **Manipulation (simulation bras robotique)**  
+   → Reconnaissance de la couleur d'un objet ou d’un cube numéroté via IA
+2. **Manipulation (OpenManipulator-X en simulation)**  
    → Le bras saisit l’objet analysé et le dépose à une position cible
-
 3. **Navigation (TurtleBot 3)**  
    → Le robot mobile récupère l’objet et le transporte à un point donnée.
 
@@ -99,7 +97,7 @@ L’objectif est de concevoir un **système robotique intelligent complet** avec
 
 ## 🧪 Contraintes techniques
 
-- PC avec Ubuntu 24.04 ou Docker + ROS 2 Jazzy.
+- PC avec Ubuntu 24.04 + ROS 2 Jazzy.
 - Utilisation exclusive des composants (topics, services, ...) et des outils (RViz, Gazebo, ROS 2 CLI, ...) de **ROS 2 Jazzy**.
 - Turtlebot 3 (Réel) et OpenMANIPULATOR-X (Simulation). 
 
@@ -122,7 +120,7 @@ L’objectif est de concevoir un **système robotique intelligent complet** avec
 
 | Icône | Signification                                         |
 | :---: | ----------------------------------------------------- |
-|   💻  | Action à réaliser sur votre machine Ubuntu ou Docker  |
+|   💻  | Action à réaliser sur votre machine Ubuntu            |
 |   🤖  | Action à réaliser sur le robot via SSH                |
 |   🌐  | Lien web utile ou documentation                       |
 |   🐍  | Code Python à exécuter localement                     |
