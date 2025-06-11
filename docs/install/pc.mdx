@@ -169,7 +169,7 @@ Assurez-vous d’avoir :
 - Une installation de **Ubuntu 24.04** (ou compatible)
 - ROS 2 Jazzy correctement installé
 
-#### 1. Installation de Gazebo Harmonic
+#### 1. Installation les dépendances nécessaires : Gazebo Harmonic, Cartographer, Navigation2, etc...
 
 ```bash
 sudo apt update
@@ -179,40 +179,27 @@ sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyr
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
 sudo apt update
-sudo apt install gz-harmonic
+sudo apt install gz-harmonic ros-jazzy-cartographer ros-jazzy-cartographer-ros ros-jazzy-navigation2 ros-jazzy-nav2-bringup python3-colcon-common-extensions
 ```
 
-#### 2. Installation de Cartographer
+#### 2. Installation des packages TurtleBot3
 
 ```bash
-sudo apt install ros-jazzy-cartographer ros-jazzy-cartographer-ros
-```
-
-#### 3. Installation de Navigation2
-```bash
-sudo apt install ros-jazzy-navigation2 ros-jazzy-nav2-bringup
-```
-
-#### 4. Installation des packages TurtleBot3
-
-```bash
-mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws/src/
+mkdir -p ~/ros_workshop_ws/src
+cd ~/ros_workshop_ws/src/
 
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git
 git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
 git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3.git
 
-sudo apt install python3-colcon-common-extensions
-
-cd ~/ros2_ws
+cd ~/ros_workshop_ws
 colcon build --symlink-install
 
-echo 'source ~/ros2_ws/install/setup.bash' >> ~/.bashrc
+echo 'source ~/ros_workshop_ws/install/setup.bash' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-#### 5. Configuration de l'environnement TurtleBot3
+#### 3. Configuration de l'environnement TurtleBot3
 
 :::note
 Assurez-vous de remplacer `<votre_numéro_de_groupe>` par le **ROS_DOMAIN_ID correspondant à votre groupe**.  
@@ -257,21 +244,25 @@ sudo apt update && sudo apt install -y \
     ros-jazzy-moveit-* --no-install-recommends
 ``` 
 
-### 3. Cloner les sources nécessaires
+### 3. Installation des packages OpenMANIPULATOR-X
 
 ```bash
-cd ~/ros2_ws/src
+mkdir -p ~/ros_workshop_ws/src
+cd ~/ros_workshop_ws/src
 
-git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+# Clone uniquement si non déjà fait (ex. pour TurtleBot3)
+git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git 
+
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git 
 git clone -b jazzy https://github.com/ROBOTIS-GIT/open_manipulator.git
-``` 
 
-#### 4. Compiler les packages
-
-```bash
-cd ~/ros2_ws
+cd ~/ros_workshop_ws
 colcon build --symlink-install
-source ~/ros2_ws/install/setup.bash
+
+# Ajout à ~/.bashrc si ce n’est pas déjà fait
+echo 'source ~/ros_workshop_ws/install/setup.bash' >> ~/.bashrc
+
+# Activation immédiate de l’environnement
+source ~/.bashrc
 ```

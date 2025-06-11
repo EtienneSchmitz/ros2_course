@@ -38,15 +38,21 @@ Etienne Schmitz
 
 <!-- _class: lead -->
 
-# ROS 2 : un écosystème open-source pour la robotique
+# 🌐 ROS 2 : un écosystème open-source pour la robotique
 
 ---
-## Qu'est-ce que ROS 2 ?
+## 🤖 Qu’est-ce que ROS 2 ?
 
-**ROS 2 (Robot Operating System 2)** est une suite logicielle (*middleware*) open-source conçue pour simplifier le développement de systèmes robotiques complexes.  
-Plutôt que de multiplier les SDKs pour chaque robot, ROS 2 propose une infrastructure unifiée, modulaire et réutilisable.
+**ROS 2 (Robot Operating System 2)** est un **middleware open-source** conçu pour **accélérer** et **simplifier** le développement de systèmes robotiques complexes.
 
-**ROS 2 est utilisé dans de nombreux domaines** : recherche académique, industrie, robotique mobile, bras manipulateurs, véhicules autonomes, etc.
+🔧 Au lieu de créer un SDK spécifique pour chaque robot, ROS 2 propose une **infrastructure modulaire, unifiée et réutilisable**, adaptée à une grande variété de projets.
+Il est utilisé dans de nombreux domaines :
+- 🧪 **Recherche** et prototypage rapide  
+- 🏭 **Industrie** (robotique collaborative, automatisation)  
+- 🚗 **Véhicules autonomes**, drones, AMR  
+- 🦾 **Bras manipulateurs** et robots de service
+
+> ROS 2 est un **socle logiciel commun** pour concevoir, tester et déployer des systèmes robotiques avancés.
 
 --- 
 
@@ -55,42 +61,49 @@ Plutôt que de multiplier les SDKs pour chaque robot, ROS 2 propose une infrastr
 - 🧰 **Bibliothèques** : communication inter-processus, calcul de trajectoires, asservissement moteur, gestion des capteurs, etc.  
 - 🖥️ **Applications** : simulation physique (*Gazebo, Ignition*), visualisation de données (*RViz*), enregistrement et rejeu de données (*rosbag*), outils de débogage, etc.  
 - 📐 **Conventions** : standardisation des formats de représentation des robots (*URDF, SDF*), des capteurs, des actionneurs, des messages et des services.  
-- 🌍 **Communauté** : large base de composants open-source, documentation abondante, forums d'entraide (*ROS Answers*), tutoriels et vidéos pédagogiques.
+- 🌍 **Communauté** : large base de composants open-source, documentation abondante, forums d'entraide, tutoriels et vidéos pédagogiques.
 
 ---
-## Historique de ROS
+## 📜 Historique de ROS
 
 ![bg right:33% 95%](./images/introduction/pr2_robot.jpg)
 
-- **2010** : Lancement de **ROS 1** par *Willow Garage*, initialement conçu pour le robot **PR2**.  
-- **2012** : Lancement de **ROS-Industrial** : adaptation de ROS aux besoins de l’**industrie**.
-- **2012** : Création de la **OSRF (Open Source Robotics Foundation)** — aujourd’hui **Open Robotics**, organisme gérant le développement de ROS.
-- **2017** : Lancement de **ROS 2**, une réécriture complète pour répondre aux **limitations de ROS 1** (temps réel, sécurité, fiabilité, middleware DDS...).
+- 🛠️ **2010** : Lancement de **ROS 1** par *Willow Garage*, initialement conçu pour le robot **PR2**.  
+- 🏭 **2012** : Lancement de **ROS-Industrial** : adaptation de ROS aux besoins de l’**industrie**.
+- 🏛️ **2012** : Création de la **OSRF (Open Source Robotics Foundation)** — aujourd’hui **Open Robotics**, organisme gérant le développement de ROS.
+- 🚀 **2017** : Lancement de **ROS 2**, une réécriture complète pour répondre aux **limitations de ROS 1** (temps réel, sécurité, fiabilité, middleware DDS...).
 
 
 ---
 
 ## De ROS 1 à ROS 2 : une nouvelle architecture
 
-- **Évolution naturelle de ROS 1** pour répondre aux **besoins modernes** : temps réel, fiabilité, ...
-- **Plus de flexibilité**, sécurité, modularité, performance  
-- Passage d’une architecture **centralisée (ROS 1)** à une architecture **distribuée (ROS 2)**
-- Meilleure gestion du **temps réel** grâce au middleware DDS  
+**ROS 2** est une **réécriture complète** de ROS 1, conçue pour répondre aux besoins modernes de la robotique :
 
-> ⚠️ **Rétrocompatibilité partielle** : des ponts existent, mais **ROS 2 ≠ ROS 1**. 
-Un package ROS 2 **ne peut interagir qu’avec d’autres packages ROS 2**
+- ⏱️ **Temps réel** mieux géré grâce au middleware **DDS**
+- 🔐 **Sécurité** renforcée
+- 🧩 **Modularité** accrue, architecture plus propre
+- ⚙️ **Performance** optimisée pour les systèmes distribués
+- ↔️ Architecture passée de **centralisée (ROS 1)** à **distribuée (ROS 2)**
+
+> ⚠️ **Compatibilité limitée** : ROS 2 n’est **pas rétrocompatible** avec ROS 1.  
+Des *bridges* existent, mais un package ROS 2 **ne peut interagir qu’avec ROS 2**.
 
 
 ---
 
-## Distributions - ROS 2
+## 🧱 Distributions - ROS 2
 
-ROS 2 évolue par **distributions annuelles**, nommées comme Ubuntu (par ordre alphabétique avec adjectif + nom propre).  
-Tous les **2 ans**, une version **LTS (Long Term Support)** est publiée, maintenue plus 5 ans.
+ROS 2 évolue par **distributions annuelles**, nommées comme Ubuntu :  
+➡️ **Adjectif + nom propre**, dans l’ordre alphabétique (ex. *Iron Irwini*, *Jazzy Jalisco*).
 
-ROS 1 a atteint sa fin de vie : sa **dernière version**, appelée [**Noetic Ninjemys**](https://wiki.ros.org/noetic), était maintenue jusqu’en 2025.  
+📆 Tous les **2 ans**, une version **LTS (Long Term Support)** est publiée, avec un support de 5 ans.
 
-Une majorité de packages ROS 2 ont été nommés comme leur équivalent ROS 1 mais avec l'ajout du 2, par exemple [**Nav 2**](https://nav2.org) ou [**MoveIt 2**](https://moveit.ai).
+📦 La plupart des packages ROS 2 sont nommés comme ceux de ROS 1, avec le suffixe **2** :  
+→ `MoveIt` devient [**MoveIt 2**](https://moveit.ai)
+→ `move_base` devient [**Nav2**](https://nav2.org),  
+
+⚠️ **ROS 1 est en fin de vie** : sa dernière version, [**Noetic Ninjemys**](https://wiki.ros.org/noetic), est maintenue jusqu’en **mai 2025**.
 
 --- 
 
@@ -103,90 +116,122 @@ Une majorité de packages ROS 2 ont été nommés comme leur équivalent ROS 1 m
 
 ---
 
-## Avantages de ROS 2
+## ROS Enhancement Proposals (REP)
 
-- **Gain de temps d’ingénierie** grâce à des briques logicielles existantes et éprouvées  
-- **Écosystème riche** : outils compatibles, bibliothèques, standards reconnus  
-- **Architecture modulaire** : composants interchangeables, dette technique réduite  
-- **Interopérabilité** : facilitation de l’intégration via des formats standardisés (URDF, messages, etc.)  
-- **Facilité d’extension** : matériel ou logiciel, pour intégrateurs ou chercheurs  
-- **Liberté vis-à-vis des fournisseurs de logiciels** : ROS évite le **vendor lock-in**  
-- **Support communautaire** (forums, GitHub) et **support professionnel** (via Open Robotics et entreprises partenaires)
+Les **REP** sont des documents qui définissent les standards, conventions et évolutions de ROS (inspirés des **PEP** de Python). Ils sont utilisés pour :
+- 📦 l’organisation des distributions et des packages  
+- 📨 les formats de messages, fichiers et conventions de nommage  
+- 🔧 les évolutions du middleware (DDS, RMW, etc.)
 
----
+📄 Exemples :
+- [REP 2000](https://www.ros.org/reps/rep-2000.html) : politique de publication  
+- [REP 2002](https://www.ros.org/reps/rep-2002.html) : distribution *rolling*  
+- [REP 2011](https://www.ros.org/reps/rep-2011.html) : format des messages ROS 2
 
-## Limites et inconvénients de ROS 2
-
-- **Standards parfois trop rigides** pour des cas spécifiques ou atypiques (Robocup SSL) 
-- **Courbe d’apprentissage non négligeable**, surtout pour les débutants en robotique logicielle  
-- **Compatibilité limitée hors Linux** : Docker, Windows et macOS partiellement pris en charge seulement  
-- **Cycles de développement rapides** : certaines APIs peuvent devenir obsolètes rapidement, nécessitant une veille technique
+> 🧠 Les REPs assurent une **gouvernance ouverte** et une **cohérence technique**.
 
 ---
 
-## Langages supportés
+## ✅ Avantages de ROS 2
 
-- **Python** (`rclpy`) : simple à utiliser, idéal pour les scripts, le prototypage rapide, et les démonstrations
-- **C++** (`rclcpp`) : plus performant, utilisé pour les composants critiques et les drivers
-- D'autres langages sont accessibles via des **bindings** :
-  - **Rust** (via `rclrs`)
-  - **Java**, **Ada**, etc.
+- ⏱️ **Gain de temps d’ingénierie** grâce à des briques logicielles existantes et éprouvées  
+- 🧰 **Écosystème riche** : outils compatibles, bibliothèques, standards reconnus  
+- 🧩 **Architecture modulaire** : composants interchangeables, dette technique réduite  
+- 🔗 **Interopérabilité** : intégration facilitée via des formats standardisés (URDF, messages, etc.)  
+- 🚀 **Facilité d’extension** : matériel ou logiciel, pour intégrateurs ou chercheurs  
+- 🔓 **Liberté vis-à-vis des fournisseurs** : pas de **vendor lock-in**  
+- 🤝 **Support communautaire** (forums, GitHub) et **support professionnel** (Open Robotics, intégrateurs)
 
-> Python et C++ sont les langages **officiels et pleinement supportés** par ROS 2.
+---
+
+## ⚠️ Limites et inconvénients de ROS 2
+
+- 🧱 **Standards parfois trop rigides** pour des cas spécifiques ou atypiques (ex : Robocup SSL)  
+- 📘 **Courbe d’apprentissage** non négligeable, surtout pour les débutants  
+- 🐧 **Compatibilité limitée hors Linux** : Docker, Windows, macOS partiellement pris en charge  
+- 🔄 **Évolution rapide** : certaines APIs deviennent vite obsolètes → veille technique nécessaire
+
+---
+
+## 💬 Langages supportés par ROS 2
+
+ROS 2 prend en charge plusieurs langages, avec deux **langages officiels** (les plus documentés dans l’écosystème ROS 2):
+
+- 🐍 **Python** (`rclpy`)  
+  → Simple, rapide à écrire, idéal pour les **scripts**, le **prototypage**, et les **démos pédagogiques**
+- ⚙️ **C++** (`rclcpp`)  
+  → Plus performant, utilisé pour les **drivers**, **nœuds critiques** et les applications industrielles
+
+> D’autres langages sont disponibles via des **bindings** tels que 🦀 **Rust** (`rclrs`), ☕ **Java**, ⚙️ **Ada**, et autres langages spécialisés.
 
 --- 
 
-## Types de robots compatibles
+## 🤖 Types de robots compatibles avec ROS 2
 
-- **Robots à roues** (AGV, AMR)
-- **Robots volants** (drones, UAV)
-- **Cobots** et bras manipulateurs industriels
-- **Robots à pattes** et humanoïdes
-- **Capteurs ou actionneurs autonomes** intégrés à un réseau ROS
+ROS 2 est conçu pour une **grande variété de plateformes robotiques** :
 
-Pour qu’un robot soit compatible ROS :
-> Il doit disposer d’un **driver ROS** (paquet logiciel) développé par le **constructeur**, un **laboratoire**, ou la **communauté**.
+- 🚗 **Robots à roues** : AGV, AMR, véhicules autonomes
+- 🚁 **Robots volants** : drones, UAV
+- 🤖 **Cobots** et **bras manipulateurs** industriels
+- 🦿 **Robots à pattes** et humanoïdes
+- 📡 **Capteurs ou actionneurs autonomes** intégrés à un réseau ROS
 
-🔗 Liste officielle des robots ROS : [robots.ros.org](https://robots.ros.org)
 
----
+Pour qu’un robot fonctionne avec ROS, il doit disposer d’un **driver ROS**  développé par le **constructeur**, un **laboratoire** ou la **communauté open-source**.
 
-# Ecosystème de ROS 2
+🔗 Découvrez les robots compatibles ROS : [robots.ros.org](https://robots.ros.org)
 
 ---
 
-## Middleware – RMW (ROS Middleware Interface)
+## RMW : le cœur des communications ROS 2
 
-ROS 2 repose sur une **abstraction de middleware** appelée **RMW**, qui joue un rôle essentiel dans la communication entre les composants logiciels.
+ROS 2 repose sur une couche appelée **RMW (ROS Middleware Interface)**, qui agit comme un **traducteur universel** entre ROS 2 et le réseau.
 
-- Assure la **communication entre les nœuds** via réseau Ethernet ou Wi-Fi
-- Fournit une **interface unifiée** entre ROS 2 et divers middlewares DDS
+- 📡 Gère la **communication entre les nœuds**, même sur plusieurs machines (Ethernet, Wi-Fi...)
+- 🔁 Sert d’interface entre ROS 2 et un **middleware de transport** (DDS)
 
-> RMW permet à ROS 2 d’être **modulaire**, **distribué**, et **orienté temps réel**
+> 🧩 Grâce à RMW, ROS 2 est **modulaire**, **distribué** et prêt pour le **temps réel**.
 
----
-
-## Modalités de communication via RMW
-
-Le RMW prend en charge plusieurs **types de communication** entre nœuds ROS :
-
-- **Topics** : messages en mode **publieur-souscripteur** (asynchrone)
-- **Services** : appels **requête-réponse** (synchrone)
-- **Paramètres** : variables externes pour configurer dynamiquement un nœud
-
-> Ces modes sont essentiels pour concevoir des systèmes robotiques flexibles et interactifs.
+![bg right:40% 95%](./images/introduction/ros-architecture.jpg)
 
 ---
 
-## Fonctionnalités avancées du RMW
+## Les trois modes de communication ROS 2
 
-Le middleware ROS 2 permet des fonctionnalités avancées grâce à DDS (Data Distribution Service) :
+Le middleware ROS 2 permet plusieurs types d’échange entre les nœuds :
 
-- **QoS (Qualité de service)** : choix du niveau de fiabilité, de délai, de persistance...
-- **Sécurité** avec `sros2` : **authentification**, **chiffrement**, contrôle d'accès
-- **Interopérabilité** DDS : choix entre plusieurs implémentations (Fast DDS, Cyclone DDS, Connext...)
+- 📬 **Topics** : messages en mode **asynchrone** (publish/subscribe)  
+  > Ex : `/scan` (LiDAR), `/cmd_vel` (commande moteur)
 
-> Ces options rendent ROS 2 utilisable dans des contextes **industriels critiques**
+- 🔁 **Services** : **appel direct** avec réponse immédiate (requête / réponse)  
+  > Ex : demander la position actuelle du robot
+
+- 🎯 **Actions** : pour les **tâches longues** avec retour d’état régulier  
+  > Ex : envoyer un robot à une position
+
+> Ces mécanismes sont essentiels pour créer des systèmes robotiques interactifs.
+
+---
+
+## DDS : le moteur réseau de ROS 2
+
+Sous RMW, ROS 2 utilise un middleware nommé **DDS (Data Distribution Service)**.
+**DDS** est un **middleware réseau standardisé** qui permet à plusieurs programmes de **s’échanger des données en temps réel**.
+Il est défini par l’**OMG** (Object Management Group) — l’organisme qui maintient aussi **UML** (Unified Model Language).
+
+
+DDS apporte :
+- 🛠️ **Qualité de service (QoS)** : fiabilité, fréquence, persistance…
+- 🔒 **Sécurité** (`sros2`) : chiffrement, authentification, contrôle d’accès
+- 🔄 **Interopérabilité** : choix entre plusieurs moteurs DDS (Fast DDS, Cyclone DDS…)
+
+> ✅ Ces options font de ROS 2 une solution robuste, adaptée à la **robotique industrielle critique**.
+
+
+
+---
+
+# 🕸️ Ecosystème de ROS 2
 
 ---
 
@@ -195,7 +240,7 @@ Le middleware ROS 2 permet des fonctionnalités avancées grâce à DDS (Data Di
 - Environnement de **simulation physique 3D** pour tester les robots virtuellement
 - Supporte les capteurs (LiDAR, caméra, IMU…), moteurs, obstacles...
 
-> Permet de tester les algorithmes de navigation, contrôle et SLAM **sans robot physique**
+> 🎯 Permet de tester les algorithmes de navigation, contrôle et SLAM **sans robot physique**
 
 ![bg right:50% 95%](./images/introduction/gazebo.png)
 
@@ -206,7 +251,7 @@ Le middleware ROS 2 permet des fonctionnalités avancées grâce à DDS (Data Di
 - 🧭 **RViz** : visualiseur 3D interactif des données ROS (lidar, caméra, trajectoire, etc.)
 - 🧩 **rqt*** : suite d’outils graphiques modulaires (rqt_graph, rqt_console, rqt_plot...)
 
-🛠️ Utile pour :
+🎯 Utile pour :
 - Visualiser les capteurs en temps réel
 - Comprendre les interactions entre nœuds
 - Debuguer facilement son système ROS
@@ -257,7 +302,7 @@ NAV2 (Navigation 2) est le système de navigation ROS 2, successeur de **move_ba
 - Séparation entre contrôleurs et interfaces matériel (hardware abstraction layer)
 - Compatible avec MoveIt2, NAV2, etc.
 
-> Objectif : Rendre le logiciel indépendant du modèle hardware du robot.
+> 🎯 Rendre le logiciel indépendant du modèle hardware du robot.
 
 ---
 
@@ -278,12 +323,14 @@ NAV2 (Navigation 2) est le système de navigation ROS 2, successeur de **move_ba
 
 --- 
 
-## Projets connexes à ROS 2
+## 🌐 Projets connexes à ROS 2
 
-- **Autoware** : middleware de conduite autonome, basé sur ROS 2  
-- **ROS-Industrial** : standardisation ROS pour la robotique industrielle (ABB, Fanuc, UR...)
+ROS 2 est utilisé comme **socle logiciel** dans de nombreux projets spécialisés :
 
-> ROS 2 est un socle pour **de nombreux projets open-source** dans la robotique moderne
+- 🚗 **Autoware** : middleware open-source pour la **conduite autonome** (voitures, navettes...)  
+- 🏭 **ROS-Industrial** : adaptation de ROS aux besoins de la **robotique industrielle** (ABB, Fanuc, UR...)
+
+> 🧩 ROS 2 alimente une **écosystème en pleine expansion** de projets open-source dans la robotique moderne.
 
 ---
 
@@ -339,16 +386,20 @@ Parmi les outils clés ROS :
 
 ---
 
-## Topics & Messages
+## 📨 Topics & Messages
 
-- Les **topics** sont des canaux de communication utilisés pour les échanges **asynchrones**
-- Modèle **Publish / Subscribe**
-  - Un ou plusieurs nœuds publie un message sur un topic
-  - Un ou plusieurs nœuds peuvent s’y abonner
+Les **topics** sont des **canaux de communication asynchrones** entre les nœuds ROS.
 
-Exemple : 
-> `/camera/image_raw` transporte des images  
-> Type du message : `sensor_msgs/msg/Image`
+🧭 Modèle **Publish / Subscribe** :
+- 📨 Un ou plusieurs nœuds **publient** des messages sur un topic
+- 📥 Un ou plusieurs nœuds peuvent **s’abonner** pour les recevoir
+
+
+📷 **Exemple** :  
+Le topic `/camera/image_raw` transporte des images au format :  
+→ `sensor_msgs/msg/Image`
+
+> ✅ Idéal pour les flux de données continus : capteurs, commandes, états du robot...
 
 ---
 
@@ -356,14 +407,19 @@ Exemple :
 
 ---
 
+## 🔁 Services
 
-## Services
+Les **services** permettent une **communication synchrone** entre deux nœuds :  
+📤 Une **requête** est envoyée → 📥 Une **réponse** est retournée.
 
-- Permettent une **communication synchrone** (requête ↔ réponse)
-- Exemple : demander la position actuelle d’un robot
-- Modèle : un client envoie une **requête**, un serveur répond
+🧭 Modèle **Client / Serveur** :
+- Le **client** envoie une requête
+- Le **serveur** traite et renvoie une réponse
 
-> Un service ne peut avoir **qu’un seul fournisseur**, mais plusieurs clients
+📍 **Exemple** :  
+Demander la **position actuelle** du robot ou changer un paramètre à la volée.
+
+> ⚠️ Un service ne peut avoir **qu’un seul serveur**, mais **plusieurs clients** peuvent l’appeler.
 
 ---
 
@@ -379,7 +435,8 @@ Exemple :
   - 🔄 Un retour intermédiaire (feedback)
   - ✅ Un résultat
 
-Exemple : atteindre une destination en renvoyant l’avancement à chaque étape
+📍 **Exemple** :  
+Atteindre une destination en renvoyant l’avancement à chaque étape
 
 ---
 
@@ -387,42 +444,92 @@ Exemple : atteindre une destination en renvoyant l’avancement à chaque étape
 
 ---
 
+## ⚙️ Paramètres
 
-## Paramètres
+Les **paramètres** sont des **variables dynamiques** associées à un nœud ROS 2.
 
-- Variables **configurables dynamiquement** pour un nœud
-- Accessibles via le code ou en ligne de commande
+🔧 Ils permettent de **modifier le comportement** d’un nœud **sans changer le code**  
+➡️ Accessibles via le code **ou** en ligne de commande (`ros2 param`)
 
-Exemples :
-- Vitesse maximale
-- Nom du robot
-- Choix du contrôleur
+📌 **Exemples de paramètres** :
+- 🚀 Vitesse maximale autorisée
+- 🤖 Nom du robot
+- 🎮 Type de contrôleur utilisé
 
-🔧 Utiles pour personnaliser un comportement **sans modifier le code**
-
----
-
-## Packages ROS 2
-
-- Un **package** est une unité de base dans un projet ROS 2
-- Il regroupe tous les fichiers liés à une fonctionnalité :
-  - Code source des **nœuds** (Python ou C++)
-  - Fichiers de configuration (YAML, launch, param...)
-  - Ressources : URDF, images, bagfiles...
-
-> Un package = un **dossier structuré**, versionnable et réutilisable
+> ✅ Très utiles pour tester, ajuster ou déployer un système de manière flexible.
 
 ---
 
-## Workspace ROS 2
+## 🗂️ Structure d’un projet ROS 2
 
-Un **workspace** est un dossier qui regroupe vos **packages en développement**.
+Un projet ROS 2 est organisé de manière **modulaire et hiérarchique**, pour faciliter le développement collaboratif.
 
-Il contient :
-- 📂 Un sous-dossier `src/` où vivent vos packages
-- ⚙️ Les dossiers `build/`, `install/` et `log/` générés après compilation
+- 📦 Chaque **fonctionnalité** est placée dans un **package** ROS 2
+- 📁 Ces packages sont regroupés dans un **workspace**
+- 🧰 Le workspace permet de compiler, tester et lancer tous les packages ensemble
 
-> Un workspace permet de **compiler, tester et exécuter** vos packages localement
+> 🔧 Cette structure encourage la **réutilisabilité**, la **clarté** et la **maintenance à long terme**.
+
+---
+
+
+## 📦 Packages ROS 2
+
+Un **package** est l’**unité de base** d’un projet dans ROS 2.  
+Il regroupe **tout ce qui est nécessaire** à une fonctionnalité robotique.
+
+📁 Un package contient généralement :
+- 🧠 Le **code source** des nœuds (Python ou C++)
+- ⚙️ Les **fichiers de configuration** : `YAML`, fichiers `launch`, paramètres...
+- 🧩 Les **ressources** : `URDF`, images, `rosbag`, scripts, etc.
+
+> ✅ Un package ROS 2 est un **dossier structuré**, **versionnable**, et **réutilisable** dans d'autres projets.
+
+---
+
+## 🧱 Workspace ROS 2
+
+Un **workspace** est un dossier qui regroupe vos **packages en développement**.  
+C’est l’environnement dans lequel vous développez, compilez et testez vos fonctionnalités ROS 2.
+
+📁 Un workspace typique contient :
+- 📂 `src/` → vos **packages sources**
+- ⚙️ `build/` → fichiers de **compilation**
+- 📦 `install/` → **binaries** et exécutables
+- 📝 `log/` → journaux de compilation et exécution
+
+> ✅ Le workspace permet de **compiler, exécuter, tester** tous vos packages localement avec `colcon build` et `source install/setup.bash`.
+
+---
+
+## 🚀 Fichiers de lancement (launch files)
+
+Les **fichiers launch** permettent de **lancer plusieurs nœuds ROS 2 à la fois**, avec leurs paramètres et configurations.
+
+🧭 Ils sont écrits en **Python** (`.py`) et permettent :
+- de démarrer plusieurs nœuds simultanément
+- de charger des paramètres depuis des fichiers `YAML`
+- de définir des arguments (nom de robot, namespace, etc.)
+
+--- 
+
+## 🚀 Fichiers de lancement (launch files)
+
+📄 Exemple :
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='my_robot',
+            executable='controller_node',
+            name='controller',
+            parameters=['config/params.yaml']
+        )
+    ])
+```
 
 ---
 
@@ -441,13 +548,9 @@ Il contient :
 ## TODO :
 
 - Donnée des liens vers les ressources
-- Système de REP
-- Avantages de ROS 2 : Réecrire une partie
 - Chiffre sur ROS 2
 - Ajouter un lien vers les images de la distributions
 - ROS Domain ID
-- Partie MiddleWare : On ne comprends bien ce qu’est le dds ? Où sont les actions ? Si rmw ?
-- Slide RWM avant l'écosystème
 - Launch files
 
 --- 
@@ -455,4 +558,4 @@ Il contient :
 # Liens utilisés
 
 - Image RVIZ : Pütz, Sebastian & Wiemann, Thomas & Hertzberg, Joachim. (2019). Tools for Visualizing, Annotating and Storing Triangle Meshes in ROS and RViz. 1-6. 10.1109/ECMR.2019.8870953. 
-- 
+- [ROS 2 Architecture Overview](https://automaticaddison.com/ros-2-architecture-overview/)
