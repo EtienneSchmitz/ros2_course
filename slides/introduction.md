@@ -30,9 +30,13 @@ Etienne Schmitz
 
 ---
 
-## Sommaires
+## 📄 Table des matières
 
-
+1. [🌐 ROS 2 : un écosystème open-source pour la robotique](#3)
+2. [🕸️ Ecosystème de ROS 2](#18)
+3. [🧠 Concepts de base ROS 2](#30)
+4. [🗂️ Organisation d’un projet ROS 2](#40)
+5. [🔧 TP - Journée 1](#50)
 
 ---
 
@@ -227,8 +231,6 @@ DDS apporte :
 
 > ✅ Ces options font de ROS 2 une solution robuste, adaptée à la **robotique industrielle critique**.
 
-
-
 ---
 
 # 🕸️ Ecosystème de ROS 2
@@ -362,7 +364,7 @@ Parmi les outils clés ROS :
 
 --- 
 
-# Concepts de base ROS 2
+# 🧠 Concepts de base ROS 2
 
 ---
 
@@ -460,6 +462,10 @@ Les **paramètres** sont des **variables dynamiques** associées à un nœud ROS
 
 ---
 
+# 🗂️ Organisation d’un projet ROS 2
+
+---
+
 ## 🗂️ Structure d’un projet ROS 2
 
 Un projet ROS 2 est organisé de manière **modulaire et hiérarchique**, pour faciliter le développement collaboratif.
@@ -471,7 +477,6 @@ Un projet ROS 2 est organisé de manière **modulaire et hiérarchique**, pour f
 > 🔧 Cette structure encourage la **réutilisabilité**, la **clarté** et la **maintenance à long terme**.
 
 ---
-
 
 ## 📦 Packages ROS 2
 
@@ -533,27 +538,68 @@ def generate_launch_description():
 
 ---
 
-## Travaux pratiques
+## 🌐 ROS_DOMAIN_ID — Isolation réseau des robots
+
+ROS 2 utilise **DDS**, qui fonctionne par **multidiffusion** sur le réseau local.  
+Pour éviter que plusieurs robots ou groupes se perturbent mutuellement, on utilise :
+
+### 🔐 `ROS_DOMAIN_ID`
+
+- C’est un **identifiant numérique** (entre `0` et `232`)  
+- Il permet d’**isoler les communications DDS** sur un même réseau Wi-Fi
+- Deux systèmes avec des `ROS_DOMAIN_ID` différents **ne communiquent pas entre eux**
+
+---
+
+### ✅ Bonnes pratiques
+
+- Chaque groupe de travail ou robot doit avoir un **ROS_DOMAIN_ID unique** 
+- Le même `ROS_DOMAIN_ID` doit être défini sur **le robot et le PC**
+
+🔧 Exemple à ajouter dans `~/.bashrc` :
+
+```bash
+export ROS_DOMAIN_ID=12
+```
+
+> 🛑 Ne pas utiliser le même numéro que les autres groupes dans la salle (si réseau commun)
+
+---
+
+## 🖥️ La CLI ROS 2 (`ros2`)
+
+ROS 2 fournit une **interface en ligne de commande (CLI)** puissante pour interagir avec l’écosystème :
+
+🧰 Commande principale :  
+```bash
+ros2 <commande> [options]
+```
+
+> ✅ Idéal pour **inspecter**, **tester**, **lancer** ou **déboguer** des éléments ROS 2 directement en terminal.
+
+---
+
+## 🔧 Commandes courantes
+
+| Catégorie     | Exemple                              | Description                                 |
+|---------------|--------------------------------------|---------------------------------------------|
+| 📦 Packages    | `ros2 pkg list`                     | Liste tous les packages installés           |
+| 🧠 Nœuds       | `ros2 node list`                    | Liste les nœuds actifs                      |
+| 📨 Topics      | `ros2 topic echo /scan`             | Affiche les messages publiés sur un topic   |
+| ⚙️ Paramètres  | `ros2 param list`                   | Liste les paramètres d’un nœud              |
+| 🔁 Services    | `ros2 service list`                 | Liste les services disponibles              |
+| 🎯 Actions     | `ros2 action list`                  | Liste les actions disponibles               |
+| 🧪 Diagnostic  | `ros2 doctor`                       | Diagnostique l’installation ROS 2           |
+
+---
+
+## 🔧 Travaux pratiques
 
 - [Installation ROS 2 - Jazzy (PC)](https://ros2.etienne-schmitz.com/docs/install/pc)
 - [TP 1 - Introduction ROS 2](https://ros2.etienne-schmitz.com/docs/introduction/tp)
 - Si vous avez le temps, débuter la deuxième journée par l'installation du robot [TurtleBot 3](https://ros2.etienne-schmitz.com/docs/install/turtlebot).
 
 ---
-
-## Ressources
-
----
-
-## TODO :
-
-- Donnée des liens vers les ressources
-- Chiffre sur ROS 2
-- Ajouter un lien vers les images de la distributions
-- ROS Domain ID
-- Launch files
-
---- 
 
 # Liens utilisés
 
