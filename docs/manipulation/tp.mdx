@@ -43,11 +43,50 @@ Pour visualiser un modèle interactif du robot dans RViz (ou dans un visualiseur
 ```bash
  ros2 launch open_manipulator_description model_x.launch.py 
 ```
-Cela :
+Cette commande :
+- 📦 Charge la description URDF du robot
+- 🧩 Initialise les nœuds nécessaires à la visualisation
+- 🖼️ Affiche le robot dans RViz
+- 🎛️ Permet de manipuler les joints du robot via des sliders ou par l’envoi de messages ROS
 
-- Affichera le robot dans RViz
-- Vous permettra de manipuler les joints du robot via des sliders ou via ROS
-- Est utile pour vérifier la validité de la modélisation et tester des poses
+#### 📡 2.a. Explorer les topics publiés par le robot
+
+À l’aide de la commande ros2 topic, explorez les communications du robot.
+- Quel est le nom du topic qui publie l’état courant des articulations (positions, vitesses, efforts) ?
+- Quel est le type du message transmis par ce topic ?
+- À quelle fréquence (en Hz) le robot met-il à jour l’état de ses joints ?
+
+#### 📈 2.b. Tracer la courbe des positions des moteurs en temps réel
+
+##### 🔹 Option 1 — Avec `rqt_plot`
+
+Lancez l’outil de visualisation graphique intégré à ROS 2 :
+```bash
+ros2 run rqt_plot rqt_plot
+```
+
+Dans le champ de saisie, entrez le nom du topic que vous souhaitez tracer. Pour les positions articulaires, utilisez : 
+`/joint_states/position[<indice_du_joint>]`
+
+> 🔢 L’indice dépend de l’ordre des joints dans le message JointState. Par exemple, si joint3 est le quatrième élément, utilisez position[3].
+
+##### 🔹 Option 2 — Avec `PlotJuggler`
+
+PlotJuggler offre une interface plus puissante et interactive. Pour l’installer :
+```bash
+sudo apt install ros-jazzy-plotjuggler ros-jazzy-plotjuggler-ros
+```
+Ensuite :
+1. Lancez PlotJuggler depuis votre terminal :
+```bash
+ros2 run plotjuggler plotjuggler
+```
+2. Dans l’onglet **Streaming**, cliquez sur ROS Topic Subscriber et sélectionnez `/joint_states`, puis appuyez sur Start.
+
+3. Faites glisser les positions des joints sur le graphique pour les visualiser en temps réel.
+
+4. Bougez avec les sliders pour observer l’évolution des valeurs en temps réel.
+
 
 ### TODO : Divers.
 
