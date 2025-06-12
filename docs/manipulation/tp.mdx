@@ -87,10 +87,87 @@ ros2 run plotjuggler plotjuggler
 
 4. Bougez avec les sliders pour observer l’évolution des valeurs en temps réel.
 
+---
 
-### TODO : Divers.
+## 🧠 Partie 2 — Manipulation du robot OpenManipulator-X
 
-Pour lancer le robot dans Gazebo, vous pouvez utiliser les commandes suivantes :
+### 0. Lancement du robot dans Gazebo
+
+Pour simuler le robot dans l’environnement physique **Gazebo**, utilisez la commande suivante :
 ```bash
-ros2 launch open_manipulator_bringup gazebo.launch.py #for om_x and om_y
+ros2 launch open_manipulator_bringup gazebo.launch.py
 ``` 
+
+Vous devriez voir le robot **OpenManipulator-X** apparaître dans la scène Gazebo, prêt à être manipulé.
+
+> **Remarque** : Gardez **Gazebo ouvert** en permanence pour les manipulations à venir.
+
+### 1. MoveIt avec RViz : planification et exécution
+
+> 🔄 Cela lance Gazebo avec le robot déjà placé dans la scène, prêt à être manipulé.
+
+:::tip Astuce : Téléopération
+Vous pouvez contrôler le robot via le clavier avec cette commande :
+```bash
+ros2 run open_manipulator_teleop keyboard_control_x.py
+```
+:::
+
+#### 🤖 Lancement de MoveIt (planification de mouvement)
+
+Pour utiliser MoveIt avec le robot OpenManipulator-X, exécutez :
+```bash
+ros2 launch open_manipulator_moveit_config moveit.launch.py
+```
+
+Cela ouvre RViz avec MoveIt configuré et prêt à planifier les mouvements du bras manipulateur.
+
+#### 🎮 Interaction avec MoveIt dans RViz
+
+
+Dans RViz et dans l’onglet **MotionPlanning**, vous pouvez interagir avec le robot de la manière suivante :
+1. Sélectionnez le planning group `arm`.
+2. Déplacez la sphère bleue (goal position/orientation).
+3. Cliquez sur `Plan` pour générer une trajectoire.
+4. Cliquez sur `Execute` pour exécuter le mouvement.
+
+:::tip 💡 Astuce
+Le bouton `Plan and Execute` permet de faire les deux étapes en un seul clic.
+:::
+
+> 🧪 Explorez :
+> - Le déplacement du bras du robot en manipulant la sphère bleue.
+> - Le changement de goal state.
+> - La modification des joints dans l’onglet Joint States.
+
+##### ❓ Questions d’observation
+
+- 🔘 Que représente le robot gris, parfois mobile mais lent ?
+- 🔸 Que représente le robot orange (fixe) ?
+- 🔁 Que représente le robot gris qui répète un mouvement rapide ?
+
+#### ✋ Tester la planification du gripper
+ 
+Vous pouvez aussi planifier le mouvement du gripper via MoveIt :
+
+##### 📌 Étapes :
+1. Dans l’onglet **Planning**, section **Query** :
+2. Définissez le `Start state` sur `current`.
+3. Définissez le `Goal state` sur un état du gripper (ouvert / fermé).
+4. Sélectionnez le planning group `gripper`.
+5. Cliquez sur `Plan`, puis `Execute`.
+
+##### ❓ Questions de compréhension
+
+- 🧩 Quelle est la différence entre les groupes `arm` et `gripper` ?
+- 🎯 Qu'est-ce qu’un planning group dans MoveIt ?
+    - À quoi cela sert-il ?
+    - Pourquoi en existe-t-il plusieurs ?
+
+### 2. Interroger l’arbre des transformations TF
+
+TODO
+
+### 3. MoveIt avec Python : planification et exécution
+
+TODO 
