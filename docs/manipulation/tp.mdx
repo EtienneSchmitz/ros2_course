@@ -4,8 +4,54 @@ sidebar_position: 3
 
 # 🛠️ Travaux pratique
 
-Pour lancer le robot dans Gazebo, vous pouvez utiliser les commandes suivantes :
+## 🧠 Partie 1 — Comprendre la représentation d’un robot sous ROS 2
 
+Un robot intégré dans l’écosystème ROS 2 est constitué au minimum de deux éléments essentiels :
+
+- 🔧 Un descripteur URDF (Unified Robot Description Format) qui décrit la structure du robot (liens, joints, dimensions…)
+- 🧠 Un contrôleur qui permet d’interagir avec les capteurs et actionneurs du robot
+
+### 🔍 1. Visualisation et compréhension du descripteur URDF
+
+Pour générer et visualiser la structure du robot OpenMANIPULATOR-X, suivez les étapes suivantes :
+
+#### 🛠️ Génération du fichier URDF
+
+💻 Dans un terminal, exécutez :
+```bash
+ros2 run xacro xacro $HOME/ros2_ws/src/open_manipulator/open_manipulator_description/urdf/om_x/open_manipulator_x.urdf.xacro -o /tmp/open_manipulator_x.urdf
+```
+
+#### 📈 Génération de la visualisation de l’arbre URDF
+
+Ensuite, convertissez le fichier en une représentation graphique :
+```bash
+urdf_to_graphiz /tmp/open_manipulator_x.urdf
+```
+
+Un fichier PDF sera généré dans le répertoire courant. Vous pouvez l’ouvrir avec un visualiseur PDF :
+```bash
+evince open_manipulator_x.urdf.pdf
+``` 
+
+Cela vous permettra d’observer l’arbre des liens et des articulations du robot, utile pour comprendre la cinématique du bras.
+
+### 🤖 2. Visualisation 3D du robot et de ses articulations
+
+Pour visualiser un modèle interactif du robot dans RViz (ou dans un visualiseur 3D similaire), lancez le fichier suivant :
+
+```bash
+ ros2 launch open_manipulator_description model_x.launch.py 
+```
+Cela :
+
+- Affichera le robot dans RViz
+- Vous permettra de manipuler les joints du robot via des sliders ou via ROS
+- Est utile pour vérifier la validité de la modélisation et tester des poses
+
+### TODO : Divers.
+
+Pour lancer le robot dans Gazebo, vous pouvez utiliser les commandes suivantes :
 ```bash
 ros2 launch open_manipulator_bringup gazebo.launch.py #for om_x and om_y
 ``` 
