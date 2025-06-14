@@ -140,7 +140,42 @@ ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_work
 
 📍 Pour donner des ordres de navigation, utilisez l'outil *Nav2 Goal* sur RViz. Cliquez et Glissez avec la souris sur la carte là où le robot doit aller.
 
-## Partie 4 — TP : Exploration autonome
+## 🧪 Partie 4 — TP : Exploration autonome
 
-🎯 L'objectif final du TP est de faire passer le robot par une suite de 2 ou 3 points de passage, comme pour une patrouille, avec un retour au point de départ. 
+🎯 **Objectif** : Programmer le robot pour qu’il suive une séquence de **2 à 3 points de passage**, comme lors d’une patrouille, avec un **retour automatique au point de départ**.
 
+📥 Téléchargez le [fichier Python du TP](/files/go_to.py) ci-dessous, puis **modifiez-le** pour répondre aux objectifs de la patrouille.
+
+
+## Simulation avec Gazebo
+
+
+:::warning
+💡 À faire uniquement si vous **n'avez pas de TurtleBot3 physique**.
+:::
+
+### 🖥️ Simulation du TurtleBot3 dans Gazebo
+
+#### 1. Installer les dépendances :
+
+```bash
+cd ~/ros_workshop_ws/src
+git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+
+cd ~/ros_workshop_ws
+colcon build --symlink-install
+```
+
+#### 2. Lancer la simulation dans Gazebo :
+
+```bash
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+```
+
+Une fois la simulation lancée, vous pouvez utiliser :
+- la téléopération
+- la navigation autonome
+
+:::tip 
+🕒 N'oubliez pas d’ajouter `use_sim_time:=true` lors du lancement des commandes la navigation pour synchroniser le temps simulé.
+:::
