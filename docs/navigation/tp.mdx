@@ -118,7 +118,7 @@ Une fois satisfait de la cartographie, sauvegardez-la :
 
 ```bash
 mkdir ~/map 
-ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop` 
+ros2 run nav2_map_server map_saver_cli -f ~/map/map_workshop
 ```
 
 🗂️ Cela créera :
@@ -146,17 +146,16 @@ ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_work
 
 📥 Téléchargez le [fichier Python du TP](/files/go_to.py) ci-dessous, puis **modifiez-le** pour répondre aux objectifs de la patrouille.
 
+Si vous souhaitez identifier les points de passage à utiliser, vous pouvez vous servir de la fonctionnalité `Publish Point` dans RViz. 
+Un simple survol dans la scène affichera les coordonnées du point sélectionné, en bas de l'interface.
 
-## Simulation avec Gazebo
-
+## 🖥️ Simulation du TurtleBot3 dans Gazebo
 
 :::warning
 💡 À faire uniquement si vous **n'avez pas de TurtleBot3 physique**.
 :::
 
-### 🖥️ Simulation du TurtleBot3 dans Gazebo
-
-#### 1. Installer les dépendances :
+### 1. Installer les dépendances
 
 ```bash
 cd ~/ros_workshop_ws/src
@@ -166,7 +165,7 @@ cd ~/ros_workshop_ws
 colcon build --symlink-install
 ```
 
-#### 2. Lancer la simulation dans Gazebo :
+### 2. Lancer la simulation dans Gazebo
 
 ```bash
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
