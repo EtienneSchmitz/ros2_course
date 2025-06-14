@@ -311,4 +311,41 @@ Elle fournit une **boîte à outils complète** combinant :
 
 ---
 
+## 🗺️ Global CostMap vs Local CostMap
+
+### 🌍 Global CostMap
+- Vue **globale** de l’environnement
+- Générée à partir de la **carte statique** + obstacles connus
+- Utilisée par le **Planner Server** pour calculer un chemin
+
+### 🚧 Local CostMap
+- Vue **locale**, autour du robot (ex : quelques mètres)
+- Met à jour les **obstacles dynamiques** en temps réel (personnes, objets...)
+- Utilisée par le **Controller Server** pour suivre et ajuster le chemin
+
+> 📌 Les deux cartes sont complémentaires :  
+> Le robot **planifie globalement** et **réagit localement**
+
+
+---
+
+## 🤖 TurtleBot3
+
+- Plateforme mobile open-source compatible ROS 2
+- Capteurs :
+  - 🔦 LIDAR 2D pour la détection d’obstacles
+  - ⚙️ Encodeurs pour l’odométrie
+  - 🧭 IMU pour orientation et stabilisation
+
+![bg right fit 50%](./images/navigation/turtlebot.jpeg)
+
+---
+
+## 🔧 Travaux pratiques
+
+- [Installation ROS 2 - Turtlebot](https://ros2.etienne-schmitz.com/docs/install/turtlebot)
+- [TP 2 - Navigation ROS 2](https://ros2.etienne-schmitz.com/docs/navigation/tp)
+
+---
+
 Présentation ROS 2 - TP 2
