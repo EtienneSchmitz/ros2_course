@@ -8,6 +8,30 @@ paginate: true
         text-align: right;
         margin-right : 50px;
     }
+    
+    img[alt~="center"] {
+        display: block;
+        margin: 0 auto;
+    }
+
+    div.twocols {
+        margin-top: 35px;
+        column-count: 2;
+    }
+    
+    div.twocols p:first-child,
+    div.twocols h1:first-child,
+    div.twocols h2:first-child,
+    div.twocols ul:first-child,
+    div.twocols ul li:first-child,
+    div.twocols ul li p:first-child {
+        margin-top: 0 !important;
+    }
+    
+    div.twocols p.break {
+        break-before: column;
+        margin-top: 0;
+    }
 </style>
 
 <!-- _class: lead -->
@@ -55,7 +79,7 @@ Etienne SCHMITZ
 
 --- 
 
-# Capteurs et techniques de localisation
+# 🔍 Localisation : capteurs et principes
 
 ---
 
@@ -156,12 +180,135 @@ Etienne SCHMITZ
 
 --- 
 
-AMCL + SLAM
+# 🧭 Techniques de localisation en ROS 2
+
+---
+
+## 🗺️ SLAM — Simultaneous Localization and Mapping
+
+- Permet à un robot de :
+  - 📍 Se **localiser**
+  - 🗺️ **Construire une carte** de l’environnement inconnu
+- Utilisé lors de la **première exploration**
+- Fonctionne avec :
+  - 🔦 LIDAR (2D ou 3D)
+  - 📷 Caméras (RGB-D, stéréo)
+  - ⚙️ Odométrie (IMU, encodeurs)
+
+> 📌 SLAM = **Localisation + Cartographie simultanées**  
 
 --- 
 
-Stack NAV 2
+## 📍 AMCL — Adaptive Monte Carlo Localization
+
+- Permet de se **localiser dans une carte existante**
+- Utilise un **filtre à particules** :
+  - Estime la position à partir de plusieurs hypothèses
+- Combine :
+  - 🔦 LIDAR
+  - ⚙️ Odométrie
+  - 🧭 IMU
+
+> 📌 Nécessite une **carte déjà construite** (ex : par SLAM)  
+> 🔗 [Ressource : Méthode de Monte Carlo – Wikipédia](https://fr.wikipedia.org/wiki/Méthode_de_Monte-Carlo)
+
+---
+
+## 📍 AMCL - Exemples (robot 1-D)
+
+![h:550 center](./images/navigation/robot_mcl.webp)
+
+---
+
+## 📍 AMCL - Exemples (robot 2-D)
+
+![h:550 center](./images/navigation/AMCL_2D.png)
+
+---
+
+# 🗺️ NAV 2 - Framework de navigation de ROS 2
+
+---
+
+## 🚀 Navigation ROS 2 — Présentation de la stack Nav2
+
+La stack **Nav2** est un composant **essentiel** de ROS 2 pour permettre à un robot de **naviguer de manière autonome** dans un environnement **inconnu ou non structuré**.
+
+Elle fournit une **boîte à outils complète** combinant :
+
+- 🗺️ **Planification de chemin** (global et local)
+- 🛑 **Évitement d’obstacles dynamiques et statiques**
+- 📡 **Traitement des données de capteurs** (LIDAR, odométrie, IMU...)
+- 🧭 **Localisation et suivi de position** (SLAM, AMCL)
+- ⚙️ **Exécution des mouvements** avec feedback
+
+> Nav2 orchestre ces éléments pour permettre un comportement de **navigation intelligent et adaptable**.
 
 --- 
 
-Présentation ROS2
+##  📦 Structure interne de Nav2
+
+![h:550 center](./images/navigation/nav2_architecture.png)
+
+---
+
+## 🧠 Le BT Navigator Server
+
+- Le **cœur** de la stack Nav2 : il orchestre les composants
+- Utilise un **Behavior Tree (BT)** pour organiser les décisions
+- Reçoit une cible → planifie, contrôle, adapte la trajectoire
+
+> Il guide le robot du début à la fin de sa mission
+
+---
+
+## 🗺️ Le Planner Server
+
+- Reçoit :
+  - 📍 Position actuelle
+  - 🎯 Objectif (destination)
+- Calcule un **itinéraire optimal** :
+  - Le plus court
+  - En évitant les obstacles
+  - Selon des critères spécifiques (couverture, sécurité…)
+
+> 🔁 Envoie un **chemin global** à suivre
+
+---
+
+## ⚙️ Le Controller Server
+
+- Transforme le **chemin global** en **mouvements précis**
+- Contrôle les roues/moteurs
+- Adapte les commandes en temps réel :
+  - Obstacles imprévus
+  - Glissements ou erreurs de trajectoire
+
+> 🧭 Il garde le robot sur la bonne voie, même dans un environnement changeant
+
+---
+
+## 🔄 Comportements et ajustements
+
+<div class="twocols">
+
+### 🎭 Behavior Server
+- Réagit aux imprévus :
+  - Robot bloqué ?
+  - Obstacle soudain ?
+- Lance des **comportements de récupération**
+  - Reculer, changer de voie, réessayer
+
+<p class="break"></p>
+
+### ✨ Smoother Server
+- Améliore le chemin reçu :
+  - Courbes plus douces
+  - Vitesse et direction réalistes
+
+> Le robot se déplace de manière **fluide et intelligente**
+</div>
+
+---
+
+Présentation ROS 2 - TP 2
