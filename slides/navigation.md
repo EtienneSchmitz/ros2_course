@@ -345,7 +345,3 @@ Elle fournit une **boîte à outils complète** combinant :
 
 - [Installation ROS 2 - Turtlebot](https://ros2.etienne-schmitz.com/docs/install/turtlebot)
 - [TP 2 - Navigation ROS 2](https://ros2.etienne-schmitz.com/docs/navigation/tp)
-
----
-
-Présentation ROS 2 - TP 2
