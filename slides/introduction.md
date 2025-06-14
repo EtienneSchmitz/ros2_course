@@ -1,7 +1,6 @@
 ---
 marp: true
 title: Introduction à ROS 2
-theme: default
 paginate: true
 ---
 
@@ -20,7 +19,7 @@ paginate: true
 <!-- _footer: "" -->
  
 
-# ROS 2  
+# Workshop ROS 2  
 
 ## Introduction à l’écosystème
 
