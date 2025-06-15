@@ -47,10 +47,6 @@ Etienne SCHMITZ
 
 ---
 
-## Sommaire
-
----
-
 ## 🚶‍♂️ Pourquoi un robot doit-il savoir naviguer ?
 
 🎯 Pour **accomplir une mission** dans un environnement réel :
