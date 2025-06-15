@@ -216,7 +216,7 @@ Quand plusieurs solutions existent, on choisit celle qui :
 
 ---
 
-# Les formats - URDF vs SDRF
+# Modélisation et représentation du robot dans ROS 2
 
 ---
 
