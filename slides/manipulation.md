@@ -43,7 +43,7 @@ paginate: true
 
 Etienne SCHMITZ
 
-![bg right fit](./images/navigation/logo.jpg)
+![bg right:50% ](./images/manipulation/ros2_manipulation.jpeg)
 
 ---
 
