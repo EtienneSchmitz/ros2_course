@@ -164,9 +164,30 @@ Vous pouvez aussi planifier le mouvement du gripper via MoveIt :
     - À quoi cela sert-il ?
     - Pourquoi en existe-t-il plusieurs ?
 
-### 2. Interroger l’arbre des transformations TF
+### 2. 🌐 Visualisation et interrogation de l’arbre des transformations (tf)
 
-TODO
+💻 Étapes :
+1. Lancez MoveIt.
+2. Dans un nouveau terminal, exécutez la commande suivante :
+```bash
+ros2 run tf2_tools view_frames
+```
+Cela génère un fichier frames.pdf représentant l’arbre des repères (frames) du robot.
+
+🔍 Ce fichier montre les mêmes repères que ceux affichés en rouge-vert-bleu dans RViz. Chaque repère correspond à un élément du robot ou de la scène.
+
+❓ Questions
+- Quel est le nom du repère de base du robot ?
+- Quels sont les noms des deux repères correspondant aux effecteurs finaux possibles ?
+- Quelle est la position actuelle d’un des effecteurs par rapport au repère de base ?
+
+💡 Pour cela, utilisez la commande suivante (en remplaçant les noms de repères) :
+```bash
+ros2 run tf2_ros tf2_echo <repère_base> <repère_effecteur>
+```
+
+> Cette commande affiche la transformation (position et orientation) du repère de l’effecteur dans celui de base.
+> Vous pouvez noter les coordonnées de position pour les utiliser ensuite comme cible de planification dans MoveIt.
 
 ### 3. MoveIt avec Python : planification et exécution
 
