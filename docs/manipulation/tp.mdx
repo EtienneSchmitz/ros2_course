@@ -191,4 +191,42 @@ ros2 run tf2_ros tf2_echo <repère_base> <repère_effecteur>
 
 ### 3. MoveIt avec Python : planification et exécution
 
-TODO 
+
+```python
+from geometry_msgs.msg import PoseStamped
+from moveit_commander import PlanningSceneInterface, MoveGroupCommander
+import rclpy
+import time
+
+rclpy.init()
+scene = PlanningSceneInterface()
+group = MoveGroupCommander("arm")
+
+time.sleep(2)  # Attente pour connexion à RViz
+
+# Ajouter un cube
+cube_pose = PoseStamped()
+cube_pose.header.frame_id = "world"
+cube_pose.pose.position.x = 0.4
+cube_pose.pose.position.y = 0.0
+cube_pose.pose.position.z = 0.025
+scene.add_box("cube", cube_pose, size=(0.05, 0.05, 0.05))
+
+# Aller au-dessus du cube
+pose = group.get_current_pose().pose
+pose.position.x = 0.4
+pose.position.y = 0.0
+pose.position.z = 0.1
+group.set_pose_target(pose)
+group.go(wait=True)
+group.clear_pose_targets()
+
+# Descendre
+pose.position.z = 0.045
+group.set_pose_target(pose)
+group.go(wait=True)
+group.clear_pose_targets()
+
+# Attacher le cube
+scene.attach_box(group.get_end_effector_link(), "cube")
+```
