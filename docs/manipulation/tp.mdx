@@ -117,7 +117,7 @@ ros2 run open_manipulator_teleop keyboard_control_x.py
 
 Pour utiliser MoveIt avec le robot OpenManipulator-X, exécutez :
 ```bash
-ros2 launch open_manipulator_moveit_config moveit.launch.py
+LC_NUMERIC=en_US.UTF-8 ros2 launch open_manipulator_moveit_config moveit_core.launch.py
 ```
 
 Cela ouvre RViz avec MoveIt configuré et prêt à planifier les mouvements du bras manipulateur.
