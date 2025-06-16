@@ -19,7 +19,7 @@ Pour générer et visualiser la structure du robot OpenMANIPULATOR-X, suivez les
 
 💻 Dans un terminal, exécutez :
 ```bash
-ros2 run xacro xacro $HOME/ros2_ws/src/open_manipulator/open_manipulator_description/urdf/om_x/open_manipulator_x.urdf.xacro -o /tmp/open_manipulator_x.urdf
+ros2 run xacro xacro $HOME/ros_workshop_ws/src/open_manipulator/open_manipulator_description/urdf/om_x/open_manipulator_x.urdf.xacro -o /tmp/open_manipulator_x.urdf
 ```
 
 #### 📈 Génération de la visualisation de l’arbre URDF
@@ -189,44 +189,32 @@ ros2 run tf2_ros tf2_echo <repère_base> <repère_effecteur>
 > Cette commande affiche la transformation (position et orientation) du repère de l’effecteur dans celui de base.
 > Vous pouvez noter les coordonnées de position pour les utiliser ensuite comme cible de planification dans MoveIt.
 
-### 3. MoveIt avec Python : planification et exécution
+## 💻 Partie 3 - Planification avec MoveIt en C++ (OpenManipulator-X)
 
+:::tip
+Si vous souhaitez utiliser MoveIt avec du **code Python**, il est recommandé d’utiliser un robot mieux supporté comme le **Franka Emika Panda** ou l’**UR5**.
 
-```python
-from geometry_msgs.msg import PoseStamped
-from moveit_commander import PlanningSceneInterface, MoveGroupCommander
-import rclpy
-import time
+Le bras **OpenManipulator-X** fonctionne beaucoup mieux avec MoveIt en **C++**, comme dans la documentation officielle de ROBOTIS.
+:::
 
-rclpy.init()
-scene = PlanningSceneInterface()
-group = MoveGroupCommander("arm")
+### 🎯 Objectif
 
-time.sleep(2)  # Attente pour connexion à RViz
+En vous inspirant de l’exemple C++ disponible ici :  
+🔗 [open_manipulator_playground — GitHub ROBOTIS](https://github.com/ROBOTIS-GIT/open_manipulator/blob/main/open_manipulator_playground)
 
-# Ajouter un cube
-cube_pose = PoseStamped()
-cube_pose.header.frame_id = "world"
-cube_pose.pose.position.x = 0.4
-cube_pose.pose.position.y = 0.0
-cube_pose.pose.position.z = 0.025
-scene.add_box("cube", cube_pose, size=(0.05, 0.05, 0.05))
+Implémentez un programme qui :
 
-# Aller au-dessus du cube
-pose = group.get_current_pose().pose
-pose.position.x = 0.4
-pose.position.y = 0.0
-pose.position.z = 0.1
-group.set_pose_target(pose)
-group.go(wait=True)
-group.clear_pose_targets()
+1. ⚙️ Initialise l'interface MoveIt pour l’OpenManipulator-X
+2. 🎯 Planifie un mouvement de l’effecteur vers une **position cible cartésienne**
+3. 🤖 Exécute le mouvement planifié
+4. Faites en sorte que le bras **attrape un petit objet fictice** placé devant lui.
 
-# Descendre
-pose.position.z = 0.045
-group.set_pose_target(pose)
-group.go(wait=True)
-group.clear_pose_targets()
+### 🧪 Bonus
 
-# Attacher le cube
-scene.attach_box(group.get_end_effector_link(), "cube")
-```
+- Créez un **monde Gazebo personnalisé** comprenant :
+  - une **table** stable
+  - un **petit objet à attraper** (ex : cube, cylindre…)
+
+- Ajoutez ce monde à votre simulation avec l’OpenManipulator-X, puis :
+  - Planifiez un mouvement pour **saisir l’objet**
+  - Optionnel : soulevez-le légèrement pour valider la prise
