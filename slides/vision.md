@@ -113,8 +113,8 @@ La vision par ordinateur est une branche de l’intelligence artificielle qui pe
 - 🧮 L’image est stockée sous forme de **matrice NumPy** : chaque pixel est repéré par `(y, x)`
 
 ```bash
-┌ y ─────────────┐
-x 
+┌ x ─────────────┐
+y 
 │ 
 │ 
 │
