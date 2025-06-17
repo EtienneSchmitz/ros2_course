@@ -1,0 +1,179 @@
+---
+sidebar_position: 1
+sidebar_label: "🖼️ OpenCV"
+---
+
+# 🖼️ Vision par ordinateur avec OpenCV
+
+La **vision par ordinateur** (ou *Computer Vision*, CV) est une branche de l'intelligence artificielle qui vise à extraire automatiquement des informations pertinentes à partir d’images.  
+Développé depuis les années 1960, ce domaine combine des techniques issues des **mathématiques**, du **traitement d’images**, des **neurosciences**, et de l’**apprentissage automatique**.
+
+Dans ce TP, vous allez découvrir **OpenCV**, une bibliothèque de référence, et apprendre à détecter des **objets colorés** dans une image.  
+👉 Objectif final : **détecter les positions des cubes colorés et exposer les résultats dans un nœud ROS 2.**
+
+---
+
+## 1. 🚀 Introduction à OpenCV
+
+**OpenCV** est une bibliothèque open-source offrant de nombreuses fonctionnalités en vision par ordinateur :
+
+- Chargement et manipulation d’images et de flux vidéo (webcams, fichiers, etc.)
+- Traitement d’image : conversion de couleur, filtrage, détection de contours...
+- Accès à des milliers d’algorithmes utilisés dans l'industrie (détection de visages, suivi d’objets, etc.)
+
+📚 Tutoriel complet : [OpenCV Python Tutorials](https://docs.opencv.org/4.11.0/d6/d00/tutorial_py_root.html)
+
+---
+
+## 2. 🖼️ Ouverture et affichage d’une image
+
+1. Téléchargez l’image suivante :  ![](/img/vision/cubes.jpg)
+   
+2. Créez un fichier `couleurs.py` :
+
+    ```python
+    import numpy as np
+    import cv2 as cv
+
+    img = cv.imread('cubes.jpg')
+    ```
+
+3. Testez :
+
+    ```python
+    print(img.shape)
+    ```
+
+❓ Que représentent les trois valeurs renvoyées ?
+
+4. Vous pouvez accéder à un pixel par :
+
+    ```python
+    print(img[170, 255])  # [B, G, R]
+    ```
+
+5. Pour isoler un canal (Bleu = 0, Vert = 1, Rouge = 2) :
+
+    ```python
+    canal_rouge = img[:, :, 2]
+    ```
+
+6. Pour extraire une **région d’intérêt (ROI)** :
+
+    ```python
+    roi = img[140:225, 210:310]
+    ```
+
+7. Pour afficher une image :
+
+    ```python
+    cv.imshow("Mon image", roi)
+    cv.waitKey(0)
+    ```
+
+8. Pour sauvegarder une image :
+
+    ```python
+    cv.imwrite("roi.png", roi)
+    ```
+
+🎯 **Exercice :** affichez les trois canaux de l’image dans des fenêtres séparées.
+
+---
+
+## 3. 🎯 Détection de couleur avec seuil HSV
+
+Les images sont en général en format `BGR`, mais ce n’est pas adapté à la détection de couleurs.  
+On préfère utiliser l’espace **HSV** (*Teinte, Saturation, Valeur*) :
+
+### 1. Conversion BGR → HSV
+
+```python
+img_HSV = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+```
+
+> H $\in$ [0, 179], S $\in$ [0, 255], V $\in$ [0, 255]
+
+### 2. Application d’un seuil de couleur
+
+```python
+img_seuil = cv.inRange(img_HSV, (MIN_H, MIN_S, MIN_V), (MAX_H, MAX_S, MAX_V))
+```
+
+> 🔍 img_seuil est une image binaire (pixels blancs = zone détectée)
+
+🎯 Exercice : détectez le cube rouge en trouvant les bons seuils HSV.
+
+🛠️ Astuce : utilisez des trackbars pour régler les seuils en temps réel [Tutoriel OpenCV - Trackbar](https://docs.opencv.org/4.11.0/d9/dc8/tutorial_py_trackbar.html)
+
+
+### 3. 🔎 Détection des cubes dans l’image
+
+Une fois la couleur détectée, il faut localiser les objets (les cubes).
+
+#### 1. Recherche des contours
+
+On commence par extraire les contours depuis l’image seuillée :
+
+```python
+contours, _ = cv.findContours(
+    img_seuil, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+```
+
+#### 2. 🎯 Filtrage des contours par surface
+
+Tous les contours détectés ne correspondent pas forcément à des objets utiles. Certains sont :
+- Trop petits → bruit
+- Trop grands → bord d’image, ombres…  
+
+On filtre donc les contours selon leur surface :
+```python
+for cnt in contours:
+    area = cv.contourArea(cnt)
+    if MIN_AREA < area < MAX_AREA:
+        cv.drawContours(img, [cnt], -1, (0, 255, 0), 2)
+```
+
+> Cette étape permet de ne conserver que les objets ayant une taille pertinente, en rejetant les artefacts et structures parasites.
+
+#### 3. Calcul du centre du cube
+
+On calcule ensuite le centre géométrique de chaque contour valide (via les moments d’image) :
+
+
+```python
+def trouver_centroid(cnt):
+    M = cv.moments(cnt)
+    if M['m00'] > 0:
+        cx = int(M['m10']/M['m00'])
+        cy = int(M['m01']/M['m00'])
+        return (cx, cy)
+    return (0, 0)
+```
+
+#### 4. Annotation du cube
+
+On affiche un label "cube" au centre de chaque objet détecté :
+
+```python
+cv.putText(img, 'cube', (cx, cy), cv.FONT_HERSHEY_SIMPLEX,
+           1, (255, 255, 255), 1, cv.LINE_AA)
+```
+
+🎯 Exercice : étendez votre programme pour détecter les cubes de l’image (avec des seuils adaptés pour chaque couleur).
+
+## 4. 🤖 Intégration avec ROS 2
+
+Vous allez maintenant encapsuler votre détection dans un nœud ROS 2 sous forme de service.
+
+##### 🔧 Objectif
+
+Ce service doit :
+- Prendre en entrée une image ou une camera (en fonction de votre choix).
+- Retourner une liste des positions et labels des cubes détectés
+
+##### 🧪 Bonus : 
+
+Faites évoluer votre service pour :
+- Publier la position du cube détecté
+- Communiquer cette position à un autre nœud ROS (ex. MoveIt, navigation…)
