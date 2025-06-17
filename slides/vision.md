@@ -255,6 +255,6 @@ Une **epoch** = une **passation complète** sur **tout l'ensemble d'entraînemen
 
 - 🎯 Détection d’objets avec **YOLO**
 - 🖐️ Reconnaissance de gestes simples
-- 🤖 Reconnaissance de symboles sur un plateau
+- 🤖 Reconnaissance de symboles
 
 > ✨ **Soyez curieux, testez vos idées, explorez des cas concrets !**
