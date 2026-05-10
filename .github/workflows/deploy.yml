@@ -48,7 +48,7 @@ jobs:
       - name: Check broken links (lychee)
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --offline apps/docs/dist
+          args: --no-progress --offline --root-dir ${{ github.workspace }}/apps/docs/dist apps/docs/dist
           fail: true
 
       - uses: actions/upload-pages-artifact@v3
