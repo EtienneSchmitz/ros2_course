@@ -1,56 +1,23 @@
 {
-  "name": "ros-2-course",
+  "name": "ros2-course",
   "version": "0.0.0",
   "private": true,
-  "scripts": {
-    "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
-    "build:pdf": "marp --input-dir slides --pdf --output static/slides",
-    "build:html": "marp --input-dir slides --html --output static/slides",
-    "build:slides-images": "cp -r slides/images/ static/slides/images",
-    "build:slides": "npm run build:pdf && npm run build:html && npm run build:slides-images",
-    "dev:slides": "marp --watch --input-dir slides --html --output static/slides",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
-    "clear": "docusaurus clear",
-    "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+  "description": "ROS 2 - Bootcamp — site Starlight + decks Slidev (refonte Perpignan 2026)",
+  "packageManager": "pnpm@11.0.9",
+  "engines": {
+    "node": ">=24"
   },
-  "dependencies": {
-    "@docusaurus/core": "^3.8.1",
-    "@docusaurus/preset-classic": "^3.8.1",
-    "@docusaurus/theme-mermaid": "^3.8.1",
-    "@mdx-js/react": "^3.0.0",
-    "clsx": "^2.0.0",
-    "prism-react-renderer": "^2.3.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+  "scripts": {
+    "dev": "pnpm --filter @bootcamp/docs dev",
+    "dev:slides": "pnpm --filter @bootcamp/slides dev",
+    "build": "pnpm build:slides:all && pnpm --filter @bootcamp/docs build",
+    "build:slides": "pnpm --filter @bootcamp/slides build",
+    "build:slides:all": "pnpm --filter @bootcamp/slides build:all",
+    "preview": "pnpm --filter @bootcamp/docs preview",
+    "lint:md": "markdownlint-cli2 'apps/docs/src/content/docs/**/*.{md,mdx}'",
+    "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.8.1",
-    "@docusaurus/tsconfig": "^3.8.1",
-    "@docusaurus/types": "^3.8.1",
-    "@marp-team/marp-cli": "^4.1.2",
-    "typescript": "~5.6.2"
-  },
-  "browserslist": {
-    "production": [
-      ">0.5%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 3 chrome version",
-      "last 3 firefox version",
-      "last 5 safari version"
-    ]
-  },
-  "engines": {
-    "node": ">=18.0"
+    "markdownlint-cli2": "^0.22.1"
   }
 }

@@ -1,0 +1,46 @@
+---
+title: ROS 2 — Bootcamp
+description: Cours intensif ROS 2 pour la session Perpignan 2026 — Kiwi + SO-101, ROS 2 Kilted.
+template: splash
+hero:
+  tagline: Cours intensif ROS 2 — base mobile Kiwi + bras SO-101.
+  actions:
+    - text: Voir le programme
+      link: /installation
+      icon: right-arrow
+      variant: primary
+    - text: Cours session 2025 (archive)
+      link: https://github.com/EtienneSchmitz/ros2_course/releases/tag/v2025-final
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Aside } from "@astrojs/starlight/components";
+
+<Aside type="note" title="Refonte en cours">
+Le contenu de la session 2026 est en cours de réécriture (issue [#17](https://github.com/EtienneSchmitz/ros2_course/issues/17)).
+La version 2025 reste accessible via le tag [`v2025-final`](https://github.com/EtienneSchmitz/ros2_course/releases/tag/v2025-final) et la branche [`v2025`](https://github.com/EtienneSchmitz/ros2_course/tree/v2025).
+</Aside>
+
+## Programme — 5 jours
+
+<CardGrid>
+  <Card title="Installation" icon="setting">
+    Mise en place de l'environnement ROS 2 Kilted, simulateur Gazebo Harmonic, et packages robots maison (Kiwi + SO-101).
+  </Card>
+  <Card title="Jour 1 — Introduction" icon="open-book">
+    Concepts ROS 2, nodes, topics, services, actions. Premier graphe en simulation.
+  </Card>
+  <Card title="Jour 2 — Navigation" icon="rocket">
+    SLAM et navigation autonome avec la base mobile Kiwi (Nav2 + LIDAR).
+  </Card>
+  <Card title="Jour 3 — Manipulation" icon="puzzle">
+    Pick & place avec le bras SO-101, MoveIt 2, planification de trajectoire.
+  </Card>
+  <Card title="Jour 4 — Vision" icon="magnifier">
+    Perception, OpenCV, détection d'objets et asservissement visuel.
+  </Card>
+  <Card title="Jour 5 — Intégration" icon="approve-check">
+    Mise en commun navigation + manipulation + vision sur un scénario complet.
+  </Card>
+</CardGrid>

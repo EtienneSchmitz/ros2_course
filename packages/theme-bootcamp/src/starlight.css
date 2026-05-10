@@ -1,0 +1,73 @@
+@import "./tokens.css";
+
+/* Surcharge des variables Starlight officielles avec les tokens @bootcamp/theme */
+:root {
+  --sl-font: var(--bc-font-sans);
+  --sl-font-mono: var(--bc-font-mono);
+
+  /* Couleurs principales */
+  --sl-color-accent-low: #0f3a48;
+  --sl-color-accent: var(--bc-primary);
+  --sl-color-accent-high: var(--bc-accent);
+
+  --sl-color-white: var(--bc-text);
+  --sl-color-gray-1: #c8d0d9;
+  --sl-color-gray-2: var(--bc-text-muted);
+  --sl-color-gray-3: #6b7785;
+  --sl-color-gray-4: #404853;
+  --sl-color-gray-5: var(--bc-border);
+  --sl-color-gray-6: var(--bc-bg-elevated);
+  --sl-color-black: var(--bc-bg);
+
+  --sl-color-bg-nav: var(--bc-bg-elevated);
+  --sl-color-bg-sidebar: var(--bc-bg);
+  --sl-color-bg-inline-code: var(--bc-bg-elevated);
+  --sl-color-bg: var(--bc-bg);
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #c8e7ee;
+  --sl-color-accent: var(--bc-primary);
+  --sl-color-accent-high: #145e74;
+
+  --sl-color-white: var(--bc-text);
+  --sl-color-gray-1: #2a3447;
+  --sl-color-gray-2: #475266;
+  --sl-color-gray-3: #5b6675;
+  --sl-color-gray-4: #8d96a4;
+  --sl-color-gray-5: var(--bc-border);
+  --sl-color-gray-6: var(--bc-bg-elevated);
+  --sl-color-gray-7: #f1f3f6;
+  --sl-color-black: #ffffff;
+
+  --sl-color-bg-nav: var(--bc-bg-elevated);
+  --sl-color-bg-sidebar: var(--bc-bg);
+  --sl-color-bg-inline-code: var(--bc-bg-overlay);
+  --sl-color-bg: var(--bc-bg);
+}
+
+/* Titres en typo display */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+.site-title {
+  font-family: var(--bc-font-display);
+  letter-spacing: -0.01em;
+}
+
+/* CTA accent industriel — utilisable dans MDX via class="cta" */
+.sl-markdown-content a.cta {
+  display: inline-block;
+  background: var(--bc-industrial);
+  color: var(--bc-text-inverse);
+  padding: 0.5rem 1rem;
+  border-radius: var(--bc-radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.sl-markdown-content a.cta:hover {
+  background: var(--bc-industrial-hover);
+}

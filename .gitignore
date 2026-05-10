@@ -1,23 +1,35 @@
 # Dependencies
-/node_modules
+node_modules/
+.pnpm-store/
 
-# Production
-/build
+# Build outputs
+dist/
+.astro/
+.slidev/
 
-# Generated files
-.docusaurus
-.cache-loader
+# Slidev PDFs copied into Astro public/ (regenerated at build time by apps/slides/scripts)
+apps/docs/public/slides/
 
-# Misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
+# Logs
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Ignore all generated files in the slides directory
-static/slides/*
+# Env
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Playwright (Slidev PDF export)
+playwright-report/
+test-results/

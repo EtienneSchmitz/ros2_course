@@ -1,0 +1,13 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+allowBuilds:
+  esbuild: true
+  playwright-chromium: true
+  sharp: true
+
+onlyBuiltDependencies:
+  - esbuild
+  - playwright-chromium
+  - sharp
