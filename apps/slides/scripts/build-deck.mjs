@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, copyFileSync } from "node:fs";
+import { existsSync, mkdirSync, copyFileSync, cpSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -21,17 +21,41 @@ if (!existsSync(entry)) {
 }
 
 const distDir = join(slidesRoot, "dist");
+const spaDir = join(distDir, deck);
 mkdirSync(distDir, { recursive: true });
+mkdirSync(docsPublic, { recursive: true });
 
 const pdfOut = join(distDir, `${deck}.pdf`);
 
+// 1. Build PDF (for download)
 execFileSync(
   "pnpm",
   ["exec", "slidev", "export", entry, "--output", pdfOut, "--with-clicks"],
   { stdio: "inherit", cwd: slidesRoot }
 );
-
-mkdirSync(docsPublic, { recursive: true });
 copyFileSync(pdfOut, join(docsPublic, `${deck}.pdf`));
 
-console.log(`✓ Built ${deck}.pdf and copied to apps/docs/public/slides/`);
+// 2. Build SPA (for iframe embed in Starlight)
+rmSync(spaDir, { recursive: true, force: true });
+execFileSync(
+  "pnpm",
+  [
+    "exec",
+    "slidev",
+    "build",
+    entry,
+    "--out",
+    spaDir,
+    "--base",
+    `/slides/${deck}/`,
+  ],
+  { stdio: "inherit", cwd: slidesRoot }
+);
+
+const spaDocsDir = join(docsPublic, deck);
+rmSync(spaDocsDir, { recursive: true, force: true });
+cpSync(spaDir, spaDocsDir, { recursive: true });
+
+console.log(
+  `✓ Built ${deck}.pdf + SPA → apps/docs/public/slides/${deck}/ (embeddable at /slides/${deck}/)`
+);

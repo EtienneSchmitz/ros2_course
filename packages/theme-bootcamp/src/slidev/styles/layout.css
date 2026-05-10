@@ -1,7 +1,28 @@
+html,
+body,
+#slide-content,
+.slidev-page,
+.slidev-slide-container,
+.slidev-slide-wrapper {
+  background: var(--bc-bg);
+}
+
 .slidev-layout {
   font-family: var(--bc-font-sans);
   color: var(--bc-text);
   background: var(--bc-bg);
+  min-height: 100%;
+  height: 100%;
+}
+
+/* Mermaid : éviter le fond clair par défaut quand un slide est dark */
+.slidev-layout .mermaid {
+  background: transparent !important;
+}
+
+.slidev-layout .mermaid svg {
+  max-width: 100%;
+  height: auto;
 }
 
 .slidev-layout h1,

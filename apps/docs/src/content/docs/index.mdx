@@ -15,7 +15,8 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid, Aside } from "@astrojs/starlight/components";
+import { CardGrid, Aside } from "@astrojs/starlight/components";
+import ProgramCard from "../../components/ProgramCard.astro";
 
 <Aside type="note" title="Refonte en cours">
 Le contenu de la session 2026 est en cours de réécriture (issue [#17](https://github.com/EtienneSchmitz/ros2_course/issues/17)).
@@ -25,22 +26,22 @@ La version 2025 reste accessible via le tag [`v2025-final`](https://github.com/E
 ## Programme — 5 jours
 
 <CardGrid>
-  <Card title="Installation" icon="setting">
+  <ProgramCard title="Installation" href="/installation" icon="setting" color="var(--sl-color-orange)">
     Mise en place de l'environnement ROS 2 Kilted, simulateur Gazebo Harmonic, et packages robots maison (Kiwi + SO-101).
-  </Card>
-  <Card title="Jour 1 — Introduction" icon="open-book">
+  </ProgramCard>
+  <ProgramCard title="Jour 1 — Introduction" href="/introduction" icon="open-book" color="var(--sl-color-purple)">
     Concepts ROS 2, nodes, topics, services, actions. Premier graphe en simulation.
-  </Card>
-  <Card title="Jour 2 — Navigation" icon="rocket">
+  </ProgramCard>
+  <ProgramCard title="Jour 2 — Navigation" href="/navigation" icon="rocket" color="var(--sl-color-green)">
     SLAM et navigation autonome avec la base mobile Kiwi (Nav2 + LIDAR).
-  </Card>
-  <Card title="Jour 3 — Manipulation" icon="puzzle">
+  </ProgramCard>
+  <ProgramCard title="Jour 3 — Manipulation" href="/manipulation" icon="puzzle" color="var(--sl-color-red)">
     Pick & place avec le bras SO-101, MoveIt 2, planification de trajectoire.
-  </Card>
-  <Card title="Jour 4 — Vision" icon="magnifier">
+  </ProgramCard>
+  <ProgramCard title="Jour 4 — Vision" href="/vision" icon="magnifier" color="var(--sl-color-blue)">
     Perception, OpenCV, détection d'objets et asservissement visuel.
-  </Card>
-  <Card title="Jour 5 — Intégration" icon="approve-check">
+  </ProgramCard>
+  <ProgramCard title="Jour 5 — Intégration" href="/integration" icon="approve-check" color="var(--sl-color-accent)">
     Mise en commun navigation + manipulation + vision sur un scénario complet.
-  </Card>
+  </ProgramCard>
 </CardGrid>

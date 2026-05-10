@@ -6,7 +6,7 @@ import rehypeMermaid from "rehype-mermaid";
 
 export default defineConfig({
   site: "https://ros2.etienne-schmitz.com",
-  trailingSlash: "never",
+  trailingSlash: "ignore",
 
   markdown: {
     remarkPlugins: [remarkMath],

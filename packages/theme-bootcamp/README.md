@@ -32,3 +32,19 @@ theme: ../../../packages/theme-bootcamp/src/slidev
 ```
 
 Layouts disponibles : `cover`, `two-cols`, `section`, `end`.
+
+### Embedder un deck dans une page Starlight
+
+Chaque deck Slidev est build aussi en mode SPA (en plus du PDF) et exposé sous `/slides/<deck>/` côté Astro. Pour l'embedder dans une page MDX :
+
+```mdx
+import SlidevEmbed from "../../../components/SlidevEmbed.astro";
+
+<SlidevEmbed name="demo" title="Démo — thème ROS 2 Bootcamp" />
+```
+
+Props :
+- `name` *(required)* — nom du sous-dossier de `apps/slides/`
+- `title` — titre affiché dans la barre d'actions
+- `pdf` *(default `true`)* — affiche le lien "PDF ↓" vers `/slides/<name>.pdf`
+- `ratio` *(default `"16 / 9"`)* — ratio CSS de l'iframe

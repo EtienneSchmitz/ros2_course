@@ -1,0 +1,57 @@
+---
+import { Card } from "@astrojs/starlight/components";
+
+interface Props {
+  title: string;
+  href: string;
+  icon: string;
+  color?: string;
+}
+
+const {
+  title,
+  href,
+  icon,
+  color = "var(--sl-color-accent)",
+} = Astro.props;
+---
+
+<a href={href} class="program-card" style={`--card-color: ${color}`}>
+  <Card title={title} icon={icon as Parameters<typeof Card>[0]["icon"]}>
+    <slot />
+  </Card>
+</a>
+
+<style>
+  .program-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .program-card :global(.card) {
+    --sl-card-border: var(--card-color);
+    --sl-card-bg: color-mix(in srgb, var(--card-color) 22%, transparent);
+    border-radius: 14px;
+    border-width: 1.5px;
+    overflow: hidden;
+  }
+
+  .program-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .program-card:hover :global(.card) {
+    --sl-card-bg: color-mix(in srgb, var(--card-color) 30%, transparent);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  }
+
+  .program-card:focus-visible {
+    outline: 2px solid var(--card-color);
+    outline-offset: 3px;
+    border-radius: 14px;
+  }
+</style>

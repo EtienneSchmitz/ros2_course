@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import { Aside } from "@astrojs/starlight/components";
+import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 
 <Aside type="caution" title="En cours de réécriture pour la session 2026">
 Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issues [#54](https://github.com/EtienneSchmitz/ros2_course/issues/54), [#55](https://github.com/EtienneSchmitz/ros2_course/issues/55)).
@@ -17,3 +18,10 @@ Le contenu de la session 2025 reste accessible :
 ## Sommaire prévisionnel
 
 Le J1 sera **rétro-conçu** à partir des briques attendues par le J5 (intégration), une fois les autres journées stabilisées.
+
+## Aperçu — démo du thème Slidev
+
+<SlidevEmbed name="demo" title="Démo — thème ROS 2 Bootcamp" />
+
+> Le deck ci-dessus est embarqué via le composant `<SlidevEmbed name="demo" />`.
+> Quand le vrai deck J1 sera prêt, on remplacera `demo` par `j1` (ou similaire).
