@@ -1,0 +1,102 @@
+---
+title: 1. Installer Ubuntu 24.04
+description: Téléchargement de l'ISO, création de la clé USB avec Rufus, installation et post-install.
+sidebar:
+  order: 2
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+<Aside type="tip" title="Tu as déjà Ubuntu 24.04 ?">
+Tu peux sauter directement à [ROS 2 Kilted + Gazebo Harmonic](/installation/02-ros-gazebo/).
+</Aside>
+
+ROS 2 Kilted Kaiju cible **Ubuntu 24.04 LTS (Noble Numbat)**. Cette page détaille l'installation depuis une machine sous Windows, macOS ou une autre distribution Linux.
+
+## Télécharger l'ISO
+
+Récupère l'image officielle Ubuntu Desktop 24.04 LTS :
+
+- Site : [ubuntu.com/download/desktop](https://ubuntu.com/download/desktop)
+- Fichier : `ubuntu-24.04.x-desktop-amd64.iso` (≈ 6 Go)
+
+Vérifie le checksum SHA256 (recommandé) :
+
+```bash
+sha256sum ubuntu-24.04.3-desktop-amd64.iso
+```
+
+et compare au fichier `SHA256SUMS` publié sur la même page.
+
+## Créer la clé USB d'installation avec Rufus
+
+[Rufus](https://rufus.ie) est l'outil le plus simple sous Windows.
+
+<Steps>
+
+1. Télécharge **Rufus** : [rufus.ie](https://rufus.ie). La version portable suffit.
+
+2. Branche ta clé USB (≥ 8 Go). **Sauvegarde son contenu**, elle sera effacée.
+
+3. Lance Rufus, puis :
+
+    - **Périphérique** : ta clé USB.
+    - **Sélection du démarrage** : clique sur _SELECTION_ et choisis l'ISO Ubuntu téléchargée.
+    - **Schéma de partition** : `GPT`.
+    - **Système de destination** : `UEFI (non CSM)`.
+    - **Système de fichiers** : `FAT32`.
+
+4. Clique sur _DÉMARRER_. Si Rufus demande le mode d'écriture, choisis **mode image ISO**.
+
+5. Attends la fin de l'écriture (5 à 15 minutes selon la clé), puis éjecte proprement.
+
+</Steps>
+
+<Aside type="caution">
+Sur Mac, utilise [balenaEtcher](https://etcher.balena.io). Sous Linux, `dd` ou GNOME Disks fonctionnent aussi.
+</Aside>
+
+## Booter sur la clé USB
+
+<Steps>
+
+1. Insère la clé sur la machine cible, allume-la, et entre dans le menu de boot (touche au démarrage selon le constructeur : `F12`, `F10`, `F2`, `Suppr`, `Esc`).
+
+2. Sélectionne l'entrée correspondant à ta clé USB (souvent préfixée `UEFI:`).
+
+3. Si l'écran reste noir : désactive **Secure Boot** dans le BIOS/UEFI, puis réessaie.
+
+</Steps>
+
+## Installer Ubuntu
+
+Au démarrage du live USB, choisis **Try or Install Ubuntu**, puis :
+
+- **Langue** : Français (ou ce que tu préfères).
+- **Disposition clavier** : `Français - Français (variante)` selon ton clavier.
+- **Mises à jour pendant l'installation** : `Téléchargements normaux` + cocher _Logiciels tiers_.
+- **Type d'installation** :
+  - Poste dédié au cours → **Effacer le disque et installer Ubuntu**.
+  - Dual-boot avec Windows → **Autre chose** (partition manuelle), prévoir au moins **40 Go** pour `/` + une swap.
+- **Compte** : crée un utilisateur, mot de passe robuste.
+
+L'installation dure 10 à 20 minutes. Redémarre, retire la clé USB quand demandé.
+
+## Post-install
+
+Une fois sur le bureau Ubuntu, ouvre un terminal (`Ctrl+Alt+T`) et applique les mises à jour :
+
+```bash
+sudo apt update && sudo apt full-upgrade -y
+sudo apt install -y curl git build-essential
+```
+
+Reboote si le noyau a été mis à jour :
+
+```bash
+sudo reboot
+```
+
+## Prochaine étape
+
+[Installer ROS 2 Kilted + Gazebo Harmonic](/installation/02-ros-gazebo/).

@@ -1,0 +1,12 @@
+# bootcamp.repos — workspace ROS 2 Bootcamp 2026
+#
+# Liste des repos robots à cloner via vcstool dans ~/ros2_bootcamp_ws/src/.
+# Phase 1 : vide. Les robots seront ajoutés au fur et à mesure de leur
+# publication sur https://github.com/EtienneSchmitz/.
+#
+# Usage côté apprenant :
+#   cd ~/ros2_bootcamp_ws
+#   wget https://ros2.etienne-schmitz.com/bootcamp.repos
+#   vcs import src < bootcamp.repos
+
+repositories: {}

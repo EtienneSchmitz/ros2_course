@@ -1,21 +1,61 @@
 ---
 title: Jour 2 — Navigation
-description: SLAM et navigation autonome avec la base mobile Kiwi.
+description: Base mobile LeKiwi, cartographie SLAM Toolbox et navigation autonome avec Nav2.
 sidebar:
   order: 1
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 
-<Aside type="caution" title="En cours de réécriture pour la session 2026">
-Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issues [#36](https://github.com/EtienneSchmitz/ros2_course/issues/36), [#37](https://github.com/EtienneSchmitz/ros2_course/issues/37)).
-
-Le contenu de la session 2025 (TurtleBot3) reste accessible :
-[ros2_course/tree/v2025/docs/navigation](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/navigation)
+<Aside type="caution" title="Section en cours de construction">
+Le package ROS associé [`lekiwi_ros2`](https://github.com/EtienneSchmitz/lekiwi_ros2) (à créer) est rédigé en parallèle de cette section. Les blocs marqués _« hands-on »_ pointent vers ce repo et deviendront actifs au fur et à mesure de sa publication.
 </Aside>
 
-## Sommaire prévisionnel
+## Objectifs pédagogiques
 
-- Migration TurtleBot3 → Kiwi (base mobile maison)
-- Nav2 + cartographie SLAM Toolbox
-- Carte de simulation Gazebo Harmonic custom
+À la fin de la journée, tu sais :
+
+- décrire la cinématique d'une base mobile **omnidirectionnelle Kiwi** (3 roues à 120°) ;
+- piloter la base en téléop dans Gazebo Harmonic ;
+- construire une carte avec **slam_toolbox** ;
+- planifier et exécuter des trajectoires autonomes avec **Nav2**.
+
+## Pré-requis
+
+- Workspace `~/ros2_bootcamp_ws/` opérationnel (voir [Installation](/installation/)).
+- Concepts ROS 2 maîtrisés (nodes, topics, tf, frames) — voir Jour 1.
+
+## Parcours
+
+<CardGrid>
+  <LinkCard
+    title="1. La base mobile"
+    description="Roues kiwi 120°, URDF, première téléop."
+    href="/navigation/01-base-mobile/"
+  />
+  <LinkCard
+    title="2. SLAM"
+    description="slam_toolbox online async, construction et sauvegarde de carte."
+    href="/navigation/02-slam/"
+  />
+  <LinkCard
+    title="3. Nav2"
+    description="Stack Nav2 holonome, planning, contrôleur, costmaps."
+    href="/navigation/03-nav2/"
+  />
+  <LinkCard
+    title="4. Exercices"
+    description="Tuning controller, obstacles dynamiques, behaviors."
+    href="/navigation/04-exercices/"
+  />
+</CardGrid>
+
+## Slides du jour
+
+<SlidevEmbed name="jour2" title="Jour 2 — Navigation" />
+
+## Référence — version 2025
+
+Le contenu de la session 2025 (TurtleBot3) reste accessible :
+[v2025-final/docs/navigation](https://github.com/EtienneSchmitz/ros2_course/tree/v2025-final/docs/navigation).

@@ -1,0 +1,86 @@
+---
+title: 4. Vérification
+description: ros2 doctor, build à vide, ouverture de Gazebo, bridge ros_gz.
+sidebar:
+  order: 5
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Avant de passer aux journées du cours, on s'assure que l'environnement est sain.
+
+## `ros2 doctor`
+
+```bash
+ros2 doctor
+```
+
+Doit afficher `All 5 checks passed` (le nombre exact peut varier). Les warnings sur le réseau (`hostname resolves loopback`) sont sans conséquence pour la simulation.
+
+## Le workspace build à vide
+
+```bash
+cd ~/ros2_bootcamp_ws
+colcon build --symlink-install
+```
+
+Tu dois obtenir `Summary: 0 packages finished` (puisque `src/` est encore vide). Aucune erreur ne doit apparaître.
+
+## Gazebo Harmonic s'ouvre
+
+```bash
+gz sim shapes.sdf
+```
+
+Une fenêtre Gazebo s'ouvre avec quelques formes. Vérifie que tu peux orbiter la caméra à la souris (clic-droit pour panner, molette pour zoomer).
+
+## Le bridge `ros_gz` répond
+
+Dans **trois terminaux** :
+
+<Tabs>
+<TabItem label="Terminal 1 — Gazebo">
+
+```bash
+gz sim -r shapes.sdf
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — bridge">
+
+```bash
+ros2 run ros_gz_bridge parameter_bridge \
+  /clock@rosgraph_msgs/msg/Clock@gz.msgs.Clock
+```
+
+</TabItem>
+<TabItem label="Terminal 3 — echo /clock">
+
+```bash
+ros2 topic echo /clock
+```
+
+</TabItem>
+</Tabs>
+
+Le terminal 3 doit afficher l'horloge Gazebo qui avance. C'est la preuve que ROS 2 ↔ Gazebo communique.
+
+## Et après ?
+
+À ce stade, la machine est prête.
+
+Les **repos robots** (`lekiwi_ros2`, `so_arm101_ros2`) seront ajoutés à `bootcamp.repos` au fur et à mesure de leur publication. Quand un nouveau robot apparaît, il suffit de :
+
+```bash
+cd ~/ros2_bootcamp_ws
+wget -O bootcamp.repos https://ros2.etienne-schmitz.com/bootcamp.repos
+vcs import src < bootcamp.repos
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+```
+
+et tu as le nouveau robot dans le workspace.
+
+<Aside type="tip">
+Les jours [Navigation (J2)](/navigation/) et [Manipulation (J3)](/manipulation/) du cours détaillent la mise en route des robots associés.
+</Aside>

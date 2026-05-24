@@ -1,0 +1,89 @@
+---
+title: 4. Exercices
+description: Tuning controller, obstacles dynamiques, comportements simples — exercices guidés J2.
+sidebar:
+  order: 5
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="caution" title="Section en construction">
+Les exercices supposent que les packages `lekiwi_bringup` et
+`lekiwi_navigation` (depuis [lekiwi_ros2](https://github.com/EtienneSchmitz/lekiwi_ros2))
+sont publiés et fonctionnels. Voir [section précédente](/navigation/03-nav2/).
+</Aside>
+
+## Exercice 1 — Cartographier une pièce
+
+**Objectif** : construire une carte complète d'un monde Gazebo, la
+sauvegarder, et la recharger en mode localisation pure.
+
+Étapes :
+
+1. Lancer la sim + slam_toolbox (`online async`).
+2. Téléopérer le robot pour couvrir toute la zone (longe les murs,
+   ferme une boucle).
+3. Sauvegarder avec `map_saver_cli`.
+4. Relancer la sim avec `slam_toolbox` en mode `localization` et la
+   carte précédente. Vérifier que le robot se localise correctement
+   sans dérive.
+
+## Exercice 2 — Tuner le controller MPPI
+
+**Objectif** : observer l'effet de quelques paramètres clés du
+controller sur le comportement du robot.
+
+Joue avec, un par un :
+
+- `vx_max`, `vy_max`, `wz_max` (vitesses max)
+- `time_steps` × `model_dt` (horizon de prédiction)
+- `critic_names` : ajoute / retire `ObstaclesCritic`, `GoalAngleCritic`
+- `inflation_radius` du global costmap (impact sur la marge gardée
+  autour des murs)
+
+Pour chaque changement, lance le même goal et note :
+
+- Le temps total pour atteindre le goal.
+- La distance parcourue.
+- Le « confort » subjectif de la trajectoire (saccadée vs lisse).
+
+## Exercice 3 — Obstacle dynamique
+
+**Objectif** : ajouter un cube dans Gazebo pendant que le robot navigue,
+et vérifier que Nav2 le contourne.
+
+Indices :
+
+- Spawn un objet pendant la navigation :
+
+  ```bash
+  ros2 service call /world/default/create gz_msgs/srv/EntityFactory ...
+  ```
+
+  (ou plus simple : ajoute manuellement un cube dans Gazebo Harmonic
+  pendant la sim).
+- Le `local_costmap` doit s'allumer autour de l'objet quand le LiDAR
+  le voit.
+- Le controller MPPI doit replanifier localement.
+
+Que se passe-t-il si tu déplaces l'objet *exactement* dans la
+trajectoire du robot ? Combien de temps avant qu'il réagisse ?
+
+## Exercice 4 — Mission multi-waypoints
+
+**Objectif** : enchaîner plusieurs goals automatiquement.
+
+Indices :
+
+- Utilise l'action `/follow_waypoints` exposée par `waypoint_follower`.
+- Publie une liste de `PoseStamped` (en Python ou via la CLI).
+- Le robot doit visiter chaque waypoint dans l'ordre, en marquant une
+  pause définie entre chacun.
+
+Bonus : déclenche un message ROS personnalisé à chaque waypoint atteint
+(préparation au Jour 5 — intégration).
+
+## Prochaine étape
+
+Retour au [sommaire J2](/navigation/), ou enchaîne sur
+[Jour 3 — Manipulation](/manipulation/).

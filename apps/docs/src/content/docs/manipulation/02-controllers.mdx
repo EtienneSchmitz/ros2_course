@@ -1,0 +1,107 @@
+---
+title: 2. Contrôleurs ros2_control
+description: ros2_control, hardware_interface, joint_trajectory_controller en simulation Gazebo Harmonic.
+sidebar:
+  order: 3
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+`ros2_control` est l'architecture standard de ROS 2 pour piloter du
+matériel (réel ou simulé) de façon **uniforme et temps réel**. Comprendre
+ses trois briques évite beaucoup de magie noire.
+
+## Le triptyque
+
+```text
+  +---------------------+      command_interfaces      +-----------------------+
+  | Controller Manager  |  <----------------------->   | Hardware Interface    |
+  |  - JTC, gripper...  |      state_interfaces        |  - sim (gz_ros2_ctrl) |
+  +---------------------+                              |  - real (Feetech)     |
+            ^                                          +-----------------------+
+            |                                                     ^
+            v                                                     |
+       Topics ROS 2                                          Hardware
+   /joint_trajectory_controller/...                     (Gazebo ou moteurs)
+```
+
+- **Hardware interface** : pont bas-niveau, lit l'état et applique les commandes.
+  En sim Gazebo Harmonic, c'est `gz_ros2_control` qui fait ce travail
+  automatiquement.
+- **Controller manager** : charge / décharge / arbitre les contrôleurs.
+- **Contrôleur** : politique de contrôle (suivre une trajectoire,
+  maintenir une position, etc.). Pour un bras, on utilise le
+  **`joint_trajectory_controller`** (JTC).
+
+## Le `joint_trajectory_controller`
+
+Le JTC accepte des trajectoires (liste de points avec positions,
+vitesses, temps) sur le topic / action :
+
+```text
+/joint_trajectory_controller/follow_joint_trajectory   (action)
+/joint_trajectory_controller/joint_trajectory          (topic)
+```
+
+Il interpole entre les points et envoie les commandes au hardware
+interface à fréquence fixe (souvent 100 Hz ou plus).
+
+## Configuration côté sim
+
+<Aside type="note" title="Hands-on (à venir)">
+Quand le package `so101_bringup` sera prêt, tu lances la sim Gazebo
++ contrôleurs :
+
+```bash
+ros2 launch so101_bringup gazebo.launch.py
+```
+
+Et tu vérifies que les contrôleurs sont chargés :
+
+```bash
+ros2 control list_controllers
+```
+
+Tu devrais voir :
+
+- `joint_state_broadcaster` (publie `/joint_states`)
+- `joint_trajectory_controller` (accepte les trajectoires)
+
+</Aside>
+
+## Envoyer une trajectoire manuelle
+
+Pour tester sans MoveIt, on peut publier une trajectoire à la main :
+
+<Tabs>
+<TabItem label="Terminal 1 — sim">
+
+```bash
+ros2 launch so101_bringup gazebo.launch.py
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — commande">
+
+```bash
+ros2 topic pub --once /joint_trajectory_controller/joint_trajectory \
+  trajectory_msgs/msg/JointTrajectory "{
+  joint_names: [shoulder_pan, shoulder_lift, elbow_flex, wrist_flex, wrist_roll, gripper],
+  points: [{positions: [0.0, -0.5, 1.0, 0.0, 0.0, 0.0], time_from_start: {sec: 2}}]
+}"
+```
+
+</TabItem>
+</Tabs>
+
+Le bras doit rejoindre la position cible en 2 secondes.
+
+<Aside type="caution">
+Cette commande va passer dès que `so101_bringup` exposera bien le JTC.
+Si elle échoue avec « controller not found », vérifier le résultat de
+`ros2 control list_controllers`.
+</Aside>
+
+## Prochaine étape
+
+[MoveIt 2 — planification](/manipulation/03-moveit/).

@@ -1,0 +1,83 @@
+---
+title: 1. Le bras SO-101
+description: Anatomie du SO-101, joints, URDF Xacro, chaîne cinématique.
+sidebar:
+  order: 2
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Le **SO-101** est un bras robotique open-source 6 DoF conçu par la communauté
+[LeRobot / Hugging Face](https://github.com/huggingface/lerobot), motorisé par
+des servos Feetech STS3215. Il est suffisamment léger pour être posé sur une
+table ou monté sur la base mobile LeKiwi.
+
+## Anatomie
+
+Le SO-101 enchaîne **6 axes en rotation** :
+
+| Joint | Type | Rôle |
+| --- | --- | --- |
+| `shoulder_pan` | revolute | rotation horizontale de l'épaule (base) |
+| `shoulder_lift` | revolute | levée verticale de l'épaule |
+| `elbow_flex` | revolute | flexion du coude |
+| `wrist_flex` | revolute | flexion du poignet |
+| `wrist_roll` | revolute | rotation du poignet |
+| `gripper` | revolute | ouverture/fermeture de la pince |
+
+C'est une **chaîne cinématique série** (chaque joint dépend du précédent),
+classique pour un bras de manipulation.
+
+## URDF / Xacro
+
+Dans ROS 2, le robot est décrit par un fichier **URDF** (XML), qu'on génère
+généralement depuis un **Xacro** (URDF + macros + paramètres) pour rester
+lisible.
+
+<Aside type="note" title="Hands-on (à venir)">
+Une fois le package `so101_description` publié dans
+[so_arm101_ros2](https://github.com/EtienneSchmitz/so_arm101_ros2),
+tu pourras générer le fichier URDF à plat avec :
+
+```bash
+ros2 run xacro xacro \
+  $(ros2 pkg prefix so101_description)/share/so101_description/urdf/so101.urdf.xacro \
+  > /tmp/so101.urdf
+check_urdf /tmp/so101.urdf
+```
+
+</Aside>
+
+Concepts à observer dans le Xacro :
+
+- **`<link>`** : un segment physique (épaule, avant-bras, etc.), avec
+  géométrie visuelle, géométrie de collision, et inertie.
+- **`<joint>`** : la liaison entre deux liens, avec son axe de rotation,
+  ses limites (`lower`/`upper`/`effort`/`velocity`), et son dynamics.
+- **`<xacro:macro>`** : factorise les liens / joints répétitifs.
+
+## Visualisation RViz
+
+<Aside type="note" title="Hands-on (à venir)">
+Une fois le package `so101_bringup` publié, tu lances :
+
+```bash
+ros2 launch so101_bringup display.launch.py
+```
+
+Cette commande démarre `robot_state_publisher`, `joint_state_publisher_gui`
+et RViz. Le panneau `JointStatePublisher` te permet de bouger chaque joint
+avec un slider et de voir le bras se déplacer en temps réel.
+</Aside>
+
+## Chaîne de transformations (tf)
+
+Quand tu publies les `joint_states`, `robot_state_publisher` calcule
+automatiquement la chaîne de **transformations tf** entre tous les frames
+du robot (`base_link` → `shoulder_link` → `upper_arm_link` → … → `gripper_link`).
+
+Cette chaîne est ce que MoveIt 2 utilisera pour planifier les trajectoires.
+
+## Prochaine étape
+
+[Contrôleurs ros2_control](/manipulation/02-controllers/).
