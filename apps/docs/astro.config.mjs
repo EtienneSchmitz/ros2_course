@@ -25,7 +25,7 @@ export default defineConfig({
         root: { label: "Français", lang: "fr" },
       },
       logo: {
-        src: "@bootcamp/theme/assets/logo-arm.svg",
+        src: "@bootcamp/theme/assets/logo-iso.svg",
         replacesTitle: true,
       },
       favicon: "/favicon.svg",

@@ -13,17 +13,10 @@ body,
   background: var(--bc-bg);
   min-height: 100%;
   height: 100%;
+  padding: 3rem 4rem 4rem;
 }
 
-/* Mermaid : éviter le fond clair par défaut quand un slide est dark */
-.slidev-layout .mermaid {
-  background: transparent !important;
-}
-
-.slidev-layout .mermaid svg {
-  max-width: 100%;
-  height: auto;
-}
+/* Titres ============================================================== */
 
 .slidev-layout h1,
 .slidev-layout h2,
@@ -38,16 +31,39 @@ body,
 .slidev-layout h1 {
   font-size: 3.2rem;
   font-weight: 700;
+  line-height: 1.1;
 }
 
 .slidev-layout h2 {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 600;
+}
+
+.slidev-layout h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--bc-accent);
+}
+
+/* Texte + liens ======================================================= */
+
+.slidev-layout p,
+.slidev-layout li {
+  font-size: 1.15rem;
+  line-height: 1.55;
 }
 
 .slidev-layout code,
 .slidev-layout pre {
   font-family: var(--bc-font-mono);
+}
+
+.slidev-layout :not(pre) > code {
+  background: var(--bc-bg-elevated);
+  border: 1px solid var(--bc-border);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
 }
 
 .slidev-layout a {
@@ -61,18 +77,129 @@ body,
   color: var(--bc-industrial);
 }
 
-/* Cover */
+/* Listes ============================================================== */
+
+.slidev-layout ul,
+.slidev-layout ol {
+  padding-left: 1.5rem;
+}
+
+.slidev-layout ul li::marker {
+  color: var(--bc-industrial);
+}
+
+.slidev-layout li {
+  margin-bottom: 0.4rem;
+}
+
+/* Mermaid ============================================================= */
+
+.slidev-layout .mermaid {
+  background: transparent !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5rem auto;
+}
+
+.slidev-layout .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* KaTeX =============================================================== */
+
+.slidev-layout .katex-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5rem 0;
+  font-size: 1.25em;
+}
+
+.slidev-layout .katex {
+  color: var(--bc-text);
+}
+
+/* Code (Shiki) ======================================================== */
+
+.slidev-layout .slidev-code,
+.slidev-layout pre.shiki {
+  border-radius: 8px;
+  border: 1px solid var(--bc-border);
+  background: #0b0e13 !important;
+  padding: 1rem 1.25rem !important;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.slidev-layout .slidev-code .highlighted,
+.slidev-layout pre.shiki .highlighted {
+  background: rgba(64, 168, 196, 0.12);
+  border-left: 3px solid var(--bc-accent);
+}
+
+/* Tables ============================================================== */
+
+.slidev-layout table {
+  border-collapse: collapse;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.slidev-layout th,
+.slidev-layout td {
+  border-bottom: 1px solid var(--bc-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.slidev-layout th {
+  font-family: var(--bc-font-display);
+  color: var(--bc-accent);
+  font-weight: 600;
+}
+
+/* Blockquote ========================================================== */
+
+.slidev-layout blockquote {
+  border-left: 4px solid var(--bc-industrial);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  background: var(--bc-bg-elevated);
+  border-radius: 0 6px 6px 0;
+  color: var(--bc-text-muted);
+}
+
+/* Cover =============================================================== */
+
 .bc-cover {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  height: 100%;
   padding: 0 4rem;
   background:
     radial-gradient(circle at 80% 20%, rgba(64, 168, 196, 0.18), transparent 50%),
     radial-gradient(circle at 10% 90%, rgba(255, 122, 26, 0.10), transparent 60%),
     var(--bc-bg);
+}
+
+.bc-cover__logo {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  height: 80px;
+  width: auto;
+}
+
+.bc-cover__rule {
+  width: 80px;
+  height: 4px;
+  background: var(--bc-industrial);
+  border-radius: 2px;
+  margin: 0 0 1.2rem;
 }
 
 .bc-cover__title {
@@ -86,14 +213,7 @@ body,
   font-size: 1.6rem;
   color: var(--bc-text-muted);
   font-weight: 400;
-}
-
-.bc-cover__rule {
-  width: 80px;
-  height: 4px;
-  background: var(--bc-industrial);
-  border-radius: 2px;
-  margin: 1.2rem 0;
+  margin: 0;
 }
 
 .bc-cover__footer {
@@ -104,48 +224,57 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
+  font-family: var(--bc-font-mono);
+  font-size: 0.85rem;
   color: var(--bc-text-muted);
+  letter-spacing: 0.05em;
 }
 
-.bc-cover__logo {
-  height: 32px;
+.bc-cover__day {
+  color: var(--bc-industrial);
 }
 
-/* Section divider */
+/* Section ============================================================= */
+
 .bc-section {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  height: 100%;
   padding: 0 4rem;
   background: linear-gradient(135deg, var(--bc-bg) 0%, var(--bc-bg-elevated) 100%);
-  border-left: 8px solid var(--bc-industrial);
+  border-left: 12px solid var(--bc-industrial);
 }
 
 .bc-section__eyebrow {
   font-family: var(--bc-font-mono);
-  font-size: 1rem;
+  font-size: 1.15rem;
   color: var(--bc-industrial);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-bottom: 1rem;
+  letter-spacing: 0.18em;
+  margin-bottom: 1.5rem;
 }
 
 .bc-section__title {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
-/* Two columns */
+.bc-section__note {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  color: var(--bc-text-muted);
+  max-width: 60ch;
+}
+
+/* Two columns ========================================================= */
+
 .bc-two-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
-  height: 100%;
-  padding: 3rem 4rem;
+  gap: 3.5rem;
+  padding: 4rem;
   align-items: start;
 }
 
@@ -153,15 +282,23 @@ body,
   min-width: 0;
 }
 
-/* End slide */
+/* End slide =========================================================== */
+
 .bc-end {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 100%;
-  background: var(--bc-bg);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(64, 168, 196, 0.15), transparent 60%),
+    var(--bc-bg);
+}
+
+.bc-end__logo {
+  height: 110px;
+  width: auto;
+  margin-bottom: 1.5rem;
 }
 
 .bc-end__title {
@@ -173,10 +310,116 @@ body,
 .bc-end__subtitle {
   color: var(--bc-text-muted);
   font-size: 1.3rem;
+  margin-bottom: 1.5rem;
 }
 
 .bc-end__link {
-  margin-top: 2rem;
+  margin-top: 1rem;
   font-family: var(--bc-font-mono);
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--bc-border);
+  border-radius: 6px;
+  background: var(--bc-bg-elevated);
+}
+
+.bc-end__link a {
+  color: var(--bc-accent);
+  text-decoration: none;
+}
+
+/* Global footer ======================================================= */
+
+.bc-global-footer {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 2rem;
+  right: 2rem;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--bc-font-mono);
+  font-size: 0.75rem;
+  color: var(--bc-text-muted);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.bc-global-footer__logo {
+  height: 24px;
+  width: auto;
+}
+
+.bc-global-footer__page {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Masquage du global footer sur les layouts qui ont leur propre marque */
+.slidev-page:has([data-hide-footer]) .bc-global-footer,
+[data-hide-footer] ~ .bc-global-footer {
+  display: none;
+}
+
+/* Color swatches (utilisé dans le deck démo) ========================== */
+
+.bc-swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  font-family: var(--bc-font-mono);
+  font-size: 0.9rem;
+}
+
+.bc-swatch__chip {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--bc-border);
+  flex-shrink: 0;
+}
+
+.bc-swatch__name {
+  color: var(--bc-text);
+  min-width: 11ch;
+}
+
+.bc-swatch__hex {
+  color: var(--bc-text-muted);
+}
+
+/* Type specimen (deck démo) =========================================== */
+
+.bc-type {
+  margin-bottom: 1.25rem;
+}
+
+.bc-type__label {
+  font-family: var(--bc-font-mono);
+  font-size: 0.7rem;
+  color: var(--bc-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.2rem;
+}
+
+.bc-type__sample--display {
+  font-family: var(--bc-font-display);
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.bc-type__sample--sans {
+  font-family: var(--bc-font-sans);
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+.bc-type__sample--mono {
+  font-family: var(--bc-font-mono);
+  font-size: 1.1rem;
   color: var(--bc-accent);
 }

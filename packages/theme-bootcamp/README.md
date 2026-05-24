@@ -9,8 +9,8 @@ Thème partagé entre le site Starlight (`apps/docs`) et les decks Slidev (`apps
 - `src/slidev/` — thème Slidev `slidev-theme-bootcamp` :
   - `layouts/cover.vue`, `two-cols.vue`, `section.vue`, `end.vue`
   - `styles/index.ts`, `layout.css`
-- `src/assets/logo-{arm,gear,iso}.svg` — 3 variantes du logo (choix final à valider sur la PR)
-- `src/assets/favicon.svg`
+- `src/assets/logo-iso.svg` — logo officiel (cube isométrique = base Kiwi + bras SO-101)
+- `src/assets/favicon.svg` — favicon dérivé du même glyphe
 
 ## Utilisation
 
