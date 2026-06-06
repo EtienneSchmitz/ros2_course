@@ -1,0 +1,78 @@
+---
+title: "Déroulé & livrables"
+description: Assemblage des briques, soutenance orale, rapport de projet et grille de notation.
+sidebar:
+  label: "Déroulé & livrables"
+  order: 3
+---
+
+import { Aside, Steps, LinkCard } from "@astrojs/starlight/components";
+
+## Déroulé de la journée
+
+<Steps>
+
+1. **Cadrage (≈30 min)** — relisez [le projet](/integration/01-projet/) et l'architecture
+   cible. Répartissez les sous-systèmes dans l'équipe.
+
+2. **Assemblage par interface** — repartez de votre package du Jour 1 et remplacez les
+   nœuds factices, **un par un**, par les vrais sous-systèmes (J2/J3/J4). Testez chaque
+   branche isolément avant de tout brancher.
+
+3. **Pipeline complet** — faites tourner la chaîne détection → pick → transport → dépôt.
+
+4. **Robustesse & démo** — gérez les cas d'échec, préparez une démo reproductible et
+   enregistrez une **vidéo de secours**.
+
+</Steps>
+
+<Aside type="tip">
+Gardez `rqt_graph` ouvert : il montre en direct que vos nœuds, topics, services et actions
+sont bien connectés — c'est votre meilleur outil de débogage d'intégration.
+</Aside>
+
+## Soutenance orale
+
+- ⏱️ **20 minutes** de présentation, **démonstration de 5 minutes** incluse.
+- ❓ **10 minutes de questions** des encadrants.
+- 📽️ **Vidéo de démonstration** requise (filet de sécurité si la démo live échoue).
+- 📊 **Diaporama obligatoire** pendant l'oral.
+
+## Rapport de projet
+
+À rendre **une semaine après la soutenance**. Contenu attendu :
+
+- 🌐 **Schéma global** : le graphe des nœuds ROS 2 (export `rqt_graph` ou diagramme).
+- 🔄 **Explication des topics / services / actions** utilisés, avec justification technique
+  du choix (pourquoi un service plutôt qu'un topic, etc.).
+- 👥 **Répartition des tâches** individuelles.
+- 🚀 **Améliorations** envisagées avec plus de temps.
+
+<LinkCard
+  title="Template de rapport (Markdown)"
+  description="Structure prête à remplir — récupérez-la comme point de départ."
+  href="/files/rapport-template.md"
+/>
+
+## Grille de notation
+
+| Critère | Points | Ce qu'on évalue |
+| --- | --- | --- |
+| **Fonctionnel** | /6 | Le pipeline détection → pick → transport → dépôt fonctionne de bout en bout. |
+| **Architecture ROS 2** | /4 | Découpage en nœuds, choix topics/services/actions, interfaces propres et figées. |
+| **Qualité du code** | /3 | Lisibilité, paramétrage (pas de valeurs en dur), packages bien structurés. |
+| **Robustesse** | /3 | Gestion des cas d'échec, reprises, comportement si un sous-système manque. |
+| **Soutenance** | /2 | Clarté de la présentation et de la démo. |
+| **Rapport** | /2 | Schéma, justifications techniques, répartition, améliorations. |
+| **Total** | **/20** | |
+
+<Aside type="note" title="Esprit du projet">
+Soyez **créatifs, curieux, ambitieux** — et amusez-vous. Une fonctionnalité bonus bien
+pensée (reprise sur erreur, multi-objets, retour visuel) vaut mieux qu'un pipeline parfait
+mais minimal.
+</Aside>
+
+## Prochaine étape
+
+Retour au [sommaire J5](/integration/), ou révisez les bases au
+[Jour 1 — Introduction](/introduction/).

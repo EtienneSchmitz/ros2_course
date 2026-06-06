@@ -6,15 +6,35 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 
-<Aside type="caution" title="En cours de réécriture pour la session 2026">
-Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issues [#46](https://github.com/EtienneSchmitz/ros2_course/issues/46), [#47](https://github.com/EtienneSchmitz/ros2_course/issues/47)).
+Le Jour 5 est l'aboutissement de la semaine : vous assemblez la perception (Jour 4), la
+manipulation (Jour 3) et la navigation (Jour 2) en un **système robotique complet** qui
+détecte, saisit et transporte un objet.
 
-Le contenu de la session 2025 reste accessible :
-[ros2_course/tree/v2025/docs/integration](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/integration)
-</Aside>
+## Objectifs
 
-## Sommaire prévisionnel
+- Assembler un **pipeline ROS 2 complet** (perception → décision → action) à partir des
+  briques construites tout au long de la semaine.
+- Concevoir une **architecture** propre (nœuds, topics, services, actions) et la documenter.
+- Présenter et défendre votre projet (soutenance + rapport).
 
-Le J5 (intégration) est le pivot de la refonte 2026 : il définit les briques que les autres journées doivent fournir.
+## Parcours
+
+<CardGrid>
+  <LinkCard
+    title="Le projet"
+    description="Scénario, architecture cible et interfaces à respecter."
+    href="/integration/01-projet/"
+  />
+  <LinkCard
+    title="Déroulé & livrables"
+    description="Assemblage des briques, soutenance, rapport et grille de notation."
+    href="/integration/02-deroule-livrables/"
+  />
+</CardGrid>
+
+## Slides du jour
+
+<SlidevEmbed name="jour5" title="Jour 5 — Intégration" />

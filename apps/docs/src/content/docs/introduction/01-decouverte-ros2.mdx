@@ -1,0 +1,206 @@
+---
+title: "Découverte de ROS 2"
+description: Qu'est-ce que ROS 2, son architecture, et ses concepts (nodes, topics, services, actions, paramètres) illustrés avec turtlesim.
+sidebar:
+  label: "Découverte de ROS 2"
+  order: 2
+---
+
+import { Aside, Tabs, TabItem, Steps } from "@astrojs/starlight/components";
+
+Dans cette première partie, vous découvrez **ce qu'est ROS 2** et ses **concepts
+fondamentaux**, en les manipulant tout de suite avec `turtlesim` — un petit simulateur
+qui sert de bac à sable. La partie suivante réutilisera ces concepts pour construire la
+première brique du projet final.
+
+<Aside type="note" title="Objectifs">
+- Comprendre l'architecture de ROS 2 (graphe de nœuds, DDS).
+- Manipuler les 5 briques de communication : **nodes, topics, services, actions, paramètres**.
+- Être à l'aise avec la **CLI `ros2`** et les **launch files**.
+</Aside>
+
+## 1. Qu'est-ce que ROS 2 ?
+
+**ROS 2** (Robot Operating System 2) n'est pas un système d'exploitation, mais un
+**framework** (un middleware + des outils) pour écrire des logiciels de robotique. Il
+fournit :
+
+- un **modèle de communication** standard entre programmes (le *graphe* de nœuds) ;
+- des **outils** (visualisation, simulation, enregistrement, débogage) ;
+- un immense **écosystème** de paquets réutilisables (Nav2, MoveIt 2, ros2_control…).
+
+Plutôt que de tout réécrire, on **assemble** des nœuds qui communiquent — exactement ce
+que vous ferez toute la semaine.
+
+<Aside type="tip" title="ROS 1 → ROS 2">
+ROS 2 a été ré-architecturé sur **DDS** (un standard industriel de communication temps
+réel) : plus de nœud maître unique (`roscore`), découverte décentralisée, support
+multi-plateforme et temps réel. Cette session utilise la distribution **Kilted** (2025).
+</Aside>
+
+## 2. L'architecture : le graphe ROS 2
+
+Un système ROS 2 est un **graphe** : des **nœuds** (processus) qui s'échangent des données
+via des **topics**, **services** et **actions**. La couche réseau (RMW → DDS) gère la
+découverte automatique : un nœud qui démarre trouve seul les autres.
+
+```mermaid
+flowchart LR
+  A["nœud A"] -->|topic| B["nœud B"]
+  B -->|service| C["nœud C"]
+  A -->|action| C
+```
+
+<Aside type="caution" title="ROS_DOMAIN_ID">
+Sur un réseau partagé (salle de cours !), tous les ROS 2 se découvrent par défaut. Pour
+**isoler** votre robot des autres, fixez un identifiant de domaine :
+
+```bash
+export ROS_DOMAIN_ID=42   # choisissez un nombre par binôme
+```
+</Aside>
+
+## 3. Bac à sable : turtlesim
+
+`turtlesim` est un mini-simulateur (une tortue dans une fenêtre) idéal pour voir les
+concepts en action. Lancez-le :
+
+<Tabs>
+<TabItem label="Terminal 1 — le simulateur">
+
+```bash
+ros2 run turtlesim turtlesim_node
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — la téléop">
+
+```bash
+ros2 run turtlesim turtle_teleop_key
+```
+
+Les flèches du clavier déplacent la tortue.
+
+</TabItem>
+</Tabs>
+
+## 4. Les nœuds
+
+Un **nœud** est un programme ROS 2 qui fait **une** tâche (lire un capteur, piloter un
+moteur…). `turtlesim_node` et `turtle_teleop_key` sont deux nœuds.
+
+```bash
+ros2 node list          # liste les nœuds actifs
+ros2 node info /turtlesim
+```
+
+## 5. Les topics & messages
+
+Un **topic** est un canal nommé en **publication / abonnement** (pub/sub) : un nœud
+*publie* des **messages** typés, d'autres s'y *abonnent*. C'est **anonyme** et
+**asynchrone** — idéal pour des flux continus (positions, images, vitesses).
+
+```bash
+ros2 topic list
+ros2 topic echo /turtle1/pose                 # voir les messages publiés
+ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
+  "{linear: {x: 1.0}, angular: {z: 0.5}}"     # publier une commande
+```
+
+<Aside type="tip" title="Vérifiez votre compréhension">
+1. Combien de nœuds peuvent publier / s'abonner à un même topic ?
+2. La communication par topic est-elle synchrone (on attend une réponse) ?
+3. Comment connaître le **type** de message d'un topic ?
+
+<details class="quiz-answers">
+<summary>Afficher les réponses</summary>
+
+1. Autant qu'on veut, dans les deux sens (N publishers, N subscribers) — c'est anonyme.
+2. Non : c'est **asynchrone**, on publie sans attendre de réponse.
+3. `ros2 topic info /turtle1/cmd_vel` (ou `ros2 topic type …`).
+
+</details>
+</Aside>
+
+## 6. Les services
+
+Un **service** est un appel **requête / réponse** (comme une fonction distante) :
+**synchrone**, ponctuel. Utile pour une action brève qui renvoie un résultat
+(« remets la tortue à zéro », « calcule X »).
+
+```bash
+ros2 service list
+ros2 service call /clear std_srvs/srv/Empty            # efface le tracé
+ros2 service call /spawn turtlesim/srv/Spawn \
+  "{x: 5.0, y: 5.0, theta: 0.0, name: 'turtle2'}"      # crée une 2e tortue
+```
+
+## 7. Les actions
+
+Une **action** est faite pour les tâches **longues** : requête + **feedback** continu +
+résultat final, et **annulable**. C'est la brique que Nav2 utilise pour « aller à une
+pose » (Jour 2).
+
+```bash
+ros2 action list
+ros2 action send_goal /turtle1/rotate_absolute \
+  turtlesim/action/RotateAbsolute "{theta: 1.57}" --feedback
+```
+
+<Aside type="tip" title="Topic vs service vs action ?">
+- **Topic** : flux continu, anonyme, asynchrone (capteurs, commandes).
+- **Service** : requête/réponse courte, synchrone (interrogation ponctuelle).
+- **Action** : tâche longue avec feedback et annulation (navigation, pick).
+</Aside>
+
+## 8. Les paramètres
+
+Les **paramètres** configurent un nœud au lancement (sans recompiler) : couleurs,
+fréquences, seuils… Sur `turtlesim`, la couleur de fond est un paramètre :
+
+```bash
+ros2 param list
+ros2 param get /turtlesim background_b
+ros2 param set /turtlesim background_b 255   # fond plus bleu
+```
+
+## 9. Les launch files
+
+Lancer chaque nœud à la main devient vite pénible. Un **launch file** démarre plusieurs
+nœuds (avec leurs paramètres) d'une seule commande — vous en avez déjà utilisé pour le
+SO-101 et le LeKiwi.
+
+```python
+# exemple minimal : launch/demo.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(package="turtlesim", executable="turtlesim_node"),
+    ])
+```
+
+```bash
+ros2 launch mon_package demo.launch.py
+```
+
+## 10. Inspecter le graphe
+
+`rqt_graph` affiche le graphe nœuds / topics en direct — votre meilleur outil pour
+comprendre « qui parle à qui » :
+
+```bash
+rqt_graph
+```
+
+<Aside type="note" title="Pour aller plus loin — tutoriels officiels">
+Les [tutoriels ROS 2 officiels](https://docs.ros.org/en/kilted/Tutorials.html) reprennent
+chacun de ces concepts en détail (nodes, topics, services, params, actions, `rqt`,
+`ros2 launch`, `ros2 bag`). Excellents en auto-formation pour approfondir.
+</Aside>
+
+## Prochaine étape
+
+Vous connaissez les briques de communication. Place à la pratique sur **notre** projet :
+[Première brique du projet](/introduction/02-premiere-brique/).

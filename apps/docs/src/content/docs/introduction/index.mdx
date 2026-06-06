@@ -6,23 +6,33 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 
-<Aside type="caution" title="En cours de réécriture pour la session 2026">
-Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issues [#54](https://github.com/EtienneSchmitz/ros2_course/issues/54), [#55](https://github.com/EtienneSchmitz/ros2_course/issues/55)).
+Premier jour : vous découvrez **ROS 2** et ses concepts, puis vous codez tout de suite la
+**première brique** du projet final. Le fil rouge de la semaine commence ici.
 
-Le contenu de la session 2025 reste accessible :
-[ros2_course/tree/v2025/docs/introduction](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/introduction)
-</Aside>
+## Objectifs
 
-## Sommaire prévisionnel
+- Comprendre l'architecture de ROS 2 et son écosystème.
+- Maîtriser les briques de communication : nodes, topics, services, actions, paramètres.
+- Créer un package ROS 2 et monter le **graphe du projet final** avec des nœuds factices.
 
-Le J1 sera **rétro-conçu** à partir des briques attendues par le J5 (intégration), une fois les autres journées stabilisées.
+## Parcours
 
-## Aperçu — démo du thème Slidev
+<CardGrid>
+  <LinkCard
+    title="Découverte de ROS 2"
+    description="Concepts (nodes, topics, services, actions, params) en pratique avec turtlesim."
+    href="/introduction/01-decouverte-ros2/"
+  />
+  <LinkCard
+    title="Première brique du projet"
+    description="Créer un package et coder le graphe du projet J5 avec des nœuds factices."
+    href="/introduction/02-premiere-brique/"
+  />
+</CardGrid>
 
-<SlidevEmbed name="demo" title="Démo — thème ROS 2 Bootcamp" />
+## Slides du jour
 
-> Le deck ci-dessus est embarqué via le composant `<SlidevEmbed name="demo" />`.
-> Quand le vrai deck J1 sera prêt, on remplacera `demo` par `j1` (ou similaire).
+<SlidevEmbed name="jour1" title="Jour 1 — Introduction" />
