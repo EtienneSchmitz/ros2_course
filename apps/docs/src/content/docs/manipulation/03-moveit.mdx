@@ -1,5 +1,5 @@
 ---
-title: 3. MoveIt 2
+title: MoveIt 2
 description: Planification de trajectoire, cinématique inverse, gestion des collisions avec MoveIt 2.
 sidebar:
   order: 4
@@ -8,9 +8,9 @@ sidebar:
 import { Aside } from "@astrojs/starlight/components";
 
 [MoveIt 2](https://moveit.picknik.ai/) est **la** stack ROS 2 de
-planification de mouvement. Au lieu de calculer toi-même chaque
-trajectoire articulaire, tu lui donnes un objectif (pose cartésienne,
-configuration cible) et il te renvoie une trajectoire collision-free.
+planification de mouvement. Au lieu de calculer vous-même chaque
+trajectoire articulaire, vous lui donnez un objectif (pose cartésienne,
+configuration cible) et il vous renvoie une trajectoire collision-free.
 
 ## Ce que MoveIt apporte
 
@@ -19,8 +19,10 @@ configuration cible) et il te renvoie une trajectoire collision-free.
 - **Planification** (OMPL, STOMP, Pilz…) : « comment passer de A à B sans
   rentrer dans un obstacle ? ».
 - **Planning Scene** : représentation du monde (obstacles, objets attachés).
-- **Trajectory execution** : envoie la trajectoire planifiée au
-  `joint_trajectory_controller` vu au chapitre précédent.
+- **Trajectory execution** : envoie la trajectoire planifiée du bras au
+  `arm_controller` (le `joint_trajectory_controller` vu au chapitre
+  précédent) ; la pince est pilotée séparément par le `gripper_controller`
+  (action `ParallelGripperCommand`).
 
 ## Architecture
 
@@ -33,8 +35,8 @@ configuration cible) et il te renvoie une trajectoire collision-free.
             │          └──► IK plugin (KDL / TracIK)
             │
             ▼
-   /joint_trajectory_controller/follow_joint_trajectory
-            │
+   /arm_controller/follow_joint_trajectory
+            │                          (pince : /gripper_controller/gripper_cmd)
             ▼
         Robot (sim ou réel)
 ```
@@ -63,8 +65,8 @@ générée via :
 ros2 launch moveit_setup_assistant setup_assistant.launch.py
 ```
 
-Charge `so101.urdf.xacro`, suis les étapes (collision matrix, groupes,
-poses, etc.) et exporte dans `so101_moveit_config/`.
+Chargez `so101.urdf.xacro`, suivez les étapes (collision matrix, groupes,
+poses, etc.) et exportez dans `so101_moveit_config/`.
 </Aside>
 
 ## Premier lancement
@@ -91,8 +93,8 @@ préchargé. Dans RViz :
 
 Pour des trajectoires en ligne droite (utile pour les approches de pick),
 MoveIt expose `compute_cartesian_path` (service `/compute_cartesian_path`
-ou méthode Python `MoveItPy`). Tu lui donnes une liste de waypoints
-cartésiens et tu obtiens une trajectoire interpolée.
+ou méthode Python `MoveItPy`). Vous lui donnez une liste de waypoints
+cartésiens et vous obtenez une trajectoire interpolée.
 
 ## Collisions
 

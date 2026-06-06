@@ -1,5 +1,5 @@
 ---
-title: 2. SLAM avec slam_toolbox
+title: SLAM avec slam_toolbox
 description: Cartographie en ligne avec slam_toolbox en mode online async, sauvegarde de carte.
 sidebar:
   order: 3
@@ -40,7 +40,7 @@ features du scan laser.
 ## Lancement en parallèle de la sim
 
 <Aside type="note" title="Hands-on (à venir)">
-Quand le package `lekiwi_navigation` sera prêt, tu lances simultanément
+Quand le package `lekiwi_navigation` sera prêt, vous lancez simultanément
 la sim et le SLAM :
 
 <Tabs>
@@ -67,7 +67,7 @@ rviz2 -d $(ros2 pkg prefix lekiwi_navigation)/share/lekiwi_navigation/rviz/slam.
 </TabItem>
 </Tabs>
 
-Dans RViz, tu dois voir :
+Dans RViz, vous devez voir :
 
 - l'`OccupancyGrid` `/map` apparaître au fur et à mesure ;
 - la silhouette du LeKiwi suivre la base ;
@@ -77,18 +77,18 @@ Dans RViz, tu dois voir :
 
 ## Téléop pour cartographier
 
-Lance en plus la téléop clavier (cf. [chapitre précédent](/navigation/01-base-mobile/#téléop-clavier))
-et balade le robot dans le monde. Quelques principes pour une bonne carte :
+Lancez en plus la téléop clavier (cf. [chapitre précédent](/navigation/01-base-mobile/#téléop-clavier))
+et baladez le robot dans le monde. Quelques principes pour une bonne carte :
 
 - **Vitesses modérées** (< 0.3 m/s) : les itérations SLAM ont le temps de
   fitter chaque scan.
-- **Boucle fermée** : reviens régulièrement à un endroit déjà visité,
+- **Boucle fermée** : revenez régulièrement à un endroit déjà visité,
   ça aide l'algo à corriger la dérive (boucle de fermeture).
-- **Couverture complète** : longe les murs pour qu'ils soient nets.
+- **Couverture complète** : longez les murs pour qu'ils soient nets.
 
 ## Sauvegarder la carte
 
-Une fois satisfait, sauvegarde la carte :
+Une fois satisfait, sauvegardez la carte :
 
 ```bash
 ros2 run nav2_map_server map_saver_cli -f ~/ros2_bootcamp_ws/maps/lekiwi_world
@@ -99,7 +99,7 @@ Cela produit deux fichiers :
 - `lekiwi_world.yaml` : métadonnées (origine, résolution, seuils).
 - `lekiwi_world.pgm` : image grayscale de l'OccupancyGrid.
 
-Tu peux ensuite rejouer la carte sans SLAM (mode pur localisation, AMCL
+Vous pouvez ensuite rejouer la carte sans SLAM (mode pur localisation, AMCL
 ou slam_toolbox en `localization`).
 
 ## Prochaine étape

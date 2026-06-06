@@ -3,6 +3,7 @@ title: Jour 3 — Manipulation
 description: Bras SO-101 et MoveIt 2 — de l'URDF à la planification de trajectoire.
 sidebar:
   order: 1
+  label: "Vue d'ensemble"
 ---
 
 import { Aside, CardGrid, LinkCard } from "@astrojs/starlight/components";
@@ -14,10 +15,10 @@ Le package ROS associé [`so_arm101_ros2`](https://github.com/EtienneSchmitz/so_
 
 ## Objectifs pédagogiques
 
-À la fin de la journée, tu sais :
+À la fin de la journée, vous saurez :
 
 - décrire la cinématique d'un bras 6 DoF et lire son URDF Xacro ;
-- piloter le bras en simulation Gazebo Harmonic via `ros2_control` ;
+- piloter le bras en simulation Gazebo Ionic (gz-sim 9) via `ros2_control` ;
 - planifier et exécuter une trajectoire avec **MoveIt 2** ;
 - raisonner sur les limites (joints, collisions, contraintes).
 
@@ -30,22 +31,22 @@ Le package ROS associé [`so_arm101_ros2`](https://github.com/EtienneSchmitz/so_
 
 <CardGrid>
   <LinkCard
-    title="1. Le bras SO-101"
+    title="Le bras SO-101"
     description="Anatomie, joints, URDF, chaîne cinématique."
     href="/manipulation/01-bras-so101/"
   />
   <LinkCard
-    title="2. Contrôleurs ros2_control"
-    description="joint_trajectory_controller en sim Gazebo Harmonic."
+    title="Contrôleurs ros2_control"
+    description="arm_controller + gripper_controller en sim Gazebo Ionic (gz-sim 9)."
     href="/manipulation/02-controllers/"
   />
   <LinkCard
-    title="3. MoveIt 2"
+    title="MoveIt 2"
     description="Config, planificateurs OMPL, planification cartésienne."
     href="/manipulation/03-moveit/"
   />
   <LinkCard
-    title="4. Exercices"
+    title="Exercices"
     description="Pick fictif, contraintes, scènes de collision."
     href="/manipulation/04-exercices/"
   />

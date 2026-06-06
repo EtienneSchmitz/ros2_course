@@ -1,5 +1,5 @@
 ---
-title: 3. Workspace ROS
+title: Workspace ROS
 description: Création du workspace ~/ros2_bootcamp_ws, vcstool, rosdep, premier colcon build.
 sidebar:
   order: 4
@@ -7,7 +7,7 @@ sidebar:
 
 import { Aside } from "@astrojs/starlight/components";
 
-Le workspace `~/ros2_bootcamp_ws/` est ton dossier de travail local pour tout le cours. **Il n'est pas versionné** : tu le construis sur ta machine et tu y tires les repos robots via [vcstool](https://github.com/dirk-thomas/vcstool).
+Le workspace `~/ros2_bootcamp_ws/` est votre dossier de travail local pour tout le cours. **Il n'est pas versionné** : vous le construisez sur votre machine et vous y tirez les repos robots via [vcstool](https://github.com/dirk-thomas/vcstool).
 
 ## Installer les outils workspace
 
@@ -19,7 +19,7 @@ sudo apt install -y \
   git
 ```
 
-Initialise `rosdep` (une seule fois sur la machine) :
+Initialisez `rosdep` (une seule fois sur la machine) :
 
 ```bash
 sudo rosdep init
@@ -42,7 +42,7 @@ Structure cible :
 ```
 
 <Aside type="caution">
-Ne fais **pas** de `git init` sur `~/ros2_bootcamp_ws/`. Ce dossier reste local. Le code source des robots, lui, vivra dans des repos GitHub séparés clonés dans `src/`.
+Ne faites **pas** de `git init` sur `~/ros2_bootcamp_ws/`. Ce dossier reste local. Le code source des robots, lui, vivra dans des repos GitHub séparés clonés dans `src/`.
 </Aside>
 
 ## Télécharger `bootcamp.repos`
@@ -61,7 +61,7 @@ vcs import src < bootcamp.repos
 ```
 
 <Aside type="note">
-Au démarrage du cours, `bootcamp.repos` est **vide** (les repos robots arrivent au fur et à mesure). La commande ci-dessus s'exécute sans erreur mais ne clone rien — c'est normal. Tu rejoueras `vcs import` plus tard pour récupérer les robots dès qu'ils seront publiés.
+Au démarrage du cours, `bootcamp.repos` est **vide** (les repos robots arrivent au fur et à mesure). La commande ci-dessus s'exécute sans erreur mais ne clone rien — c'est normal. Vous rejouerez `vcs import` plus tard pour récupérer les robots dès qu'ils seront publiés.
 </Aside>
 
 ## Installer les dépendances ROS
@@ -83,13 +83,13 @@ Le flag `--symlink-install` permet de modifier les fichiers Python / launch sans
 
 ## Sourcer le workspace
 
-À chaque ouverture de terminal, tu dois sourcer **deux choses** : ROS (déjà fait via `~/.bashrc`) puis le workspace :
+À chaque ouverture de terminal, vous devez sourcer **deux choses** : ROS (déjà fait via `~/.bashrc`) puis le workspace :
 
 ```bash
 source ~/ros2_bootcamp_ws/install/setup.bash
 ```
 
-Pour automatiser, ajoute à ton `~/.bashrc` :
+Pour automatiser, ajoutez à votre `~/.bashrc` :
 
 ```bash
 echo "source ~/ros2_bootcamp_ws/install/setup.bash" >> ~/.bashrc

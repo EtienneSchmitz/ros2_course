@@ -3,6 +3,7 @@ title: Jour 2 — Navigation
 description: Base mobile LeKiwi, cartographie SLAM Toolbox et navigation autonome avec Nav2.
 sidebar:
   order: 1
+  label: "Vue d'ensemble"
 ---
 
 import { Aside, CardGrid, LinkCard } from "@astrojs/starlight/components";
@@ -14,10 +15,10 @@ Le package ROS associé [`lekiwi_ros2`](https://github.com/EtienneSchmitz/lekiwi
 
 ## Objectifs pédagogiques
 
-À la fin de la journée, tu sais :
+À la fin de la journée, vous saurez :
 
 - décrire la cinématique d'une base mobile **omnidirectionnelle Kiwi** (3 roues à 120°) ;
-- piloter la base en téléop dans Gazebo Harmonic ;
+- piloter la base en téléop dans Gazebo Ionic (gz-sim 9) ;
 - construire une carte avec **slam_toolbox** ;
 - planifier et exécuter des trajectoires autonomes avec **Nav2**.
 
@@ -30,22 +31,22 @@ Le package ROS associé [`lekiwi_ros2`](https://github.com/EtienneSchmitz/lekiwi
 
 <CardGrid>
   <LinkCard
-    title="1. La base mobile"
+    title="La base mobile"
     description="Roues kiwi 120°, URDF, première téléop."
     href="/navigation/01-base-mobile/"
   />
   <LinkCard
-    title="2. SLAM"
+    title="SLAM"
     description="slam_toolbox online async, construction et sauvegarde de carte."
     href="/navigation/02-slam/"
   />
   <LinkCard
-    title="3. Nav2"
+    title="Nav2"
     description="Stack Nav2 holonome, planning, contrôleur, costmaps."
     href="/navigation/03-nav2/"
   />
   <LinkCard
-    title="4. Exercices"
+    title="Exercices"
     description="Tuning controller, obstacles dynamiques, behaviors."
     href="/navigation/04-exercices/"
   />

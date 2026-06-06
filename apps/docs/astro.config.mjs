@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeMermaid from "rehype-mermaid";
@@ -9,7 +10,7 @@ export default defineConfig({
   trailingSlash: "ignore",
 
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       [rehypeKatex, {}],
       [rehypeMermaid, { strategy: "img-svg" }],

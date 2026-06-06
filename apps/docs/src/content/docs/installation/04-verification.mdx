@@ -1,5 +1,5 @@
 ---
-title: 4. Vérification
+title: Vérification
 description: ros2 doctor, build à vide, ouverture de Gazebo, bridge ros_gz.
 sidebar:
   order: 5
@@ -24,7 +24,7 @@ cd ~/ros2_bootcamp_ws
 colcon build --symlink-install
 ```
 
-Tu dois obtenir `Summary: 0 packages finished` (puisque `src/` est encore vide). Aucune erreur ne doit apparaître.
+Vous devez obtenir `Summary: 0 packages finished` (puisque `src/` est encore vide). Aucune erreur ne doit apparaître.
 
 ## Gazebo Harmonic s'ouvre
 
@@ -32,7 +32,7 @@ Tu dois obtenir `Summary: 0 packages finished` (puisque `src/` est encore vide).
 gz sim shapes.sdf
 ```
 
-Une fenêtre Gazebo s'ouvre avec quelques formes. Vérifie que tu peux orbiter la caméra à la souris (clic-droit pour panner, molette pour zoomer).
+Une fenêtre Gazebo s'ouvre avec quelques formes. Vérifiez que vous pouvez orbiter la caméra à la souris (clic-droit pour panner, molette pour zoomer).
 
 ## Le bridge `ros_gz` répond
 
@@ -79,7 +79,7 @@ rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 ```
 
-et tu as le nouveau robot dans le workspace.
+et vous avez le nouveau robot dans le workspace.
 
 <Aside type="tip">
 Les jours [Navigation (J2)](/navigation/) et [Manipulation (J3)](/manipulation/) du cours détaillent la mise en route des robots associés.

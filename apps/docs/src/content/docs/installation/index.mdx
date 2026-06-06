@@ -3,6 +3,7 @@ title: Installation
 description: Mise en place de l'environnement ROS 2 Kilted + Gazebo Harmonic pour la session Perpignan 2026.
 sidebar:
   order: 1
+  label: "Vue d'ensemble"
 ---
 
 import { Aside, Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
@@ -29,22 +30,22 @@ Cette section décrit, étape par étape, comment monter une machine de travail 
 
 <CardGrid>
   <LinkCard
-    title="1. Installer Ubuntu 24.04"
+    title="Installer Ubuntu 24.04"
     description="Téléchargement ISO, clé USB Rufus, boot UEFI, post-install."
     href="/installation/01-ubuntu/"
   />
   <LinkCard
-    title="2. ROS 2 Kilted + Gazebo Harmonic"
+    title="ROS 2 Kilted + Gazebo Harmonic"
     description="Dépôts apt, install desktop-full, bridge ros_gz, vérifications."
     href="/installation/02-ros-gazebo/"
   />
   <LinkCard
-    title="3. Workspace ROS"
+    title="Workspace ROS"
     description="vcstool, bootcamp.repos, premier colcon build."
     href="/installation/03-workspace/"
   />
   <LinkCard
-    title="4. Vérification"
+    title="Vérification"
     description="ros2 doctor, build à vide, ouverture de Gazebo."
     href="/installation/04-verification/"
   />

@@ -1,5 +1,5 @@
 ---
-title: 3. Navigation autonome avec Nav2
+title: Navigation autonome avec Nav2
 description: Stack Nav2 holonome — planning, controller, costmaps, premiers goals 2D.
 sidebar:
   order: 4
@@ -64,7 +64,7 @@ Quand `lekiwi_navigation` sera prêt :
 ros2 launch lekiwi_navigation navigation.launch.py
 ```
 
-Ce launch empile : la sim, slam_toolbox (en `localization` si tu as une
+Ce launch empile : la sim, slam_toolbox (en `localization` si vous avez une
 carte ; en `online async` sinon), et la stack Nav2 complète.
 </Aside>
 
@@ -72,14 +72,14 @@ carte ; en `online async` sinon), et la stack Nav2 complète.
 
 Dans RViz :
 
-1. Définir la **2D Pose Estimate** (bouton dans la toolbar) : clique
+1. Définir la **2D Pose Estimate** (bouton dans la toolbar) : cliquez
    sur la carte à l'endroit où le robot se trouve réellement et
-   oriente la flèche selon le cap. C'est la pose initiale pour le
+   orientez la flèche selon le cap. C'est la pose initiale pour le
    filtre de localisation.
-2. Définir le **Nav2 Goal** : clique ailleurs sur la carte. Nav2
+2. Définir le **Nav2 Goal** : cliquez ailleurs sur la carte. Nav2
    planifie et exécute la trajectoire.
 
-Tu peux suivre l'avancement via :
+Vous pouvez suivre l'avancement via :
 
 ```bash
 ros2 topic echo /behavior_server/behavior_tree_log

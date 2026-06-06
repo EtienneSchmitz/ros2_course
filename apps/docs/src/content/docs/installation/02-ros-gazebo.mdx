@@ -1,5 +1,5 @@
 ---
-title: 2. ROS 2 Kilted + Gazebo Harmonic
+title: ROS 2 Kilted + Gazebo Harmonic
 description: Installation des dépôts apt, ROS 2 Kilted desktop-full, Gazebo Harmonic et bridge ros_gz.
 sidebar:
   order: 3
@@ -56,14 +56,14 @@ sudo apt install -y \
 
 ## Sourcer ROS 2
 
-Ajoute le sourcing à ton `~/.bashrc` pour ne pas avoir à le refaire à chaque terminal :
+Ajoutez le sourcing à votre `~/.bashrc` pour ne pas avoir à le refaire à chaque terminal :
 
 ```bash
 echo "source /opt/ros/kilted/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Vérifie que `ros2` est trouvé :
+Vérifiez que `ros2` est trouvé :
 
 ```bash
 ros2 --help
@@ -113,7 +113,7 @@ Tester Gazebo seul :
 gz sim shapes.sdf
 ```
 
-Une fenêtre Gazebo doit s'ouvrir avec quelques formes. Ferme-la (`Ctrl+C` dans le terminal).
+Une fenêtre Gazebo doit s'ouvrir avec quelques formes. Fermez-la (`Ctrl+C` dans le terminal).
 
 ## Installer le bridge `ros_gz`
 
@@ -150,7 +150,7 @@ ros2 topic echo /clock
 </TabItem>
 </Tabs>
 
-Tu dois voir le `/clock` ROS avancer pendant que Gazebo simule.
+Vous devez voir le `/clock` ROS avancer pendant que Gazebo simule.
 
 ## Prochaine étape
 

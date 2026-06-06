@@ -1,5 +1,5 @@
 ---
-title: 4. Exercices
+title: Exercices
 description: Pick fictif, contraintes, scènes de collision — exercices guidés J3.
 sidebar:
   order: 5
@@ -20,7 +20,7 @@ publié et fonctionnel. Voir [section précédente](/manipulation/03-moveit/).
 
 Indices :
 
-- Dans RViz / MotionPlanning, sélectionne directement la **goal state**
+- Dans RViz / MotionPlanning, sélectionnez directement la **goal state**
   par son nom (déroulant à côté de `random valid`).
 - Ou en code Python (`moveit_py`) :
 
@@ -40,9 +40,9 @@ la pince orientée **verticalement vers le bas** (pour préparer un pick).
 
 Indices :
 
-- Définis un `PoseStamped` avec l'orientation cible
+- Définissez un `PoseStamped` avec l'orientation cible
   (quaternion équivalent à un yaw-pitch-roll).
-- Active une **OrientationConstraint** dans la requête de planification
+- Activez une **OrientationConstraint** dans la requête de planification
   pour éviter que MoveIt tourne le poignet en route.
 
 ## Exercice 3 — Évitement d'obstacle
@@ -52,8 +52,8 @@ de départ et la cible, puis vérifier que MoveIt contourne l'obstacle.
 
 Indices :
 
-- Publie un `CollisionObject` (cf. [chapitre MoveIt](/manipulation/03-moveit/#collisions)).
-- Compare deux planifications : avec et sans obstacle. Le temps de
+- Publiez un `CollisionObject` (cf. [chapitre MoveIt](/manipulation/03-moveit/#collisions)).
+- Comparez deux planifications : avec et sans obstacle. Le temps de
   planification doit légèrement augmenter et la trajectoire faire un
   détour.
 
@@ -63,13 +63,13 @@ Indices :
 
 Étapes :
 
-1. Approche : déplace la pince à 5 cm au-dessus de la pose de l'objet,
+1. Approche : déplacez la pince à 5 cm au-dessus de la pose de l'objet,
    pince ouverte.
 2. Descente : trajectoire cartésienne vers la pose de l'objet.
-3. Préhension : commande la pince en fermeture
+3. Préhension : commandez la pince en fermeture
    (via le contrôleur du gripper).
-4. Retrait : remonte de 10 cm (trajectoire cartésienne).
-5. Retour : rejoint la pose nommée `home`.
+4. Retrait : remontez de 10 cm (trajectoire cartésienne).
+5. Retour : rejoignez la pose nommée `home`.
 
 <Aside type="tip">
 Aucun objet réel n'est manipulé ici (pas de perception, pas de feedback
@@ -80,5 +80,5 @@ au Jour 5 et à la session S20.
 
 ## Prochaine étape
 
-Retour au [sommaire J3](/manipulation/), ou enchaîne sur
+Retour au [sommaire J3](/manipulation/), ou enchaînez sur
 [Jour 4 — Vision](/vision/).
