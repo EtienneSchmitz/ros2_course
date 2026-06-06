@@ -6,12 +6,8 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { Aside, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import SlidevEmbed from "../../../components/SlidevEmbed.astro";
-
-<Aside type="caution" title="Section en cours de construction">
-Le package ROS associé [`so_arm101_ros2`](https://github.com/EtienneSchmitz/so_arm101_ros2) (à créer) est rédigé en parallèle de cette section. Les blocs marqués _« hands-on »_ pointent vers ce repo et deviendront actifs au fur et à mesure de sa publication.
-</Aside>
 
 ## Objectifs pédagogiques
 
@@ -20,35 +16,25 @@ Le package ROS associé [`so_arm101_ros2`](https://github.com/EtienneSchmitz/so_
 - décrire la cinématique d'un bras 6 DoF et lire son URDF Xacro ;
 - piloter le bras en simulation Gazebo Ionic (gz-sim 9) via `ros2_control` ;
 - planifier et exécuter une trajectoire avec **MoveIt 2** ;
-- raisonner sur les limites (joints, collisions, contraintes).
+- coder un **pick & place** complet en simulation.
 
 ## Pré-requis
 
 - Workspace `~/ros2_bootcamp_ws/` opérationnel (voir [Installation](/installation/)).
 - Concepts ROS 2 maîtrisés (nodes, topics, tf) — voir Jour 1.
 
-## Parcours
+## Parcours — deux parties
 
 <CardGrid>
   <LinkCard
-    title="Le bras SO-101"
-    description="Anatomie, joints, URDF, chaîne cinématique."
-    href="/manipulation/01-bras-so101/"
+    title="Découverte du bras SO-101"
+    description="Anatomie, URDF/Xacro, visualisation RViz, puis pilotage en sim via ros2_control."
+    href="/manipulation/01-decouverte-bras/"
   />
   <LinkCard
-    title="Contrôleurs ros2_control"
-    description="arm_controller + gripper_controller en sim Gazebo Ionic (gz-sim 9)."
-    href="/manipulation/02-controllers/"
-  />
-  <LinkCard
-    title="MoveIt 2"
-    description="Config, planificateurs OMPL, planification cartésienne."
-    href="/manipulation/03-moveit/"
-  />
-  <LinkCard
-    title="Exercices"
-    description="Pick fictif, contraintes, scènes de collision."
-    href="/manipulation/04-exercices/"
+    title="MoveIt & pick and place"
+    description="Planification MoveIt 2, IK, collisions, et un pick & place codé par l'étudiant."
+    href="/manipulation/02-moveit-pick-place/"
   />
 </CardGrid>
 

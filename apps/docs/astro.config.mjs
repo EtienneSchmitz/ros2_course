@@ -13,7 +13,14 @@ export default defineConfig({
     remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       [rehypeKatex, {}],
-      [rehypeMermaid, { strategy: "img-svg" }],
+      [
+        rehypeMermaid,
+        {
+          strategy: "img-svg",
+          mermaidConfig: { theme: "default" },
+          dark: { theme: "dark" },
+        },
+      ],
     ],
   },
 

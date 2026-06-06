@@ -1,6 +1,6 @@
 ---
-title: ROS 2 Kilted + Gazebo Harmonic
-description: Installation des dépôts apt, ROS 2 Kilted desktop-full, Gazebo Harmonic et bridge ros_gz.
+title: ROS 2 Kilted + Gazebo Ionic
+description: Installation des dépôts apt, ROS 2 Kilted desktop-full, Gazebo Ionic et bridge ros_gz.
 sidebar:
   order: 3
 ---
@@ -92,9 +92,9 @@ ros2 run demo_nodes_py listener
 
 Le listener doit afficher en continu les messages `Hello World: N` publiés par le talker. Si oui, ROS 2 est opérationnel.
 
-## Installer Gazebo Harmonic
+## Installer Gazebo Ionic
 
-Gazebo Harmonic vient des dépôts OSRF :
+Gazebo Ionic vient des dépôts OSRF :
 
 ```bash
 sudo curl -sSL https://packages.osrfoundation.org/gazebo.gpg \
@@ -104,7 +104,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-
 http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" \
   | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-sudo apt update && sudo apt install -y gz-harmonic
+sudo apt update && sudo apt install -y gz-ionic
 ```
 
 Tester Gazebo seul :

@@ -81,26 +81,47 @@ colcon build --symlink-install
 
 Le flag `--symlink-install` permet de modifier les fichiers Python / launch sans rebuilder.
 
-## Sourcer le workspace
+## Sourcer ROS et le workspace
 
-À chaque ouverture de terminal, vous devez sourcer **deux choses** : ROS (déjà fait via `~/.bashrc`) puis le workspace :
-
-```bash
-source ~/ros2_bootcamp_ws/install/setup.bash
-```
-
-Pour automatiser, ajoutez à votre `~/.bashrc` :
+À chaque ouverture de terminal, **deux** choses doivent être sourcées : d'abord
+**ROS 2**, puis votre **workspace**. La source ROS a déjà été ajoutée à votre
+`~/.bashrc` à l'[étape précédente](/installation/02-ros-gazebo/) ; il ne reste
+qu'à y ajouter le workspace :
 
 ```bash
 echo "source ~/ros2_bootcamp_ws/install/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Ou un alias plus contrôlé :
+Votre `~/.bashrc` doit alors contenir les **deux** lignes, dans cet ordre :
+
+```bash
+source /opt/ros/kilted/setup.bash             # ajouté à l'étape ROS
+source ~/ros2_bootcamp_ws/install/setup.bash  # ajouté ici
+```
+
+<Aside type="caution" title="À savoir sur le sourcing automatique">
+Mettre `install/setup.bash` dans le `.bashrc` est pratique, mais comporte des
+effets de bord à connaître :
+
+- **Tout nouveau terminal** hérite de l'overlay du workspace. Si un `colcon build`
+  échoue ou laisse le workspace dans un état cassé, vos terminaux peuvent afficher
+  des erreurs dès l'ouverture.
+- Après un build qui **ajoute un nouveau package**, ouvrez un **terminal neuf**
+  (ou re-sourcez) pour qu'il soit visible.
+- Si vous jonglez avec **plusieurs workspaces**, l'auto-source fige celui-ci :
+  préférez alors l'alias ci-dessous et sourcez à la demande.
 
 ```bash
 alias rosws='source ~/ros2_bootcamp_ws/install/setup.bash'
 ```
+</Aside>
+
+<Aside type="tip">
+La suite du cours **suppose** que ROS et le workspace sont sourcés
+automatiquement via votre `~/.bashrc`. Les parties ne répètent donc **pas** ces deux
+`source` dans leurs blocs de commandes.
+</Aside>
 
 ## Prochaine étape
 

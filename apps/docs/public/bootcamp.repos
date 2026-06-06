@@ -9,4 +9,8 @@
 #   wget https://ros2.etienne-schmitz.com/bootcamp.repos
 #   vcs import src < bootcamp.repos
 
-repositories: {}
+repositories:
+  so_arm101_ros2:
+    type: git
+    url: https://github.com/EtienneSchmitz/so_arm101_ros2.git
+    version: main

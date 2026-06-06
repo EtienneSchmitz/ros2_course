@@ -125,3 +125,97 @@ starlight-tabs [role="tabpanel"] pre {
 starlight-tabs [role="tabpanel"] .expressive-code .frame .header {
   display: none;
 }
+
+/* Largeur de lecture fluide sur grand écran — évite l'effet "colonne étroite
+   perdue au milieu" sur les moniteurs larges. En dessous de 1600px on garde la
+   valeur par défaut de Starlight (45rem). */
+@media (min-width: 1600px) { :root { --sl-content-width: 60rem; } }
+@media (min-width: 1920px) { :root { --sl-content-width: 68rem; } }
+@media (min-width: 2560px) { :root { --sl-content-width: 76rem; } }
+
+/* Bloc « Vérifiez votre compréhension » — disclosure des réponses stylé via les
+   tokens du thème (au lieu du rendu <details> natif du navigateur). */
+.sl-markdown-content details.quiz-answers {
+  border: 1px solid var(--sl-color-gray-5);
+  border-left: 3px solid var(--sl-color-accent);
+  border-radius: var(--bc-radius-md);
+  background: var(--sl-color-bg-inline-code);
+  margin-top: 0.85rem;
+  overflow: hidden;
+}
+
+.sl-markdown-content details.quiz-answers > summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--sl-color-accent-high);
+  padding: 0.65rem 1rem;
+  list-style: none; /* masque le marqueur natif */
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sl-markdown-content details.quiz-answers > summary:hover {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+}
+
+.sl-markdown-content details.quiz-answers > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Chevron pivotant (au lieu de changer le glyphe) */
+.sl-markdown-content details.quiz-answers > summary::before {
+  content: "▸";
+  display: inline-block;
+  color: var(--sl-color-accent);
+  transition: transform 0.15s ease;
+}
+
+.sl-markdown-content details.quiz-answers[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* Corps des réponses — séparé de l'en-tête par un filet, padding confortable */
+.sl-markdown-content details.quiz-answers[open] > summary {
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content details.quiz-answers > :not(summary) {
+  margin-inline: 1rem;
+}
+
+.sl-markdown-content details.quiz-answers > :not(summary):first-of-type {
+  margin-top: 0.75rem;
+}
+
+.sl-markdown-content details.quiz-answers > :not(summary):last-child {
+  margin-bottom: 0.75rem;
+}
+
+/* Tableaux pleine largeur par défaut — sur grand écran ils occupent toute la
+   colonne de lecture au lieu de flotter, compacts, calés à gauche.
+   En-têtes et cellules centrés.
+   La classe `table--compact` rétablit le comportement « largeur du contenu,
+   centré » (wrapper la table dans un <div class="table--compact">). */
+.sl-markdown-content table {
+  display: table; /* annule le display:block de Starlight qui empêchait l'étirement */
+  width: 100%;
+}
+
+/* En-têtes centrés et colorés ; corps des cellules aligné à gauche (défaut) */
+.sl-markdown-content thead th {
+  text-align: center;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-accent-high);
+  border-bottom: 2px solid var(--sl-color-accent);
+  padding-block: 0.55rem;
+}
+
+.sl-markdown-content .table--compact table {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
