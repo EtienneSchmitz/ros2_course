@@ -6,8 +6,8 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { CardGrid, LinkCard, Steps } from "@astrojs/starlight/components";
 import SlidevEmbed from "../../../components/SlidevEmbed.astro";
+import DayFlow from "../../../components/DayFlow.astro";
 
 ## Objectifs
 
@@ -17,29 +17,14 @@ import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 
 ## Déroulé de la journée
 
-<Steps>
+<DayFlow>
 
-1. **Présentation de ROS 2** et de son écosystème (slides).
-2. **Concepts en pratique** avec turtlesim : nodes, topics, services, actions, paramètres.
+1. **Présentation de ROS 2** et de son écosystème (slides ci-dessous).
+2. **[Découverte des concepts](/introduction/01-decouverte-ros2/)** avec turtlesim : nodes, topics, services, actions, paramètres.
 3. **Création d'un package** ROS 2 (`ros2 pkg create`, `colcon build`).
-4. **Première brique du projet** : monter le graphe factice (pub/sub, service, action, paramètres, launch) et le visualiser avec `rqt_graph`.
+4. **[Première brique du projet](/introduction/02-premiere-brique/)** : monter le graphe factice (pub/sub, service, action, paramètres, launch) et le visualiser avec `rqt_graph`.
 
-</Steps>
-
-## Parcours
-
-<CardGrid>
-  <LinkCard
-    title="Découverte de ROS 2"
-    description="Concepts (nodes, topics, services, actions, params) en pratique avec turtlesim."
-    href="/introduction/01-decouverte-ros2/"
-  />
-  <LinkCard
-    title="Première brique du projet"
-    description="Créer un package et coder le graphe du projet J5 avec des nœuds factices."
-    href="/introduction/02-premiere-brique/"
-  />
-</CardGrid>
+</DayFlow>
 
 ## Slides du jour
 

@@ -6,8 +6,8 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import SlidevEmbed from "../../../components/SlidevEmbed.astro";
+import DayFlow from "../../../components/DayFlow.astro";
 
 ## Objectifs pédagogiques
 
@@ -23,20 +23,16 @@ import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 - Workspace `~/ros2_bootcamp_ws/` opérationnel (voir [Installation](/installation/)).
 - Concepts ROS 2 maîtrisés (nodes, topics, tf) — voir Jour 1.
 
-## Parcours — deux parties
+## Déroulé de la journée
 
-<CardGrid>
-  <LinkCard
-    title="Découverte du bras SO-101"
-    description="Anatomie, URDF/Xacro, visualisation RViz, puis pilotage en sim via ros2_control."
-    href="/manipulation/01-decouverte-bras/"
-  />
-  <LinkCard
-    title="MoveIt & pick and place"
-    description="Planification MoveIt 2, IK, collisions, et un pick & place codé par l'étudiant."
-    href="/manipulation/02-moveit-pick-place/"
-  />
-</CardGrid>
+<DayFlow>
+
+1. **Présentation** du bras SO-101 et de MoveIt 2 (slides ci-dessous).
+2. **[Découverte du bras SO-101](/manipulation/01-decouverte-bras/)** : anatomie, URDF/Xacro, visualisation RViz.
+3. **Pilotage** en simulation via `ros2_control` (trajectoires, gripper).
+4. **[MoveIt & pick and place](/manipulation/02-moveit-pick-place/)** : planification (IK, collisions) puis pick & place codé.
+
+</DayFlow>
 
 ## Slides du jour
 

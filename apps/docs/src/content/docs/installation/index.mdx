@@ -10,6 +10,12 @@ import { Aside, Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
 
 L'objectif : une machine prête avec **Ubuntu 24.04**, **ROS 2 Kilted**, **Gazebo Ionic** et le workspace du cours. Deux parcours au choix, suivis d'une vérification commune.
 
+## Pré-requis matériels
+
+- Ordinateur capable de virtualiser une scène Gazebo Ionic (recommandé : **8 Go de RAM**, **CPU 4 cœurs**, **20 Go libres** sur disque).
+- GPU dédié optionnel mais recommandé pour Gazebo et RViz fluides.
+- Connexion Internet pour les téléchargements de paquets et de repos.
+
 ## Choisir son parcours
 
 <CardGrid>
@@ -43,17 +49,3 @@ wsl --install -d Ubuntu-24.04
 
 Ouvrez ensuite le terminal Ubuntu et suivez l'[installation native](/installation/01-ubuntu/) : tout s'applique à l'identique (sautez la section « Installer Ubuntu 24.04 »).
 
-## Pré-requis matériels
-
-- Ordinateur capable de virtualiser une scène Gazebo Ionic (recommandé : **8 Go de RAM**, **CPU 4 cœurs**, **20 Go libres** sur disque).
-- GPU dédié optionnel mais recommandé pour Gazebo et RViz fluides.
-- Connexion Internet pour les téléchargements de paquets et de repos.
-
-## Stack cible
-
-| Couche | Version |
-| --- | --- |
-| Système | Ubuntu 24.04 LTS (Noble Numbat) |
-| ROS 2 | Kilted Kaiju |
-| Simulateur | Gazebo Ionic |
-| Outils workspace | vcstool, rosdep, colcon |

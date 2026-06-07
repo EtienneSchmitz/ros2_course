@@ -6,8 +6,8 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import SlidevEmbed from "../../../components/SlidevEmbed.astro";
+import DayFlow from "../../../components/DayFlow.astro";
 
 Les jours 5 et 6 sont l'aboutissement de la semaine : vous assemblez la perception (Jour 4), la
 manipulation (Jour 3) et la navigation (Jour 2) en un **système robotique complet** qui
@@ -20,20 +20,16 @@ détecte, saisit et transporte un objet.
 - Concevoir une **architecture** propre (nœuds, topics, services, actions) et la documenter.
 - Présenter et défendre votre projet (soutenance + rapport).
 
-## Parcours
+## Déroulé de la journée
 
-<CardGrid>
-  <LinkCard
-    title="Le projet"
-    description="Scénario, architecture cible et interfaces à respecter."
-    href="/integration/01-projet/"
-  />
-  <LinkCard
-    title="Déroulé & livrables"
-    description="Assemblage des briques, soutenance, rapport et grille de notation."
-    href="/integration/02-deroule-livrables/"
-  />
-</CardGrid>
+<DayFlow>
+
+1. **[Le projet](/integration/01-projet/)** : scénario, architecture cible et interfaces à respecter.
+2. **Assemblage par interface** : remplacer les nœuds factices par les vrais robots (J2/J3/J4).
+3. **Pipeline complet** : détection → pick → transport → dépôt.
+4. **[Déroulé & livrables](/integration/02-deroule-livrables/)** : soutenance, rapport et grille de notation.
+
+</DayFlow>
 
 ## Slides du jour
 

@@ -1,0 +1,73 @@
+---
+/**
+ * DayFlow — « Déroulé de la journée ».
+ * Enveloppe une liste numérotée Markdown et la rend en timeline aérée
+ * (badge numéroté + rail vertical). Réutilisable sur l'accueil de chaque jour.
+ *
+ * Usage (MDX) :
+ *   <DayFlow>
+ *
+ *   1. **Étape une** — description.
+ *   2. **Étape deux** — description.
+ *
+ *   </DayFlow>
+ */
+---
+
+<div class="day-flow">
+  <slot />
+</div>
+
+<style>
+  .day-flow :global(ol) {
+    list-style: none;
+    counter-reset: dayflow;
+    padding-left: 0;
+    margin-block: 1.5rem 0;
+  }
+
+  .day-flow :global(ol > li) {
+    counter-increment: dayflow;
+    position: relative;
+    padding-left: 3.25rem;
+    padding-bottom: 1.75rem;
+    margin: 0;
+  }
+
+  .day-flow :global(ol > li::marker) {
+    content: "";
+  }
+
+  .day-flow :global(ol > li:last-child) {
+    padding-bottom: 0;
+  }
+
+  /* Badge numéroté */
+  .day-flow :global(ol > li)::before {
+    content: counter(dayflow);
+    position: absolute;
+    left: 0;
+    top: -0.15rem;
+    width: 2.1rem;
+    height: 2.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--sl-color-accent);
+    color: var(--sl-color-black);
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 0 0 4px var(--sl-color-bg);
+  }
+
+  /* Rail vertical reliant les étapes */
+  .day-flow :global(ol > li:not(:last-child))::after {
+    content: "";
+    position: absolute;
+    left: 1.05rem;
+    top: 2.1rem;
+    bottom: -0.15rem;
+    width: 2px;
+    background: var(--sl-color-gray-5);
+  }
+</style>
