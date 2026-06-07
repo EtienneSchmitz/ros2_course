@@ -6,12 +6,12 @@ import logoIso from "../../assets/logo-iso.svg";
 <template>
   <div class="slidev-layout bc-cover" data-hide-footer>
     <img :src="logoIso" alt="" class="bc-cover__logo" />
-    <div class="bc-cover__rule" />
     <h1 class="bc-cover__title">
       <slot name="title">
         <slot />
       </slot>
     </h1>
+    <div class="bc-cover__rule" />
     <p v-if="$slots.subtitle" class="bc-cover__subtitle">
       <slot name="subtitle" />
     </p>

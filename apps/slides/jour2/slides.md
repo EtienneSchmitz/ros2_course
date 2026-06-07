@@ -1,6 +1,7 @@
 ---
 theme: ../../../packages/theme-bootcamp/src/slidev
 title: ROS 2 — Bootcamp — Jour 2 Navigation
+author: Etienne Schmitz
 info: |
   Deck Jour 2 — Navigation (LeKiwi + slam_toolbox + Nav2).
   Base mobile holonome, cartographie SLAM, navigation autonome.
@@ -39,7 +40,7 @@ layout: default
 
 ---
 layout: section
-eyebrow: Base mobile · 01
+eyebrow: Partie 01 · Base mobile
 ---
 
 # La base mobile LeKiwi
@@ -160,7 +161,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
 ---
 layout: section
-eyebrow: SLAM · 02
+eyebrow: Partie 02 · SLAM
 ---
 
 # SLAM avec slam_toolbox
@@ -183,15 +184,13 @@ layout: two-cols
 
 ::right::
 
-```text
- /scan (LaserScan)   ──┐
- /tf (odom→base_link) ─┤
-                       ▼
-                 slam_toolbox
-                       │
-        ┌──────────────┼─────────────┐
-        ▼              ▼              ▼
-      /map        /tf (map→odom)  /map_metadata
+```mermaid
+flowchart TB
+  scan["/scan (LaserScan)"] --> st[slam_toolbox]
+  tf["/tf (odom→base_link)"] --> st
+  st --> map["/map"]
+  st --> tfmo["/tf (map→odom)"]
+  st --> meta["/map_metadata"]
 ```
 
 <v-click>
@@ -261,7 +260,7 @@ Rejouable ensuite en **localisation pure**.
 
 ---
 layout: section
-eyebrow: Nav2 · 03
+eyebrow: Partie 03 · Nav2
 ---
 
 # Navigation autonome avec Nav2
@@ -383,7 +382,7 @@ graph LR
 
 ---
 layout: section
-eyebrow: Exercices · 04
+eyebrow: Partie 04 · Exercices
 ---
 
 # Exercices

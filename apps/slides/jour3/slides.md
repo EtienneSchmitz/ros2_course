@@ -7,6 +7,7 @@ info: |
   FK/IK en KaTeX, pipeline MoveIt en Mermaid, animations v-click.
 mdc: true
 layout: cover
+day: 3
 ---
 
 # Jour 3 — Manipulation
@@ -16,10 +17,13 @@ SO-101 · ros2_control · MoveIt 2
 
 ---
 layout: section
-eyebrow: Le bras SO-101 · 01
+eyebrow: Partie 01 · Matériel
 ---
 
 # Le bras SO-101
+
+::note::
+Plateforme 6 DoF open-source (LeRobot / Hugging Face) — la base matérielle du jour.
 
 ---
 layout: two-cols
@@ -89,10 +93,13 @@ Trois contrôleurs : `joint_state_broadcaster`, `arm_controller` (5 joints, JTC)
 
 ---
 layout: section
-eyebrow: Cinématique · 02
+eyebrow: Partie 02 · Cinématique
 ---
 
 # Cinématique directe & inverse
+
+::note::
+FK directe, IK numérique : le calcul que MoveIt résout pour vous.
 
 ---
 layout: default
@@ -138,10 +145,13 @@ $$
 
 ---
 layout: section
-eyebrow: MoveIt 2 · 03
+eyebrow: Partie 03 · MoveIt 2
 ---
 
 # MoveIt 2
+
+::note::
+URDF + SRDF, planification OMPL / STOMP, exécution via ros2_control.
 
 ---
 layout: default
@@ -180,8 +190,8 @@ L'URDF décrit la **géométrie**. Le SRDF ajoute la **sémantique**, généré 
 <v-click>
 
 ```bash
-# Lancer la démo
-ros2 launch so101_moveit_config \
+# Lancer la démo (locale FR : forcer le séparateur décimal)
+LC_NUMERIC=C.UTF-8 ros2 launch so101_moveit_config \
   demo.launch.py
 ```
 
@@ -191,10 +201,13 @@ Dans RViz : *drag* du marqueur → **Plan** → **Execute** → le bras bouge da
 
 ---
 layout: section
-eyebrow: Pick & place · 04
+eyebrow: Partie 04 · Pick & place
 ---
 
 # Pick & place
+
+::note::
+Séquencer des trajectoires : approche, prise, retrait, dépôt.
 
 ---
 layout: default

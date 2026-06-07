@@ -9,10 +9,10 @@
   --bc-industrial-hover: #ff8d3a;
 
   /* Surfaces (dark by default) */
-  --bc-bg: #0e1116;
-  --bc-bg-elevated: #1e232b;
-  --bc-bg-overlay: #262d37;
-  --bc-border: #2a323d;
+  --bc-bg: #161b22;
+  --bc-bg-elevated: #212833;
+  --bc-bg-overlay: #2a323d;
+  --bc-border: #323b48;
 
   /* Text */
   --bc-text: #e6edf3;

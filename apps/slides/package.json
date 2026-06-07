@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "slidev demo/slides.md --open",
+    "dev": "node ./scripts/dev-deck.mjs",
     "build": "node ./scripts/build-deck.mjs demo",
     "build:all": "node ./scripts/build-all.mjs",
     "export": "slidev export demo/slides.md --output dist/demo.pdf"

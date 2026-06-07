@@ -3,8 +3,8 @@ import { defineMermaidSetup } from "@slidev/types";
 export default defineMermaidSetup(() => ({
   theme: "dark",
   themeVariables: {
-    background: "#0e1116",
-    primaryColor: "#1e232b",
+    background: "#161b22",
+    primaryColor: "#212833",
     primaryTextColor: "#e6edf3",
     primaryBorderColor: "#40a8c4",
     secondaryColor: "#1f6f8b",
@@ -16,8 +16,8 @@ export default defineMermaidSetup(() => ({
     lineColor: "#9ba7b4",
     textColor: "#e6edf3",
     nodeTextColor: "#e6edf3",
-    edgeLabelBackground: "#1e232b",
-    clusterBkg: "#1e232b",
+    edgeLabelBackground: "#212833",
+    clusterBkg: "#212833",
     clusterBorder: "#40a8c4",
     fontFamily: "'JetBrains Mono Variable', monospace",
   },
