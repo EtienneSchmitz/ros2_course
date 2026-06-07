@@ -1,0 +1,143 @@
+---
+// Bouton desktop pour replier / afficher la sidebar de navigation gauche.
+// L'état est piloté par l'attribut `data-sidebar-collapsed` sur <html> et
+// mémorisé dans localStorage (cf. script no-flash dans astro.config.mjs).
+---
+
+<sidebar-toggle>
+  <button
+    type="button"
+    aria-pressed="false"
+    aria-label="Masquer le menu"
+    aria-controls="starlight__sidebar"
+    class="bc-sidebar-toggle"
+  >
+    <svg
+      class="icon-collapse"
+      aria-hidden="true"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="m15 18-6-6 6-6"></path>
+    </svg>
+    <svg
+      class="icon-expand"
+      aria-hidden="true"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="m9 18 6-6-6-6"></path>
+    </svg>
+  </button>
+</sidebar-toggle>
+
+<script>
+  class SidebarToggle extends HTMLElement {
+    btn = this.querySelector("button")!;
+
+    constructor() {
+      super();
+      this.sync();
+      this.btn.addEventListener("click", () => this.toggle());
+    }
+
+    isCollapsed() {
+      return document.documentElement.hasAttribute("data-sidebar-collapsed");
+    }
+
+    sync() {
+      const collapsed = this.isCollapsed();
+      this.btn.setAttribute("aria-pressed", String(collapsed));
+      this.btn.setAttribute(
+        "aria-label",
+        collapsed ? "Afficher le menu" : "Masquer le menu",
+      );
+    }
+
+    toggle() {
+      const collapsed = !this.isCollapsed();
+      document.documentElement.toggleAttribute(
+        "data-sidebar-collapsed",
+        collapsed,
+      );
+      try {
+        localStorage.setItem("bc:sidebar-collapsed", collapsed ? "1" : "0");
+      } catch (e) {
+        /* localStorage indisponible : on ignore, l'état reste valable pour la page */
+      }
+      this.sync();
+    }
+  }
+
+  customElements.define("sidebar-toggle", SidebarToggle);
+</script>
+
+<style>
+  .bc-sidebar-toggle {
+    display: none;
+  }
+
+  @media (min-width: 50rem) {
+    .bc-sidebar-toggle {
+      position: fixed;
+      top: calc(var(--sl-nav-height) + 0.75rem);
+      inset-inline-start: calc(var(--sl-content-inline-start) - 1.1rem);
+      z-index: var(--sl-z-index-navbar);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      padding: 0;
+      border: 1px solid var(--sl-color-gray-5);
+      border-radius: 50%;
+      background-color: var(--sl-color-bg-nav);
+      color: var(--sl-color-white);
+      box-shadow: var(--sl-shadow-md);
+      cursor: pointer;
+      transition:
+        inset-inline-start 0.2s ease,
+        background-color 0.15s ease,
+        color 0.15s ease;
+    }
+
+    .bc-sidebar-toggle:hover {
+      background-color: var(--sl-color-gray-6);
+      color: var(--sl-color-accent-high);
+    }
+
+    .bc-sidebar-toggle:focus-visible {
+      outline: 2px solid var(--sl-color-accent);
+      outline-offset: 2px;
+    }
+
+    :global(:root[data-sidebar-collapsed]) .bc-sidebar-toggle {
+      inset-inline-start: 0.6rem;
+    }
+  }
+
+  /* Bascule des icônes selon l'état : chevron ◄ quand ouvert, ► quand replié */
+  .icon-expand {
+    display: none;
+  }
+
+  :global(:root[data-sidebar-collapsed]) .icon-collapse {
+    display: none;
+  }
+
+  :global(:root[data-sidebar-collapsed]) .icon-expand {
+    display: block;
+  }
+</style>

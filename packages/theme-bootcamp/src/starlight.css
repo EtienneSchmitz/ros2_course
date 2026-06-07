@@ -239,3 +239,16 @@ starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6
   max-width: 100%;
   margin-inline: auto;
 }
+
+/* Repli de la sidebar de navigation (desktop) — piloté par le bouton
+   SidebarToggle via l'attribut data-sidebar-collapsed sur <html>. Mettre la
+   variable de largeur à 0 réaligne automatiquement .main-frame et la grille du
+   header ; on masque en plus la nav elle-même. */
+@media (min-width: 50rem) {
+  :root[data-sidebar-collapsed] {
+    --sl-content-inline-start: 0rem;
+  }
+  :root[data-sidebar-collapsed] .sidebar {
+    display: none;
+  }
+}

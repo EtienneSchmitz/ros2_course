@@ -29,6 +29,7 @@ export default defineConfig({
       title: "ROS 2 — Bootcamp",
       description: "Cours intensif ROS 2 — base mobile Kiwi + bras SO-101.",
       components: {
+        Header: "./src/components/Header.astro",
         Footer: "./src/components/Footer.astro",
       },
       defaultLocale: "root",
@@ -50,6 +51,12 @@ export default defineConfig({
               "sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+",
             crossorigin: "anonymous",
           },
+        },
+        {
+          tag: "script",
+          content:
+            "try{if(localStorage.getItem('bc:sidebar-collapsed')==='1')" +
+            "document.documentElement.setAttribute('data-sidebar-collapsed','');}catch(e){}",
         },
       ],
       customCss: ["@bootcamp/theme/starlight.css"],
