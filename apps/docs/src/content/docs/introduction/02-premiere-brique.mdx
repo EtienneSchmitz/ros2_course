@@ -13,14 +13,17 @@ projet final** (Jour 5) — mais avec des **nœuds factices**. Chaque brique ré
 concept de la partie précédente, et sera remplacée par un vrai robot aux Jours 2 à 4.
 
 <Aside type="note" title="Le graphe à construire">
+
 ```
 [detector] --/detections (Detection.msg)--> [mission_coordinator] --PickRequest.srv--> [arm_server]
                                                     |
                                                     +-- (plus tard) action NavigateToPose --> [base]
 ```
+
 Aujourd'hui, le `detector` invente des détections, le `arm_server` répond toujours
 « pris ». Aux Jours 2-4, vous brancherez la vraie caméra, le vrai bras, le vrai robot
 mobile — **sans changer les interfaces**.
+
 </Aside>
 
 ## 1. Créer les packages
