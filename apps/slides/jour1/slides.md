@@ -1,6 +1,7 @@
 ---
 theme: ../../../packages/theme-bootcamp/src/slidev
 title: ROS 2 — Bootcamp — Jour 1 Introduction
+author: Etienne Schmitz
 info: |
   Deck Jour 1 — Introduction à ROS 2 (écosystème, concepts, organisation projet, CLI).
   Portage Slidev du deck 2025, adapté Kilted + robots LeKiwi/SO-101.

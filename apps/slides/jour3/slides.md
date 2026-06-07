@@ -1,6 +1,7 @@
 ---
 theme: ../../../packages/theme-bootcamp/src/slidev
 title: ROS 2 — Bootcamp — Jour 3 Manipulation
+author: Etienne Schmitz
 info: |
   Deck Jour 3 — Manipulation (SO-101 + MoveIt 2 + ros2_control).
   FK/IK en KaTeX, pipeline MoveIt en Mermaid, animations v-click.

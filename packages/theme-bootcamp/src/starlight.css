@@ -133,6 +133,11 @@ starlight-tabs [role="tabpanel"] .expressive-code .frame .header {
 @media (min-width: 1920px) { :root { --sl-content-width: 68rem; } }
 @media (min-width: 2560px) { :root { --sl-content-width: 76rem; } }
 
+/* Page d'accueil (splash) : resserrer le grand vide sous le hero */
+.hero {
+  padding-block: 2.5rem 1rem;
+}
+
 /* Bloc « Vérifiez votre compréhension » — disclosure des réponses stylé via les
    tokens du thème (au lieu du rendu <details> natif du navigateur). */
 .sl-markdown-content details.quiz-answers {

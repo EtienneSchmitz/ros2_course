@@ -28,6 +28,9 @@ export default defineConfig({
     starlight({
       title: "ROS 2 — Bootcamp",
       description: "Cours intensif ROS 2 — base mobile Kiwi + bras SO-101.",
+      components: {
+        Footer: "./src/components/Footer.astro",
+      },
       defaultLocale: "root",
       locales: {
         root: { label: "Français", lang: "fr" },
@@ -84,7 +87,7 @@ export default defineConfig({
           items: [{ autogenerate: { directory: "vision" } }],
         },
         {
-          label: "Jour 5 — Intégration",
+          label: "Jours 5-6 — Intégration",
           items: [{ autogenerate: { directory: "integration" } }],
         },
       ],

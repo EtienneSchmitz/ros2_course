@@ -9,12 +9,12 @@ sidebar:
 import { Aside, Steps } from "@astrojs/starlight/components";
 
 Place à **votre** projet. Vous allez créer un package ROS 2 et y monter le **graphe du
-projet final** (Jour 5) — mais avec des **nœuds factices**. Chaque brique réutilise un
+projet final** (Jours 5-6) — mais avec des **nœuds factices**. Chaque brique réutilise un
 concept de la partie précédente, et sera remplacée par un vrai robot aux Jours 2 à 4.
 
 <Aside type="note" title="Le graphe à construire">
 
-```
+```text
 [detector] --/detections (Detection.msg)--> [mission_coordinator] --PickRequest.srv--> [arm_server]
                                                     |
                                                     +-- (plus tard) action NavigateToPose --> [base]
@@ -251,8 +251,8 @@ def generate_launch_description():
 </Aside>
 
 <Aside type="caution" title="Le fil rouge">
-Ce graphe **est** le squelette du projet final (Jour 5). Gardez ce package : aux Jours 2,
-3 et 4, vous remplacerez chaque nœud factice par le vrai robot, et au Jour 5 vous
+Ce graphe **est** le squelette du projet final (Jours 5-6). Gardez ce package : aux Jours 2,
+3 et 4, vous remplacerez chaque nœud factice par le vrai robot, et aux Jours 5-6 vous
 assemblerez le tout.
 </Aside>
 

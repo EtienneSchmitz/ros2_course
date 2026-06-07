@@ -1,14 +1,15 @@
 ---
 theme: ../../../packages/theme-bootcamp/src/slidev
-title: ROS 2 — Bootcamp — Jour 5 Intégration
+title: ROS 2 — Bootcamp — Jours 5-6 Intégration
+author: Etienne Schmitz
 info: |
-  Deck Jour 5 — Intégration (projet final).
+  Deck Jours 5-6 — Intégration (projet final).
   Pipeline perception → manipulation → navigation. Portage du deck 2025.
 mdc: true
 layout: cover
 ---
 
-# Jour 5 — Intégration
+# Jours 5-6 — Intégration
 
 ::subtitle::
 Projet final · perception → décision → action
