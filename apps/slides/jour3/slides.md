@@ -53,7 +53,7 @@ layout: default
 
 # De l'URDF au robot pilotable
 
-- <v-click>**URDF / Xacro** — `<link>` (segments), `<joint>` (axes + limites). Le `.xacro` prend des args (`mode`, `joint_states_gui`) → l'URDF généré change.</v-click>
+- <v-click>**URDF / Xacro** — `link` (segments), `joint` (axes + limites). Le `.xacro` prend des args (`mode`, `joint_states_gui`) → l'URDF généré change.</v-click>
 - <v-click>**`robot_state_publisher`** — combine URDF + `/joint_states` → publie la `tf`.</v-click>
 - <v-click>**Visualisation** — `ros2 launch so101_description view.launch.py` (RViz + sliders).</v-click>
 
@@ -79,7 +79,8 @@ flowchart LR
   end
   cm -->|command| hw["Hardware Interface<br/>gz_ros2_control (sim)"]
   hw -->|state| cm
-  hw <--> robot["Gazebo / moteurs"]
+  hw --> robot["Gazebo / moteurs"]
+  robot --> hw
   hw --> js["/joint_states"]
 ```
 

@@ -2,12 +2,12 @@
 title: Vérification
 description: ros2 doctor, build à vide, ouverture de Gazebo, bridge ros_gz.
 sidebar:
-  order: 5
+  order: 4
 ---
 
-import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
-Avant de passer aux journées du cours, on s'assure que l'environnement est sain.
+Avant de passer aux journées du cours, on s'assure que l'environnement est sain. Ces vérifications valent pour les **deux parcours** : installation native ([Ubuntu / WSL](/installation/01-ubuntu/)) ou [Docker](/installation/02-docker/). Dans le cas Docker, exécutez-les **à l'intérieur du conteneur**.
 
 ## `ros2 doctor`
 
@@ -17,14 +17,14 @@ ros2 doctor
 
 Doit afficher `All 5 checks passed` (le nombre exact peut varier). Les warnings sur le réseau (`hostname resolves loopback`) sont sans conséquence pour la simulation.
 
-## Le workspace build à vide
+## Le workspace build
 
 ```bash
 cd ~/ros2_bootcamp_ws
 colcon build --symlink-install
 ```
 
-Vous devez obtenir `Summary: 0 packages finished` (puisque `src/` est encore vide). Aucune erreur ne doit apparaître.
+Le build doit se terminer **sans erreur** (`Summary: N packages finished`).
 
 ## Gazebo Ionic s'ouvre
 
@@ -67,9 +67,9 @@ Le terminal 3 doit afficher l'horloge Gazebo qui avance. C'est la preuve que ROS
 
 ## Et après ?
 
-À ce stade, la machine est prête.
+À ce stade, la machine est prête, avec les **repos robots** (`lekiwi_ros2`, `so_arm101_ros2`) déjà dans le workspace.
 
-Les **repos robots** (`lekiwi_ros2`, `so_arm101_ros2`) seront ajoutés à `bootcamp.repos` au fur et à mesure de leur publication. Quand un nouveau robot apparaît, il suffit de :
+Si `bootcamp.repos` est mis à jour pendant le cours, resynchronisez le workspace avec :
 
 ```bash
 cd ~/ros2_bootcamp_ws
@@ -78,9 +78,3 @@ vcs import src < bootcamp.repos
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 ```
-
-et vous avez le nouveau robot dans le workspace.
-
-<Aside type="tip">
-Les jours [Navigation (J2)](/navigation/) et [Manipulation (J3)](/manipulation/) du cours détaillent la mise en route des robots associés.
-</Aside>

@@ -8,13 +8,6 @@ Cours intensif ROS 2 en français — base mobile **Kiwi** + bras **SO-101**, RO
 
 🌐 **Site en ligne : [ros2.etienne-schmitz.com](https://ros2.etienne-schmitz.com)**
 
-> **Refonte 2026 en cours** — la session 2025 reste accessible :
->
-> - Branche [`v2025`](https://github.com/EtienneSchmitz/ros2_course/tree/v2025)
-> - Tag [`v2025-final`](https://github.com/EtienneSchmitz/ros2_course/releases/tag/v2025-final)
->
-> Suivi de la refonte : issue [#17](https://github.com/EtienneSchmitz/ros2_course/issues/17).
-
 ## Programme — 5 jours
 
 | Jour | Thème | Robot |

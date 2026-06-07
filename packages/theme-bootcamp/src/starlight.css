@@ -126,6 +126,21 @@ starlight-tabs [role="tabpanel"] .expressive-code .frame .header {
   display: none;
 }
 
+/* Respiration pour le contenu TEXTE dans les tabs (le code reste pleine largeur
+   pour conserver l'effet "fenêtre de terminal"). On aligne le texte sur le
+   padding horizontal des onglets et on aère le haut du panneau. */
+starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6) {
+  padding-inline: 0.9rem;
+}
+
+starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0.85rem;
+}
+
+starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):last-child {
+  margin-bottom: 0.85rem;
+}
+
 /* Largeur de lecture fluide sur grand écran — évite l'effet "colonne étroite
    perdue au milieu" sur les moniteurs larges. En dessous de 1600px on garde la
    valeur par défaut de Starlight (45rem). */

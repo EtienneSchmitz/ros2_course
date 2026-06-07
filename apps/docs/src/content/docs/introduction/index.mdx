@@ -6,17 +6,25 @@ sidebar:
   label: "Vue d'ensemble"
 ---
 
-import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import { CardGrid, LinkCard, Steps } from "@astrojs/starlight/components";
 import SlidevEmbed from "../../../components/SlidevEmbed.astro";
-
-Premier jour : vous découvrez **ROS 2** et ses concepts, puis vous codez tout de suite la
-**première brique** du projet final. Le fil rouge de la semaine commence ici.
 
 ## Objectifs
 
 - Comprendre l'architecture de ROS 2 et son écosystème.
 - Maîtriser les briques de communication : nodes, topics, services, actions, paramètres.
 - Créer un package ROS 2 et monter le **graphe du projet final** avec des nœuds factices.
+
+## Déroulé de la journée
+
+<Steps>
+
+1. **Présentation de ROS 2** et de son écosystème (slides).
+2. **Concepts en pratique** avec turtlesim : nodes, topics, services, actions, paramètres.
+3. **Création d'un package** ROS 2 (`ros2 pkg create`, `colcon build`).
+4. **Première brique du projet** : monter le graphe factice (pub/sub, service, action, paramètres, launch) et le visualiser avec `rqt_graph`.
+
+</Steps>
 
 ## Parcours
 
