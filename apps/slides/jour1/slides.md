@@ -636,10 +636,10 @@ layout: two-cols
 
 # Topics & messages
 
-Le bus **publish / subscribe** : des nœuds publient, d'autres s'abonnent — **sans se connaître**.
+Le bus **publish / subscribe** — les nœuds publient et s'abonnent **sans se connaître**.
 
 - 📡 **asynchrone** : N publishers, N subscribers
-- 🏷️ identifié par un **nom** (`/scan`) et un **type** de message
+- 🏷️ un **nom** (`/scan`) + un **type** de message
 - 🔁 idéal pour les **flux continus** (capteurs, commandes)
 - 🕵️ communication **anonyme** et **découplée**
 
@@ -735,7 +735,34 @@ Workspace, packages, launch et CLI.
 layout: two-cols
 ---
 
-# Workspace & packages
+# Le package
+
+L'**unité de base** de ROS 2 : on **build**, **partage** et **réutilise** par package.
+
+- 📄 `package.xml` — nom, version, **dépendances**
+- 🔧 `CMakeLists.txt` (C++) ou `setup.py` (Python)
+- 🧩 le code : nœuds, `launch/`, `config/`, `msg/`
+- ▶️ créé avec `ros2 pkg create <nom>`
+
+::right::
+
+```text
+mission/
+├── package.xml
+├── setup.py
+├── mission/
+│   └── coordinator.py
+├── launch/
+└── config/
+```
+
+---
+layout: two-cols
+---
+
+# Le workspace
+
+Un dossier qui **regroupe vos packages** dans `src/` et les compile ensemble.
 
 ```text
 ros2_bootcamp_ws/
@@ -745,22 +772,39 @@ ros2_bootcamp_ws/
 ├── build/  install/  log/
 ```
 
-- **package** = unité de build (`ros2 pkg create`)
-- **workspace** = ensemble de packages (`colcon build`)
-
 ::right::
 
-# Launch & isolation
+- 🏗️ `colcon build` → `build/`, `install/`, `log/`
+- 🔌 `source install/setup.bash` rend les packages **disponibles**
+- 🧅 **overlay** : votre workspace se superpose à ROS 2 (*underlay*)
+- ♻️ `--packages-select <pkg>` pour ne recompiler qu'un package
+
+---
+layout: two-cols
+---
+
+# Qu'est-ce qu'un launch file ?
+
+Démarrer **tout un système** d'une seule commande, plutôt que chaque nœud à la main.
+
+- 🚀 lance **plusieurs nœuds** d'un coup
+- ⚙️ leur passe leurs **paramètres** (YAML)
+- 🔀 compose d'autres launch files (réutilisable)
+- 🐍 écrit en **Python** (`.launch.py`)
+
+::right::
 
 ```bash
 ros2 launch mission mission.launch.py
 ```
 
-- **launch file** : démarre plusieurs nœuds + params
-- `ROS_DOMAIN_ID` : isole votre robot sur le réseau partagé
-
-```bash
-export ROS_DOMAIN_ID=42
+```python
+# mission.launch.py
+def generate_launch_description():
+    return LaunchDescription([
+        Node(package="mission", executable="coordinator"),
+        Node(package="mission", executable="detector"),
+    ])
 ```
 
 ---
@@ -776,13 +820,18 @@ perturbent, on isole les communications par un identifiant (`0`–`232`).
 
 - même `ROS_DOMAIN_ID` sur **le robot et le PC**
 - un numéro **unique par groupe** dans la salle
-- à définir dans `~/.bashrc`
 
 </v-clicks>
+
+<v-click>
+
+- à définir dans `~/.bashrc`
 
 ```bash
 export ROS_DOMAIN_ID=12
 ```
+
+</v-click>
 
 ---
 layout: section
@@ -803,8 +852,25 @@ layout: default
 <ul class="bc-agenda">
 <li><span><a href="https://ros2.etienne-schmitz.com/installation/">Installation ROS 2 Kilted</a> (natif ou Docker)</span></li>
 <li><span><a href="https://ros2.etienne-schmitz.com/introduction/">Exercice 1 — premiers pas avec ROS 2</a></span></li>
-<li><span>Si le temps le permet : préparer les robots <strong>LeKiwi</strong> / <strong>SO-101</strong></span></li>
+<li><span><a href="https://ros2.etienne-schmitz.com/introduction/02-premiere-brique/">Commencer le projet</a> du fil rouge (<strong>Jours 5-6</strong>) — la première brique</span></li>
 </ul>
+
+---
+layout: default
+---
+
+# En résumé
+
+<div class="bc-cards bc-cards--3">
+<div class="bc-card"><div class="bc-card__title">🧩 ROS 2</div><p>Un middleware + un écosystème : des nœuds qui communiquent</p></div>
+<div class="bc-card"><div class="bc-card__title">🛰️ Architecture</div><p>5 couches : vos nœuds → rcl → RMW → DDS → OS</p></div>
+<div class="bc-card"><div class="bc-card__title">📨 Communication</div><p>Topics (flux), services (requête/réponse), actions (tâches longues)</p></div>
+<div class="bc-card"><div class="bc-card__title">⚙️ Paramètres</div><p>Configurer un nœud sans recompiler</p></div>
+<div class="bc-card"><div class="bc-card__title">📦 Organisation</div><p>Package, workspace (<code>colcon</code>), launch file</p></div>
+<div class="bc-card"><div class="bc-card__title">🛠️ Outils</div><p><code>ros2</code> CLI, <code>rqt_graph</code>, RViz, Gazebo</p></div>
+</div>
+
+> Place à la pratique : montez la **première brique** du projet.
 
 ---
 layout: end

@@ -10,9 +10,11 @@ import { Aside } from "@astrojs/starlight/components";
 
 ## Le projet final
 
-Avant de coder, voici **où l'on va**. Le fil rouge de la semaine est un **robot de
-mission** : il **détecte** un objet (caméra), **le saisit** (bras SO-101), puis **navigue**
-(base mobile LeKiwi) vers une **zone de dépôt** choisie selon la classe de l'objet.
+Le fil rouge de la semaine est un **robot de mission**. Son scénario, de bout en bout :
+
+1. il **détecte** un objet avec la **caméra** ;
+2. il **le saisit** avec le **bras SO-101** ;
+3. il **navigue** avec la **base mobile LeKiwi** jusqu'à une **zone de dépôt**, choisie selon la classe de l'objet.
 
 ```mermaid
 flowchart LR
@@ -25,7 +27,9 @@ Ce graphe **est** le squelette du projet final (Jours 5-6). À vous de le monter
 **aujourd'hui avec vos propres nœuds factices** : la détection invente des objets, le bras
 répond toujours « pris », la base se contente de logger la pose visée. Aux **Jours 2-4**,
 vous remplacerez chaque nœud factice par le vrai robot (vraie caméra, vrai bras, vrai robot
-mobile) — **sans changer vos interfaces**. Aux **Jours 5-6**, vous assemblerez le tout.
+mobile). L'**architecture** — qui parle à qui, et via quel mode de communication — reste la
+même ; vos **interfaces** (types de messages, services, actions), elles, pourront être
+**ajustées** au contact des vrais robots. Aux **Jours 5-6**, vous assemblerez le tout.
 
 ## La consigne
 
@@ -51,8 +55,9 @@ Votre graphe doit contenir :
 Choisissez **vos** noms, **votre** découpage et surtout **vos interfaces** (le type des
 messages de topic, la requête/réponse du service, le but de l'action). Justifiez chaque
 choix : **topic** pour un flux continu, **service** pour une requête courte avec réponse,
-**action** pour une tâche longue et annulable. Ces interfaces sont le **contrat** qui
-restera stable quand les nœuds factices céderont la place aux vrais robots — soignez-les.
+**action** pour une tâche longue et annulable. Ces interfaces sont le **contrat** que vous
+chercherez à garder **le plus stable possible** quand les nœuds factices céderont la place
+aux vrais robots — quitte à les ajuster au contact du réel. Soignez-les.
 </Aside>
 
 <Aside type="note" title="Livrable : présentez et validez chaque nœud">
@@ -81,8 +86,8 @@ send_goal` (la base accepte un but), `ros2 param get` (la zone est paramétrable
 
 <Aside type="caution" title="Gardez votre graphe">
 Ce package factice est le **squelette de votre projet final** : vous le ferez évoluer toute
-la semaine. Aux Jours 2, 3 et 4, vous remplacerez vos nœuds factices par les vrais robots,
-**sans toucher à vos interfaces**.
+la semaine. Aux Jours 2, 3 et 4, vous remplacerez vos nœuds factices par les vrais robots
+**en gardant la même architecture** — quitte à ajuster vos interfaces selon les vrais messages.
 </Aside>
 
 ## Prochaine étape
