@@ -1,0 +1,80 @@
+---
+title: Vérification
+description: ros2 doctor, build à vide, ouverture de Gazebo, bridge ros_gz.
+sidebar:
+  order: 4
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Avant de passer aux journées du cours, on s'assure que l'environnement est sain. Ces vérifications valent pour les **deux parcours** : installation native ([Ubuntu / WSL](/installation/01-ubuntu/)) ou [Docker](/installation/02-docker/). Dans le cas Docker, exécutez-les **à l'intérieur du conteneur**.
+
+## `ros2 doctor`
+
+```bash
+ros2 doctor
+```
+
+Doit afficher `All 5 checks passed` (le nombre exact peut varier). Les warnings sur le réseau (`hostname resolves loopback`) sont sans conséquence pour la simulation.
+
+## Le workspace build
+
+```bash
+cd ~/ros2_bootcamp_ws
+colcon build --symlink-install
+```
+
+Le build doit se terminer **sans erreur** (`Summary: N packages finished`).
+
+## Gazebo Ionic s'ouvre
+
+```bash
+gz sim shapes.sdf
+```
+
+Une fenêtre Gazebo s'ouvre avec quelques formes. Vérifiez que vous pouvez orbiter la caméra à la souris (clic-droit pour panner, molette pour zoomer).
+
+## Le bridge `ros_gz` répond
+
+Dans **trois terminaux** :
+
+<Tabs>
+<TabItem label="Terminal 1 — Gazebo">
+
+```bash
+gz sim -r shapes.sdf
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — bridge">
+
+```bash
+ros2 run ros_gz_bridge parameter_bridge \
+  /clock@rosgraph_msgs/msg/Clock@gz.msgs.Clock
+```
+
+</TabItem>
+<TabItem label="Terminal 3 — echo /clock">
+
+```bash
+ros2 topic echo /clock
+```
+
+</TabItem>
+</Tabs>
+
+Le terminal 3 doit afficher l'horloge Gazebo qui avance. C'est la preuve que ROS 2 ↔ Gazebo communique.
+
+## Et après ?
+
+À ce stade, la machine est prête, avec les **repos robots** (`lekiwi_ros2`, `so_arm101_ros2`) déjà dans le workspace.
+
+Si `bootcamp.repos` est mis à jour pendant le cours, resynchronisez le workspace avec :
+
+```bash
+cd ~/ros2_bootcamp_ws
+wget -O bootcamp.repos https://ros2.etienne-schmitz.com/bootcamp.repos
+vcs import src < bootcamp.repos
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+```

@@ -33,3 +33,7 @@ Thumbs.db
 # Playwright (Slidev PDF export)
 playwright-report/
 test-results/
+
+# Python (bytecode cache, ex. apps/docs/public/files)
+__pycache__/
+*.py[cod]

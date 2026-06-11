@@ -1,0 +1,339 @@
+---
+title: Navigation autonome avec Nav2
+description: Cartographier avec slam_toolbox, puis planifier et exécuter des trajectoires autonomes avec Nav2.
+sidebar:
+  label: "Navigation autonome"
+  order: 3
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+<Aside type="caution" title="Section en cours de construction">
+Les blocs _« hands-on »_ supposent les packages `lekiwi_bringup` et
+`lekiwi_navigation` (depuis [lekiwi_ros2](https://github.com/EtienneSchmitz/lekiwi_ros2),
+à créer). Ils deviendront actifs au fur et à mesure de leur publication.
+</Aside>
+
+Naviguer de façon autonome se fait en **deux temps** :
+
+1. **Cartographier** l'environnement pendant qu'on s'y localise — c'est le
+   **SLAM** (`slam_toolbox`).
+2. **Planifier et suivre** des trajectoires dans cette carte, en évitant les
+   obstacles — c'est la stack **Nav2**.
+
+## 1 · Cartographier avec slam_toolbox
+
+**SLAM** = *Simultaneous Localization And Mapping*. Le robot construit
+une carte de son environnement **en même temps** qu'il s'y localise.
+
+Sur ROS 2, l'implémentation de référence pour des bases 2D avec LiDAR
+est [`slam_toolbox`](https://github.com/SteveMacenski/slam_toolbox).
+
+### Modes de slam_toolbox
+
+| Mode | Quand l'utiliser |
+| --- | --- |
+| **`online async`** | Le robot bouge ; SLAM tourne en temps quasi-réel, perd un peu de précision mais ne bloque pas le robot. **Mode du cours.** |
+| `online sync` | Strict temps réel sans drop. Coûteux. |
+| `offline` | Replay d'un bag enregistré, pour optimisation hors-ligne. |
+| `lifelong` | Mise à jour continue d'une carte existante. |
+
+### Entrées / sorties
+
+```text
+   /scan (LaserScan)   ───┐
+   /tf (odom → base_link) ─┤
+                           ▼
+                    slam_toolbox  ──► /map (OccupancyGrid)
+                                  ──► /tf (map → odom)
+                                  ──► /map_metadata
+```
+
+Ce qu'il faut surtout retenir : `slam_toolbox` publie la transformation
+**`map → odom`**, qui corrige la dérive de l'odométrie en utilisant les
+features du scan laser.
+
+### Lancer SLAM en parallèle de la sim
+
+<Aside type="note" title="Hands-on (à venir)">
+Quand le package `lekiwi_navigation` sera prêt, vous lancez simultanément
+la sim et le SLAM :
+
+<Tabs>
+<TabItem label="Terminal 1 — sim">
+
+```bash
+ros2 launch lekiwi_bringup sim_base.launch.py
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — SLAM">
+
+```bash
+ros2 launch lekiwi_navigation slam.launch.py
+```
+
+</TabItem>
+<TabItem label="Terminal 3 — RViz">
+
+```bash
+rviz2 -d $(ros2 pkg prefix lekiwi_navigation)/share/lekiwi_navigation/rviz/slam.rviz
+```
+
+</TabItem>
+</Tabs>
+
+Dans RViz, vous devez voir :
+
+- l'`OccupancyGrid` `/map` apparaître au fur et à mesure ;
+- la silhouette du LeKiwi suivre la base ;
+- les rayons laser en bleu.
+
+</Aside>
+
+### Téléop pour cartographier
+
+Lancez en plus la téléop clavier (cf. [première page](/navigation/01-base-mobile/#téléop-clavier))
+et baladez le robot dans le monde. Quelques principes pour une bonne carte :
+
+- **Vitesses modérées** (< 0.3 m/s) : les itérations SLAM ont le temps de
+  fitter chaque scan.
+- **Boucle fermée** : revenez régulièrement à un endroit déjà visité,
+  ça aide l'algo à corriger la dérive (boucle de fermeture).
+- **Couverture complète** : longez les murs pour qu'ils soient nets.
+
+### Sauvegarder la carte
+
+Une fois satisfait, sauvegardez la carte :
+
+```bash
+ros2 run nav2_map_server map_saver_cli -f ~/ros2_bootcamp_ws/maps/lekiwi_world
+```
+
+Cela produit deux fichiers :
+
+- `lekiwi_world.yaml` : métadonnées (origine, résolution, seuils).
+- `lekiwi_world.pgm` : image grayscale de l'OccupancyGrid.
+
+Vous pouvez ensuite rejouer la carte sans SLAM (mode pur localisation, AMCL
+ou slam_toolbox en `localization`).
+
+## 2 · Planifier et naviguer avec Nav2
+
+[Nav2](https://docs.nav2.org/) est la stack de navigation de référence
+pour ROS 2 : planning global, suivi local, recovery, comportements,
+gestion des obstacles dynamiques.
+
+### Vue d'ensemble
+
+```text
+   goal pose (RViz / code)
+            │
+            ▼
+      ┌───────────┐    plan global    ┌─────────────┐
+      │  Planner  │ ────────────────► │ Controller  │ ──► /cmd_vel
+      │  (Smac,   │                   │  (MPPI,     │
+      │  NavFn)   │                   │  DWB, RPP)  │
+      └───────────┘                   └─────────────┘
+            ▲                                ▲
+            │                                │
+       Global costmap                  Local costmap
+       (map + obstacles)               (LiDAR temps réel)
+            ▲                                ▲
+            │                                │
+            └────────── /map, /scan, tf ─────┘
+```
+
+Les briques importantes :
+
+- **`bt_navigator`** : orchestre l'ensemble via un **behavior tree**
+  (planifier, suivre, recovery si échec…).
+- **Planner** : trajectoire globale point-à-point (Smac hybrid, NavFn…).
+- **Controller** : suit le chemin localement en évitant les obstacles
+  dynamiques (DWB, MPPI, Regulated Pure Pursuit).
+- **Costmaps** : représentations grille du monde (statique + locale)
+  avec inflation autour des obstacles.
+
+### Contrôleur pour base holonome
+
+Une base **omnidirectionnelle** (kiwi) peut translater sans tourner.
+Tous les controllers Nav2 ne le savent pas :
+
+| Controller | Holonome ? |
+| --- | --- |
+| `DWB` | Oui, à activer via `vy_samples > 0` dans la config |
+| `MPPI` | Oui, naturellement |
+| `Regulated Pure Pursuit` | Non, suppose une base différentielle |
+
+Pour LeKiwi, on partira sur **MPPI** : meilleur tracking et nativement
+holonome.
+
+### Lancement
+
+<Aside type="note" title="Hands-on (à venir)">
+Quand `lekiwi_navigation` sera prêt :
+
+```bash
+ros2 launch lekiwi_navigation navigation.launch.py
+```
+
+Ce launch empile : la sim, slam_toolbox (en `localization` si vous avez une
+carte ; en `online async` sinon), et la stack Nav2 complète.
+</Aside>
+
+### Premier goal 2D
+
+Dans RViz :
+
+1. Définir la **2D Pose Estimate** (bouton dans la toolbar) : cliquez
+   sur la carte à l'endroit où le robot se trouve réellement et
+   orientez la flèche selon le cap. C'est la pose initiale pour le
+   filtre de localisation.
+2. Définir le **Nav2 Goal** : cliquez ailleurs sur la carte. Nav2
+   planifie et exécute la trajectoire.
+
+Vous pouvez suivre l'avancement via :
+
+```bash
+ros2 topic echo /behavior_server/behavior_tree_log
+```
+
+ou plus visuellement avec le panneau **Nav2 Behavior Tree** de Foxglove
+Studio.
+
+### Envoyer un goal par le code
+
+Plutôt que de cliquer dans RViz, on peut envoyer un goal depuis du Python
+via l'action `navigate_to_pose`. Téléchargez le client de départ et
+recopiez-le dans un package :
+
+- 📄 [`go_to.py`](/files/go_to.py) — client Nav2 minimal (un seul goal, avec
+  suivi de la distance restante).
+
+<Aside type="note" title="Hands-on (à venir)">
+Une fois `go_to.py` copié dans `lekiwi_navigation` (avec un point d'entrée
+`console_scripts`) et la navigation lancée :
+
+```bash
+ros2 run lekiwi_navigation go_to
+```
+
+Les coordonnées du goal (`GOAL_X`, `GOAL_Y` en tête de fichier) sont à adapter
+à votre carte `lekiwi_world`.
+</Aside>
+
+### Configuration clé
+
+Le fichier `nav2_params.yaml` (dans `lekiwi_navigation/config/`)
+contient toutes les options. Quelques paramètres qu'on touchera souvent
+en exercice :
+
+```yaml
+controller_server:
+  ros__parameters:
+    controller_plugins: ["FollowPath"]
+    FollowPath:
+      plugin: "nav2_mppi_controller::MPPIController"
+      time_steps: 56
+      model_dt: 0.05
+      vx_max: 0.5
+      vy_max: 0.5     # <-- non nul = base holonome
+      wz_max: 1.5
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      inflation_layer:
+        inflation_radius: 0.4
+```
+
+### Recoveries
+
+Quand le robot est bloqué, Nav2 déclenche un comportement de
+**recovery** défini dans le behavior tree : `spin`, `back_up`,
+`wait`, puis `clear_local_costmap` ou réessai. Les bases holonomes
+peuvent utiliser **`drive_on_heading`** plutôt que `back_up` pour des
+manœuvres latérales.
+
+## 3 · Exercices
+
+<Aside type="caution" title="Section en construction">
+Les exercices supposent que les packages `lekiwi_bringup` et
+`lekiwi_navigation` (depuis [lekiwi_ros2](https://github.com/EtienneSchmitz/lekiwi_ros2))
+sont publiés et fonctionnels — voir les sections précédentes.
+</Aside>
+
+### Exercice 1 — Cartographier une pièce
+
+**Objectif** : construire une carte complète d'un monde Gazebo, la
+sauvegarder, et la recharger en mode localisation pure.
+
+Étapes :
+
+1. Lancer la sim + slam_toolbox (`online async`).
+2. Téléopérer le robot pour couvrir toute la zone (longez les murs,
+   fermez une boucle).
+3. Sauvegarder avec `map_saver_cli`.
+4. Relancer la sim avec `slam_toolbox` en mode `localization` et la
+   carte précédente. Vérifier que le robot se localise correctement
+   sans dérive.
+
+### Exercice 2 — Tuner le controller MPPI
+
+**Objectif** : observer l'effet de quelques paramètres clés du
+controller sur le comportement du robot.
+
+Jouez avec, un par un :
+
+- `vx_max`, `vy_max`, `wz_max` (vitesses max)
+- `time_steps` × `model_dt` (horizon de prédiction)
+- `critic_names` : ajoutez / retirez `ObstaclesCritic`, `GoalAngleCritic`
+- `inflation_radius` du global costmap (impact sur la marge gardée
+  autour des murs)
+
+Pour chaque changement, lancez le même goal et notez :
+
+- Le temps total pour atteindre le goal.
+- La distance parcourue.
+- Le « confort » subjectif de la trajectoire (saccadée vs lisse).
+
+### Exercice 3 — Obstacle dynamique
+
+**Objectif** : ajouter un cube dans Gazebo pendant que le robot navigue,
+et vérifier que Nav2 le contourne.
+
+Indices :
+
+- Spawn un objet pendant la navigation :
+
+  ```bash
+  ros2 service call /world/default/create gz_msgs/srv/EntityFactory ...
+  ```
+
+  (ou plus simple : ajoutez manuellement un cube dans Gazebo Ionic (gz-sim 9)
+  pendant la sim).
+- Le `local_costmap` doit s'allumer autour de l'objet quand le LiDAR
+  le voit.
+- Le controller MPPI doit replanifier localement.
+
+Que se passe-t-il si vous déplacez l'objet *exactement* dans la
+trajectoire du robot ? Combien de temps avant qu'il réagisse ?
+
+### Exercice 4 — Mission multi-waypoints
+
+**Objectif** : enchaîner plusieurs goals automatiquement.
+
+Indices :
+
+- Utilisez l'action `/follow_waypoints` exposée par `waypoint_follower`.
+- Publiez une liste de `PoseStamped` (en Python ou via la CLI).
+- Le robot doit visiter chaque waypoint dans l'ordre, en marquant une
+  pause définie entre chacun.
+
+Bonus : déclenchez un message ROS personnalisé à chaque waypoint atteint
+(préparation aux Jours 5-6 — intégration).
+
+## Prochaine étape
+
+Retour au [sommaire J2](/navigation/), ou enchaînez sur
+[Jour 3 — Manipulation](/manipulation/).

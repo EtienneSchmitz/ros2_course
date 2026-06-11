@@ -12,8 +12,8 @@ import logoIso from "../../assets/logo-iso.svg";
       ROS 2 — Bootcamp · Perpignan 2026
     </p>
     <p class="bc-end__link">
-      <a href="https://github.com/EtienneSchmitz/ros2_course" target="_blank" rel="noopener">
-        github.com/EtienneSchmitz/ros2_course
+      <a href="https://ros2.etienne-schmitz.com" target="_blank" rel="noopener">
+        ros2.etienne-schmitz.com
       </a>
     </p>
   </div>

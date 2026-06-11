@@ -1,0 +1,329 @@
+---
+title: Installation native (Ubuntu / WSL)
+description: Mettre en place Ubuntu 24.04 (ou WSL2), installer ROS 2 Kilted + Gazebo Ionic, et préparer le workspace.
+sidebar:
+  order: 2
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+<Aside type="note" title="Gardez tout en anglais">
+Installez Ubuntu **en anglais** et configurez votre locale en `en_US.UTF-8`, pas en français. Les outils de la stack (ROS 2, Gazebo, MoveIt) **parsent des nombres** selon la locale du système : `fr_FR` utilise la virgule comme séparateur décimal (`1,5` au lieu de `1.5`), ce qui casse ce parsing. Le clavier, lui, peut rester en français.
+</Aside>
+
+## Installer Ubuntu 24.04
+
+ROS 2 Kilted Kaiju cible **Ubuntu 24.04 LTS (Noble Numbat)**.
+
+### Télécharger l'ISO
+
+Récupérez l'image officielle Ubuntu Desktop 24.04 LTS :
+
+- Site : [ubuntu.com/download/desktop](https://ubuntu.com/download/desktop)
+- Fichier : `ubuntu-24.04.x-desktop-amd64.iso` (≈ 6 Go)
+
+### Créer la clé USB d'installation avec Rufus
+
+[Rufus](https://rufus.ie) est l'outil le plus simple sous Windows.
+
+<Steps>
+
+1. Téléchargez **Rufus** : [rufus.ie](https://rufus.ie). La version portable suffit.
+
+2. Branchez votre clé USB (≥ 8 Go). **Sauvegardez son contenu**, elle sera effacée.
+
+3. Lancez Rufus, puis :
+
+    - **Périphérique** : votre clé USB.
+    - **Sélection du démarrage** : cliquez sur _SELECTION_ et choisissez l'ISO Ubuntu téléchargée.
+    - **Schéma de partition** : `GPT`.
+    - **Système de destination** : `UEFI (non CSM)`.
+    - **Système de fichiers** : `FAT32`.
+
+4. Cliquez sur _DÉMARRER_. Si Rufus demande le mode d'écriture, choisissez **mode image ISO**.
+
+5. Attendez la fin de l'écriture (5 à 15 minutes selon la clé), puis éjectez proprement.
+
+</Steps>
+
+<Aside type="note">
+Sur Mac, utilisez [balenaEtcher](https://etcher.balena.io).<br />
+Sous Linux, `dd` ou GNOME Disks fonctionnent aussi.
+</Aside>
+
+### Booter sur la clé USB
+
+<Steps>
+
+1. Insérez la clé sur la machine cible, allumez-la, et entrez dans le menu de boot (touche au démarrage selon le constructeur : `F12`, `F10`, `F2`, `Suppr`, `Esc`).
+
+2. Sélectionnez l'entrée correspondant à votre clé USB (souvent préfixée `UEFI:`).
+
+3. Si l'écran reste noir : désactivez **Secure Boot** dans le BIOS/UEFI, puis réessayez.
+
+</Steps>
+
+### Lancer l'installation
+
+Au démarrage du live USB, choisissez **Try or Install Ubuntu**, puis :
+
+- **Langue** : **English**.
+- **Disposition clavier** : `French` selon votre clavier physique.
+- **Mises à jour pendant l'installation** : `Téléchargements normaux` + cocher _Logiciels tiers_.
+- **Type d'installation** :
+  - Poste dédié au cours → **Effacer le disque et installer Ubuntu**.
+  - Dual-boot avec Windows → **Autre chose** (partition manuelle), prévoir au moins **40 Go** pour `/` + une swap.
+- **Compte** : créez un utilisateur, mot de passe robuste.
+
+L'installation dure 10 à 20 minutes. Redémarrez, retirez la clé USB quand demandé.
+
+### Post-install
+
+Une fois sur le bureau Ubuntu, ouvrez un terminal (`Ctrl+Alt+T`) et appliquez les mises à jour :
+
+```bash
+sudo apt update && sudo apt full-upgrade -y
+sudo apt install -y curl git build-essential
+```
+
+Rebootez si le noyau a été mis à jour :
+
+```bash
+sudo reboot
+```
+
+## ROS 2 Kilted + Gazebo Ionic
+
+ROS 2 et Gazebo s'installent ensemble : le bridge `ros_gz` fait le lien entre les deux et c'est la combinaison utilisée tout au long du cours.
+
+### Installer ROS 2 Kilted
+
+<Aside type="note" title="« Sourcer », c'est quoi ?">
+**Sourcer** un fichier (`source fichier.bash`), c'est exécuter son contenu dans le terminal courant pour en charger l'environnement : variables (`PATH`, `ROS_DISTRO`…), complétion, et accès aux commandes `ros2`. Sans ce `source`, le terminal ne « connaît » pas ROS 2. L'ajouter à `~/.bashrc` le rejoue automatiquement à chaque nouveau terminal.
+</Aside>
+
+<Steps>
+
+1. **Locale UTF-8.** Configurez la locale du système en `en_US.UTF-8` :
+
+    ```bash
+    locale  # vérifie la locale courante
+
+    sudo apt update && sudo apt install -y locales
+    sudo locale-gen en_US en_US.UTF-8
+    sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    ```
+
+2. **Ajouter le dépôt ROS 2.**
+
+    ```bash
+    sudo apt install -y software-properties-common
+    sudo add-apt-repository universe
+
+    sudo apt update && sudo apt install -y curl
+    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+      -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+      | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    ```
+
+3. **Installer les paquets.** Le métapaquet `ros-kilted-desktop` inclut RViz 2, les démos, et la majorité des paquets utiles ; on y ajoute `joint-state-publisher` (visualisation URDF, sliders de joints) utilisé tout au long du cours.
+
+    ```bash
+    sudo apt update && sudo apt upgrade -y
+    sudo apt install -y \
+      ros-kilted-desktop \
+      python3-argcomplete \
+      ros-kilted-joint-state-publisher \
+      ros-kilted-joint-state-publisher-gui
+    ```
+
+4. **Sourcer ROS 2** dans votre `~/.bashrc`, puis vérifier que `ros2` répond.
+
+    ```bash
+    echo "source /opt/ros/kilted/setup.bash" >> ~/.bashrc
+    source ~/.bashrc
+    ros2 --help
+    ```
+
+</Steps>
+
+### Tester ROS 2 (talker / listener)
+
+Dans **deux terminaux** différents :
+
+<Tabs>
+<TabItem label="Terminal 1 — talker">
+
+```bash
+ros2 run demo_nodes_cpp talker
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — listener">
+
+```bash
+ros2 run demo_nodes_py listener
+```
+
+</TabItem>
+</Tabs>
+
+Le listener doit afficher en continu les messages `Hello World: N` publiés par le talker. Si oui, ROS 2 est opérationnel.
+
+### Installer Gazebo Ionic
+
+<Steps>
+
+1. **Ajouter le dépôt OSRF et installer Gazebo Ionic.**
+
+    ```bash
+    sudo curl -sSL https://packages.osrfoundation.org/gazebo.gpg \
+      -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] \
+    http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" \
+      | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+
+    sudo apt update && sudo apt install -y gz-ionic
+    ```
+
+2. **Tester Gazebo seul.** Une fenêtre doit s'ouvrir avec quelques formes ; fermez-la (`Ctrl+C` dans le terminal).
+
+    ```bash
+    gz sim shapes.sdf
+    ```
+
+3. **Installer le bridge `ros_gz`**, qui permet à ROS 2 et Gazebo de s'échanger des messages.
+
+    ```bash
+    sudo apt install -y ros-kilted-ros-gz
+    ```
+
+</Steps>
+
+Test rapide du bridge, dans **trois terminaux** :
+
+<Tabs>
+<TabItem label="Terminal 1 — Gazebo">
+
+```bash
+gz sim -r shapes.sdf
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — bridge">
+
+```bash
+ros2 run ros_gz_bridge parameter_bridge \
+  /clock@rosgraph_msgs/msg/Clock@gz.msgs.Clock
+```
+
+</TabItem>
+<TabItem label="Terminal 3 — echo /clock">
+
+```bash
+ros2 topic echo /clock
+```
+
+</TabItem>
+</Tabs>
+
+Vous devez voir le `/clock` ROS avancer pendant que Gazebo simule.
+
+## Workspace ROS
+
+Le workspace `~/ros2_bootcamp_ws/` est votre dossier de travail local pour tout le cours : vous le construisez sur votre machine et vous y tirez les repos robots via [vcstool](https://github.com/dirk-thomas/vcstool).
+
+### Créer le workspace
+
+L'étape 1 (outils + `rosdep init`) est à faire **une seule fois sur votre machine** ; les suivantes constituent le workspace.
+
+<Steps>
+
+1. Installez les outils workspace, puis initialisez `rosdep` :
+
+    ```bash
+    sudo apt install -y \
+      python3-colcon-common-extensions \
+      python3-rosdep \
+      python3-vcstool \
+      git
+    sudo rosdep init
+    rosdep update
+    ```
+
+2. Créez le dossier et placez-vous dedans :
+
+    ```bash
+    mkdir -p ~/ros2_bootcamp_ws/src
+    cd ~/ros2_bootcamp_ws
+    ```
+
+3. Récupérez `bootcamp.repos` (la liste des repos robots, hébergée sur le site du cours) et importez les repos avec vcstool :
+
+    ```bash
+    wget https://ros2.etienne-schmitz.com/bootcamp.repos
+    vcs import src < bootcamp.repos
+    ```
+
+4. Installez les dépendances système des packages, puis lancez le premier build :
+
+    ```bash
+    rosdep install --from-paths src --ignore-src -r -y
+    colcon build --symlink-install
+    ```
+
+</Steps>
+
+Le flag `--symlink-install` permet de modifier les fichiers Python / launch sans rebuilder.
+
+### Sourcer ROS et le workspace
+
+À chaque ouverture de terminal, **deux** choses doivent être sourcées : d'abord
+**ROS 2**, puis votre **workspace**. La source ROS a déjà été ajoutée à votre
+`~/.bashrc` à l'[étape ROS](#installer-ros-2-kilted) ; il ne reste
+qu'à y ajouter le workspace :
+
+```bash
+echo "source ~/ros2_bootcamp_ws/install/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+Votre `~/.bashrc` doit alors contenir les **deux** lignes, dans cet ordre :
+
+```bash
+source /opt/ros/kilted/setup.bash             # ajouté à l'étape ROS
+source ~/ros2_bootcamp_ws/install/setup.bash  # ajouté ici
+```
+
+<Aside type="note" title="À savoir sur le sourcing automatique">
+Mettre `install/setup.bash` dans le `.bashrc` est pratique, mais comporte des
+effets de bord à connaître :
+
+- **Tout nouveau terminal** hérite de l'overlay du workspace. Si un `colcon build`
+  échoue ou laisse le workspace dans un état cassé, vos terminaux peuvent afficher
+  des erreurs dès l'ouverture.
+- Après un build qui **ajoute un nouveau package**, ouvrez un **terminal neuf**
+  (ou re-sourcez) pour qu'il soit visible.
+- Si vous jonglez avec **plusieurs workspaces**, l'auto-source fige celui-ci :
+  préférez alors l'alias ci-dessous et sourcez à la demande.
+
+```bash
+alias rosws='source ~/ros2_bootcamp_ws/install/setup.bash'
+```
+
+</Aside>
+
+<Aside type="tip">
+La suite du cours **suppose** que ROS et le workspace sont sourcés
+automatiquement via votre `~/.bashrc`. Les parties ne répètent donc **pas** ces deux
+`source` dans leurs blocs de commandes.
+</Aside>
+
+## Prochaine étape
+
+[Vérifier l'environnement](/installation/03-verification/).

@@ -1,22 +1,50 @@
 ---
 title: Installation
-description: Mise en place de l'environnement ROS 2 Kilted pour la session 2026.
+description: Mise en place de l'environnement ROS 2 Kilted + Gazebo Ionic pour la session Perpignan 2026.
 sidebar:
   order: 1
+  label: "Vue d'ensemble"
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
 
-<Aside type="caution" title="En cours de réécriture pour la session 2026">
-Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issues [#24](https://github.com/EtienneSchmitz/ros2_course/issues/24)).
+L'objectif : une machine prête avec **Ubuntu 24.04**, **ROS 2 Kilted**, **Gazebo Ionic** et le workspace du cours. Deux parcours au choix, suivis d'une vérification commune.
 
-Le contenu de la session 2025 reste accessible :
-[ros2_course/tree/v2025/docs/install](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/install)
+## Pré-requis matériels
+
+- Ordinateur capable de virtualiser une scène Gazebo Ionic (recommandé : **8 Go de RAM**, **CPU 4 cœurs**, **20 Go libres** sur disque).
+- GPU dédié optionnel mais recommandé pour Gazebo et RViz fluides.
+- Connexion Internet pour les téléchargements de paquets et de repos.
+
+## Choisir son parcours
+
+<CardGrid>
+  <LinkCard
+    title="Installation native (Ubuntu / WSL)"
+    description="ROS 2 et Gazebo installés directement sur la machine. Le plus performant, et indispensable pour piloter les vrais robots."
+    href="/installation/01-ubuntu/"
+  />
+  <LinkCard
+    title="Installation Docker"
+    description="Tout dans un conteneur, sans toucher l'OS hôte. Idéal sur macOS ou pour un environnement jetable."
+    href="/installation/02-docker/"
+  />
+</CardGrid>
+
+<Aside type="tip" title="Quel parcours selon votre OS ?">
+- **Linux** → installation native.
+- **Windows** → **WSL2** pour la simulation ; **dual-boot natif** pour piloter les vrais robots.
+- **macOS** → Docker.
 </Aside>
 
-## Sommaire prévisionnel
+Une fois l'un des deux parcours terminé, passez à la **[vérification](/installation/03-verification/)** (`ros2 doctor`, build à vide, ouverture de Gazebo) — commune aux deux.
 
-- Installation commune (Ubuntu 24.04 + ROS 2 Kilted + Gazebo Harmonic)
-- Packages Kiwi (description + bringup + navigation)
-- Packages SO-101 (description + bringup + MoveIt 2)
-- Combo Kiwi + SO-101 (URDF combiné)
+### Sur Windows : WSL2
+
+Pour la **simulation**, le plus simple sous Windows est [WSL2](https://learn.microsoft.com/windows/wsl/), qui fait tourner un vrai Ubuntu 24.04 dans Windows (Gazebo et RViz s'affichent via WSLg). Dans un PowerShell **administrateur** :
+
+```powershell
+wsl --install -d Ubuntu-24.04
+```
+
+Ouvrez ensuite le terminal Ubuntu et suivez l'[installation native](/installation/01-ubuntu/) : tout s'applique à l'identique (sautez la section « Installer Ubuntu 24.04 »).

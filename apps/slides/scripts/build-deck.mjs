@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, copyFileSync, cpSync, rmSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  copyFileSync,
+  cpSync,
+  rmSync,
+  readdirSync,
+} from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -51,6 +58,18 @@ execFileSync(
   ],
   { stdio: "inherit", cwd: slidesRoot }
 );
+
+// 2b. Copy raw asset folders (img/, distros/, …) into the SPA output.
+// Slidev bundles <img> into hashed assets, but ALSO emits
+// <link rel="preload" as="image" href="./img/…"> pointing at the ORIGINAL
+// paths. Without the raw files those preloads 404 (and break the link checker).
+for (const e of readdirSync(join(slidesRoot, deck), { withFileTypes: true })) {
+  if (e.isDirectory() && e.name !== "public") {
+    cpSync(join(slidesRoot, deck, e.name), join(spaDir, e.name), {
+      recursive: true,
+    });
+  }
+}
 
 const spaDocsDir = join(docsPublic, deck);
 rmSync(spaDocsDir, { recursive: true, force: true });

@@ -11,13 +11,14 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
-    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/mdx": "^6.0.1",
     "@astrojs/starlight": "^0.39.2",
     "@bootcamp/theme": "workspace:*",
-    "astro": "^6.3.7",
+    "astro": "^6.4.2",
     "playwright": "^1.60.0",
     "rehype-katex": "^7.0.1",
     "rehype-mermaid": "^3.0.0",
+    "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.5",
     "typescript": "^6.0.3"

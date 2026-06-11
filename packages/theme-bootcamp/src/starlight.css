@@ -71,3 +71,184 @@
 .sl-markdown-content a.cta:hover {
   background: var(--bc-industrial-hover);
 }
+
+/* Tabs Starlight — habillage type "fenêtre de terminal"
+   La tablist a un fond gris proche du bloc de code, l'onglet actif s'y fond,
+   les inactifs sont visiblement grisés. */
+starlight-tabs .tablist-wrapper ul[role="tablist"] {
+  background: var(--sl-color-gray-5);
+  border: 1px solid var(--sl-color-gray-4);
+  border-bottom: none;
+  border-top-left-radius: var(--bc-radius-md, 0.5rem);
+  border-top-right-radius: var(--bc-radius-md, 0.5rem);
+  padding: 0.25rem 0.25rem 0 0.25rem;
+  margin-bottom: 0;
+}
+
+starlight-tabs [role="tab"] {
+  color: var(--sl-color-gray-3);
+  opacity: 0.6;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, opacity 0.15s ease,
+    background 0.15s ease, border-color 0.15s ease;
+}
+
+starlight-tabs [role="tab"]:hover {
+  color: var(--sl-color-white);
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+starlight-tabs [role="tab"][aria-selected="true"] {
+  color: var(--sl-color-accent-high);
+  opacity: 1;
+  font-weight: 700;
+  background: var(--sl-color-gray-6);
+  border-bottom-color: var(--sl-color-accent);
+}
+
+/* Le panneau (code) s'aligne pixel-perfect sous la tablist */
+starlight-tabs [role="tabpanel"] {
+  margin-top: 0;
+}
+
+starlight-tabs [role="tabpanel"] .expressive-code,
+starlight-tabs [role="tabpanel"] pre {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Masque la barre "fenêtre macOS" (3 points) d'expressive-code dans les tabs
+   pour éviter l'effet "hamburger" à 3 couches */
+starlight-tabs [role="tabpanel"] .expressive-code .frame .header {
+  display: none;
+}
+
+/* Respiration pour le contenu TEXTE dans les tabs (le code reste pleine largeur
+   pour conserver l'effet "fenêtre de terminal"). On aligne le texte sur le
+   padding horizontal des onglets et on aère le haut du panneau. */
+starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6) {
+  padding-inline: 0.9rem;
+}
+
+starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0.85rem;
+}
+
+starlight-tabs [role="tabpanel"] > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):last-child {
+  margin-bottom: 0.85rem;
+}
+
+/* Largeur de lecture fluide sur grand écran — évite l'effet "colonne étroite
+   perdue au milieu" sur les moniteurs larges. En dessous de 1600px on garde la
+   valeur par défaut de Starlight (45rem). */
+@media (min-width: 1600px) { :root { --sl-content-width: 60rem; } }
+@media (min-width: 1920px) { :root { --sl-content-width: 68rem; } }
+@media (min-width: 2560px) { :root { --sl-content-width: 76rem; } }
+
+/* Page d'accueil (splash) : resserrer le grand vide sous le hero */
+.hero {
+  padding-block: 2.5rem 1rem;
+}
+
+/* Bloc « Vérifiez votre compréhension » — disclosure des réponses stylé via les
+   tokens du thème (au lieu du rendu <details> natif du navigateur). */
+.sl-markdown-content details.quiz-answers {
+  border: 1px solid var(--sl-color-gray-5);
+  border-left: 3px solid var(--sl-color-accent);
+  border-radius: var(--bc-radius-md);
+  background: var(--sl-color-bg-inline-code);
+  margin-top: 0.85rem;
+  overflow: hidden;
+}
+
+.sl-markdown-content details.quiz-answers > summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--sl-color-accent-high);
+  padding: 0.65rem 1rem;
+  list-style: none; /* masque le marqueur natif */
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sl-markdown-content details.quiz-answers > summary:hover {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+}
+
+.sl-markdown-content details.quiz-answers > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Chevron pivotant (au lieu de changer le glyphe) */
+.sl-markdown-content details.quiz-answers > summary::before {
+  content: "▸";
+  display: inline-block;
+  color: var(--sl-color-accent);
+  transition: transform 0.15s ease;
+}
+
+.sl-markdown-content details.quiz-answers[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* Corps des réponses — séparé de l'en-tête par un filet, padding confortable */
+.sl-markdown-content details.quiz-answers[open] > summary {
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content details.quiz-answers > :not(summary) {
+  margin-inline: 1rem;
+}
+
+.sl-markdown-content details.quiz-answers > :not(summary):first-of-type {
+  margin-top: 0.75rem;
+}
+
+.sl-markdown-content details.quiz-answers > :not(summary):last-child {
+  margin-bottom: 0.75rem;
+}
+
+/* Tableaux pleine largeur par défaut — sur grand écran ils occupent toute la
+   colonne de lecture au lieu de flotter, compacts, calés à gauche.
+   En-têtes et cellules centrés.
+   La classe `table--compact` rétablit le comportement « largeur du contenu,
+   centré » (wrapper la table dans un <div class="table--compact">). */
+.sl-markdown-content table {
+  display: table; /* annule le display:block de Starlight qui empêchait l'étirement */
+  width: 100%;
+}
+
+/* En-têtes centrés et colorés ; corps des cellules aligné à gauche (défaut) */
+.sl-markdown-content thead th {
+  text-align: center;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-accent-high);
+  border-bottom: 2px solid var(--sl-color-accent);
+  padding-block: 0.55rem;
+}
+
+.sl-markdown-content .table--compact table {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+/* Repli de la sidebar de navigation (desktop) — piloté par le bouton
+   SidebarToggle via l'attribut data-sidebar-collapsed sur <html>. Mettre la
+   variable de largeur à 0 réaligne automatiquement .main-frame et la grille du
+   header ; on masque en plus la nav elle-même. */
+@media (min-width: 50rem) {
+  :root[data-sidebar-collapsed] {
+    --sl-content-inline-start: 0rem;
+  }
+  :root[data-sidebar-collapsed] .sidebar {
+    display: none;
+  }
+}

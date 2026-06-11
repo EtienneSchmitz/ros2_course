@@ -1,0 +1,123 @@
+---
+title: La base mobile LeKiwi
+description: Anatomie d'une base 3 roues omnidirectionnelles kiwi, URDF, première téléop.
+sidebar:
+  order: 2
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+La **base LeKiwi** est une plateforme open-source à **3 roues
+omnidirectionnelles** réparties à 120°. Cette configuration en fait une
+base **holonome** : elle peut se déplacer dans n'importe quelle direction
+sans avoir à se réorienter au préalable.
+
+## Configuration kiwi à 120°
+
+```text
+            roue 0 (avant)
+                 │
+                 ▼
+              ╱──────╲
+             ╱        ╲
+            │  base    │
+             ╲        ╱
+              ╲──────╱
+            ╱           ╲
+        roue 1         roue 2
+       (arr. gauche)  (arr. droit)
+```
+
+Les trois roues sont identiques, montées sur des moteurs indépendants.
+Chaque roue est **omnidirectionnelle** (roue + galets latéraux) :
+elle peut glisser latéralement librement et n'entraîne le sol que dans
+son axe principal.
+
+## Cinématique inverse simplifiée
+
+Pour une consigne `(vx, vy, ω)` (translation X, translation Y, rotation
+autour de Z), la vitesse linéaire de chaque roue `i` (i ∈ {0, 1, 2})
+située à l'angle `θᵢ` du centre est :
+
+$$
+v_i = -\sin(\theta_i)\, v_x + \cos(\theta_i)\, v_y + L\, \omega
+$$
+
+avec `L` = rayon entre le centre du robot et chaque roue.
+
+Cette transformation est typiquement implémentée par un nœud
+**`base_controller`** qui consomme `/cmd_vel` (type `Twist`) et publie
+les commandes de vitesse pour chaque moteur.
+
+## URDF
+
+L'URDF de la base LeKiwi définit :
+
+- un `base_link` central ;
+- trois `wheel_link` placés à 120° (avec leur `<joint>` continuous) ;
+- un `laser_link` pour le LiDAR 360° (placé en haut du robot) ;
+- les inerties et collisions approximées par des cylindres / boîtes.
+
+<Aside type="note" title="Hands-on (à venir)">
+Une fois `lekiwi_description` publié dans
+[lekiwi_ros2](https://github.com/EtienneSchmitz/lekiwi_ros2), vous pouvez
+visualiser l'URDF avec :
+
+```bash
+ros2 launch lekiwi_description display.launch.py
+```
+
+Cela démarre `robot_state_publisher` + RViz avec une config qui charge le
+modèle.
+</Aside>
+
+## Premier lancement en simulation
+
+<Aside type="note" title="Hands-on (à venir)">
+Quand `lekiwi_bringup` sera prêt, vous lancez la sim Gazebo + bridges :
+
+```bash
+ros2 launch lekiwi_bringup sim_base.launch.py
+```
+
+Cela ouvre un monde plat avec quelques obstacles, spawn la base LeKiwi,
+et bridge les topics ROS / Gazebo (`/cmd_vel`, `/odom`, `/scan`,
+`/clock`, `tf`).
+</Aside>
+
+## Téléop clavier
+
+Pour valider la cinématique, le plus simple est la téléop clavier
+standard `teleop_twist_keyboard` :
+
+<Tabs>
+<TabItem label="Terminal 1 — sim">
+
+```bash
+ros2 launch lekiwi_bringup sim_base.launch.py
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — téléop">
+
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+</TabItem>
+</Tabs>
+
+Touches utiles :
+
+- `i` / `,` : avancer / reculer
+- `j` / `l` : translation latérale gauche / droite (la magie d'une base
+  holonome)
+- `u` / `o` : rotation
+- `q` / `z` : modifier la vitesse
+
+Si la base bouge dans la bonne direction sans changer de cap, la
+cinématique est correcte.
+
+## Prochaine étape
+
+[Navigation autonome avec Nav2](/navigation/02-nav2/).

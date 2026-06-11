@@ -1,19 +1,36 @@
 ---
-title: Jour 5 — Intégration
+title: Jours 5-6 — Intégration
 description: Mise en commun navigation + manipulation + vision sur un scénario complet.
 sidebar:
   order: 1
+  label: "Vue d'ensemble"
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import SlidevEmbed from "../../../components/SlidevEmbed.astro";
+import DayFlow from "../../../components/DayFlow.astro";
 
-<Aside type="caution" title="En cours de réécriture pour la session 2026">
-Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issues [#46](https://github.com/EtienneSchmitz/ros2_course/issues/46), [#47](https://github.com/EtienneSchmitz/ros2_course/issues/47)).
+Les jours 5 et 6 sont l'aboutissement de la semaine : vous assemblez la perception (Jour 4), la
+manipulation (Jour 3) et la navigation (Jour 2) en un **système robotique complet** qui
+détecte, saisit et transporte un objet.
 
-Le contenu de la session 2025 reste accessible :
-[ros2_course/tree/v2025/docs/integration](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/integration)
-</Aside>
+## Objectifs
 
-## Sommaire prévisionnel
+- Assembler un **pipeline ROS 2 complet** (perception → décision → action) à partir des
+  briques construites tout au long de la semaine.
+- Concevoir une **architecture** propre (nœuds, topics, services, actions) et la documenter.
+- Présenter et défendre votre projet (soutenance + rapport).
 
-Le J5 (intégration) est le pivot de la refonte 2026 : il définit les briques que les autres journées doivent fournir.
+## Déroulé de la journée
+
+<DayFlow>
+
+1. **[Le projet](/integration/01-projet/)** : scénario, architecture cible et interfaces à respecter.
+2. **Assemblage par interface** : remplacer les nœuds factices par les vrais robots (J2/J3/J4).
+3. **Pipeline complet** : détection → pick → transport → dépôt.
+4. **[Déroulé & livrables](/integration/02-deroule-livrables/)** : soutenance, rapport et grille de notation.
+
+</DayFlow>
+
+## Slides du jour
+
+<SlidevEmbed name="jour5" title="Jours 5-6 — Intégration" />

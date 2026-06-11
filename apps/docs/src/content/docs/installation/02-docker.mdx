@@ -1,0 +1,177 @@
+---
+title: Installation Docker
+description: Environnement ROS 2 Kilted + Gazebo Ionic dans un conteneur Docker, avec affichage GUI sous Linux, Windows et macOS.
+sidebar:
+  order: 3
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Quand choisir Docker
+
+- Vous ne voulez **pas toucher à l'OS hôte** (pas de dual-boot, pas de paquets apt).
+- Vous travaillez sur **macOS** (pas de dual-boot ni de WSL pour faire tourner ROS nativement).
+- Vous voulez un environnement **jetable et reproductible**, identique pour tout le monde.
+
+<Aside type="note" title="Docker et matériel réel">
+Comme WSL2, Docker est confortable pour la **simulation**. Pour piloter les **vrais robots** (USB/série, découverte DDS sur le réseau local), il faut ajouter des options (`--device`, `--network host` sous Linux) et la configuration devient vite délicate. Pour ces journées, l'[installation native en dual-boot](/installation/01-ubuntu/) reste la plus simple.
+</Aside>
+
+## Installer Docker
+
+<Tabs>
+<TabItem label="Linux">
+
+Installez **Docker Engine** en suivant la [doc officielle](https://docs.docker.com/engine/install/ubuntu/), puis ajoutez votre utilisateur au groupe `docker` pour éviter `sudo` :
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+</TabItem>
+<TabItem label="Windows">
+
+Installez [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/). Il s'appuie sur **WSL2** (activez l'intégration WSL dans les réglages).
+
+</TabItem>
+<TabItem label="macOS">
+
+Installez [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/) (Apple Silicon ou Intel selon votre Mac).
+
+</TabItem>
+</Tabs>
+
+Vérifiez que Docker fonctionne :
+
+```bash
+docker run hello-world
+```
+
+## Récupérer le Dockerfile
+
+L'image du cours part de l'image officielle ROS 2 Kilted et y ajoute Gazebo Ionic, le bridge `ros_gz` et les outils workspace. Le `Dockerfile` est hébergé sur le site :
+
+```bash
+mkdir -p ~/ros2_bootcamp_docker && cd ~/ros2_bootcamp_docker
+wget https://ros2.etienne-schmitz.com/Dockerfile
+```
+
+## Builder l'image
+
+```bash
+cd ~/ros2_bootcamp_docker
+docker build -t ros2-bootcamp .
+```
+
+Le build télécharge l'image de base et installe Gazebo + les paquets (quelques minutes la première fois).
+
+## Activer l'affichage GUI
+
+Gazebo et RViz ont besoin d'un serveur d'affichage. La marche à suivre dépend de l'OS hôte.
+
+<Tabs>
+<TabItem label="Linux (X11)">
+
+Autorisez les conteneurs locaux à accéder à votre serveur X :
+
+```bash
+xhost +local:docker
+```
+
+Le conteneur sera lancé avec `-e DISPLAY` et le montage de `/tmp/.X11-unix` (voir commande `docker run` ci-dessous).
+
+</TabItem>
+<TabItem label="Windows (WSLg)">
+
+Avec Docker Desktop sur **WSL2**, l'affichage est géré automatiquement par **WSLg** : aucune configuration nécessaire. La variable `DISPLAY` est déjà définie dans l'environnement WSL.
+
+</TabItem>
+<TabItem label="macOS (XQuartz)">
+
+Installez [XQuartz](https://www.xquartz.org), puis dans ses **Préférences → Sécurité**, cochez _Autoriser les connexions des clients réseau_. Redémarrez XQuartz, puis :
+
+```bash
+xhost +localhost
+```
+
+Le conteneur utilisera `-e DISPLAY=host.docker.internal:0`.
+
+</TabItem>
+</Tabs>
+
+## Lancer le conteneur
+
+On monte le workspace hôte `~/ros2_bootcamp_ws` en volume pour que le code et les builds **persistent** entre deux lancements.
+
+```bash
+mkdir -p ~/ros2_bootcamp_ws
+```
+
+<Tabs>
+<TabItem label="Linux (X11)">
+
+```bash
+docker run -it --rm \
+  --name ros2-bootcamp \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v ~/ros2_bootcamp_ws:/root/ros2_bootcamp_ws \
+  ros2-bootcamp
+```
+
+</TabItem>
+<TabItem label="Windows (WSLg)">
+
+Depuis un terminal **WSL** (Ubuntu) :
+
+```bash
+docker run -it --rm \
+  --name ros2-bootcamp \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v ~/ros2_bootcamp_ws:/root/ros2_bootcamp_ws \
+  ros2-bootcamp
+```
+
+</TabItem>
+<TabItem label="macOS (XQuartz)">
+
+```bash
+docker run -it --rm \
+  --name ros2-bootcamp \
+  -e DISPLAY=host.docker.internal:0 \
+  -v ~/ros2_bootcamp_ws:/root/ros2_bootcamp_ws \
+  ros2-bootcamp
+```
+
+</TabItem>
+</Tabs>
+
+Vous obtenez un shell **dans le conteneur**, avec ROS 2 déjà sourcé. Testez l'affichage :
+
+```bash
+gz sim shapes.sdf
+```
+
+Une fenêtre Gazebo doit s'ouvrir sur votre bureau.
+
+## Préparer le workspace dans le conteneur
+
+Le workspace est monté sur `/root/ros2_bootcamp_ws`. À l'intérieur du conteneur, la préparation est **identique au parcours natif** :
+
+```bash
+cd /root/ros2_bootcamp_ws
+wget https://ros2.etienne-schmitz.com/bootcamp.repos
+vcs import src < bootcamp.repos
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+```
+
+<Aside type="note">
+Comme le dossier `~/ros2_bootcamp_ws` est monté en volume, le contenu (`src/`, `install/`, `bootcamp.repos`) **survit** à l'arrêt du conteneur. Vous retrouvez votre workspace au prochain `docker run`. Pour les détails sur `bootcamp.repos` et le sourcing, voir la [section Workspace du parcours natif](/installation/01-ubuntu/#workspace-ros).
+</Aside>
+
+## Prochaine étape
+
+[Vérifier l'environnement](/installation/03-verification/).

@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeMermaid from "rehype-mermaid";
@@ -9,10 +10,17 @@ export default defineConfig({
   trailingSlash: "ignore",
 
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       [rehypeKatex, {}],
-      [rehypeMermaid, { strategy: "img-svg" }],
+      [
+        rehypeMermaid,
+        {
+          strategy: "img-svg",
+          mermaidConfig: { theme: "default" },
+          dark: { theme: "dark" },
+        },
+      ],
     ],
   },
 
@@ -20,6 +28,10 @@ export default defineConfig({
     starlight({
       title: "ROS 2 — Bootcamp",
       description: "Cours intensif ROS 2 — base mobile Kiwi + bras SO-101.",
+      components: {
+        Header: "./src/components/Header.astro",
+        Footer: "./src/components/Footer.astro",
+      },
       defaultLocale: "root",
       locales: {
         root: { label: "Français", lang: "fr" },
@@ -39,6 +51,12 @@ export default defineConfig({
               "sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+",
             crossorigin: "anonymous",
           },
+        },
+        {
+          tag: "script",
+          content:
+            "try{if(localStorage.getItem('bc:sidebar-collapsed')==='1')" +
+            "document.documentElement.setAttribute('data-sidebar-collapsed','');}catch(e){}",
         },
       ],
       customCss: ["@bootcamp/theme/starlight.css"],
@@ -76,7 +94,7 @@ export default defineConfig({
           items: [{ autogenerate: { directory: "vision" } }],
         },
         {
-          label: "Jour 5 — Intégration",
+          label: "Jours 5-6 — Intégration",
           items: [{ autogenerate: { directory: "integration" } }],
         },
       ],

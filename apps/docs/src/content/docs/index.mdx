@@ -9,25 +9,20 @@ hero:
       link: /installation
       icon: right-arrow
       variant: primary
-    - text: Cours session 2025 (archive)
-      link: https://github.com/EtienneSchmitz/ros2_course/releases/tag/v2025-final
-      icon: external
+    - text: GitHub
+      link: https://github.com/EtienneSchmitz/ros2_course
+      icon: github
       variant: minimal
 ---
 
-import { CardGrid, Aside } from "@astrojs/starlight/components";
+import { CardGrid } from "@astrojs/starlight/components";
 import ProgramCard from "../../components/ProgramCard.astro";
 
-<Aside type="note" title="Refonte en cours">
-Le contenu de la session 2026 est en cours de réécriture (issue [#17](https://github.com/EtienneSchmitz/ros2_course/issues/17)).
-La version 2025 reste accessible via le tag [`v2025-final`](https://github.com/EtienneSchmitz/ros2_course/releases/tag/v2025-final) et la branche [`v2025`](https://github.com/EtienneSchmitz/ros2_course/tree/v2025).
-</Aside>
-
-## Programme — 5 jours
+## Programme — 6 jours
 
 <CardGrid>
   <ProgramCard title="Installation" href="/installation" icon="setting" color="var(--sl-color-orange)">
-    Mise en place de l'environnement ROS 2 Kilted, simulateur Gazebo Harmonic, et packages robots maison (Kiwi + SO-101).
+    Mise en place de l'environnement ROS 2 Kilted, simulateur Gazebo Ionic, et packages robots maison (Kiwi + SO-101).
   </ProgramCard>
   <ProgramCard title="Jour 1 — Introduction" href="/introduction" icon="open-book" color="var(--sl-color-purple)">
     Concepts ROS 2, nodes, topics, services, actions. Premier graphe en simulation.
@@ -41,7 +36,7 @@ La version 2025 reste accessible via le tag [`v2025-final`](https://github.com/E
   <ProgramCard title="Jour 4 — Vision" href="/vision" icon="magnifier" color="var(--sl-color-blue)">
     Perception, OpenCV, détection d'objets et asservissement visuel.
   </ProgramCard>
-  <ProgramCard title="Jour 5 — Intégration" href="/integration" icon="approve-check" color="var(--sl-color-accent)">
+  <ProgramCard title="Jours 5-6 — Intégration" href="/integration" icon="approve-check" color="var(--sl-color-accent)">
     Mise en commun navigation + manipulation + vision sur un scénario complet.
   </ProgramCard>
 </CardGrid>

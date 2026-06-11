@@ -127,7 +127,7 @@ body,
 .slidev-layout pre.shiki {
   border-radius: 8px;
   border: 1px solid var(--bc-border);
-  background: #0b0e13 !important;
+  background: #0e1116 !important;
   padding: 1rem 1.25rem !important;
   font-size: 1rem;
   line-height: 1.5;
@@ -252,7 +252,15 @@ body,
   color: var(--bc-industrial);
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.bc-section__rule {
+  width: 80px;
+  height: 4px;
+  background: var(--bc-industrial);
+  border-radius: 2px;
+  margin: 0 0 1.4rem;
 }
 
 .bc-section__title {
@@ -275,7 +283,7 @@ body,
   grid-template-columns: 1fr 1fr;
   gap: 3.5rem;
   padding: 4rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .bc-two-cols__col {
@@ -346,13 +354,30 @@ body,
   pointer-events: none;
 }
 
+.bc-global-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
 .bc-global-footer__logo {
   height: 24px;
   width: auto;
+  flex-shrink: 0;
+}
+
+.bc-global-footer__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60ch;
+  color: var(--bc-text-muted);
 }
 
 .bc-global-footer__page {
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
 /* Masquage du global footer sur les layouts qui ont leur propre marque */
@@ -422,4 +447,325 @@ body,
   font-family: var(--bc-font-mono);
   font-size: 1.1rem;
   color: var(--bc-accent);
+}
+
+/* Agenda (cartes numérotées) ========================================== */
+
+.bc-agenda {
+  list-style: none;
+  counter-reset: bc-agenda;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.bc-agenda li {
+  counter-increment: bc-agenda;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.2rem;
+  background: var(--bc-bg-elevated);
+  border: 1px solid var(--bc-border);
+  border-left: 3px solid var(--bc-industrial);
+  border-radius: var(--bc-radius-md);
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.bc-agenda li::before {
+  content: counter(bc-agenda);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--bc-industrial);
+  color: var(--bc-text-inverse);
+  font-family: var(--bc-font-display);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Le contenu est un unique flex item → pas de gap parasite entre les mots */
+.bc-agenda li > span {
+  min-width: 0;
+}
+
+/* Timeline (historique) =============================================== */
+
+.bc-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  position: relative;
+}
+
+.bc-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 2px;
+  background: var(--bc-border);
+}
+
+.bc-timeline li {
+  position: relative;
+  padding: 0 0 1.1rem 1.75rem;
+  margin: 0;
+  list-style: none;
+}
+
+.bc-timeline li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: var(--bc-bg);
+  border: 3px solid var(--bc-accent);
+}
+
+.bc-timeline li:last-child {
+  padding-bottom: 0;
+}
+
+.bc-timeline .bc-timeline__year {
+  font-family: var(--bc-font-display);
+  font-weight: 700;
+  color: var(--bc-accent);
+  margin-right: 0.5rem;
+}
+
+/* Média centré (colonne image d'un two-cols) ========================== */
+
+.bc-media {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.bc-media img {
+  width: 100%;
+  border-radius: var(--bc-radius-md);
+}
+
+.bc-media--frame img {
+  background: #fff;
+  padding: 0.75rem;
+}
+
+/* Pile de couches (architecture) ===================================== */
+
+.bc-layers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  height: 100%;
+}
+
+.bc-layers__item {
+  border: 1px solid var(--bc-border);
+  border-left: 4px solid var(--bc-border);
+  border-radius: var(--bc-radius-md);
+  background: var(--bc-bg-elevated);
+  padding: 0.7rem 1.1rem;
+  opacity: 0.4;
+  transition: opacity 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.bc-layers__item.is-active {
+  opacity: 1;
+  border-color: var(--bc-accent);
+  border-left-color: var(--bc-accent);
+  background: rgba(64, 168, 196, 0.12);
+  box-shadow: var(--bc-shadow-md);
+  transform: translateX(6px);
+}
+
+.bc-layers__name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.bc-layers__desc {
+  font-size: 0.85rem;
+  color: var(--bc-text-muted);
+  margin-top: 0.1rem;
+}
+
+/* Cards (grille) ====================================================== */
+
+.bc-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+}
+
+.bc-cards--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.bc-cards--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.bc-card {
+  background: var(--bc-bg-elevated);
+  border: 1px solid var(--bc-border);
+  border-radius: var(--bc-radius-md);
+  padding: 1rem 1.1rem;
+}
+
+.bc-card__title {
+  font-family: var(--bc-font-display);
+  font-weight: 600;
+  color: var(--bc-accent);
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+.bc-card p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--bc-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* Callout (avertissement) ============================================= */
+
+.bc-callout {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0 0;
+  border-radius: var(--bc-radius-md);
+  background: var(--bc-bg-elevated);
+  border: 1px solid var(--bc-border);
+  border-left: 4px solid var(--bc-warn);
+}
+
+.bc-callout__icon {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.bc-callout__body {
+  min-width: 0;
+}
+
+.bc-callout__title {
+  font-family: var(--bc-font-display);
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--bc-warn);
+}
+
+.bc-callout__body p {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.bc-callout--warn {
+  border-left-color: var(--bc-warn);
+}
+
+.bc-callout--warn .bc-callout__title {
+  color: var(--bc-warn);
+}
+
+.bc-callout--info {
+  border-left-color: var(--bc-accent);
+}
+
+.bc-callout--info .bc-callout__title {
+  color: var(--bc-accent);
+}
+
+.bc-callout img {
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* Distributions (tableau avec logos) ================================== */
+
+.bc-distros {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0 0;
+}
+
+.bc-distros th {
+  font-family: var(--bc-font-display);
+  color: var(--bc-text-muted);
+  font-weight: 600;
+  text-align: left;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--bc-border);
+}
+
+.bc-distros td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--bc-border);
+  vertical-align: middle;
+}
+
+.bc-distros img {
+  height: 2.4rem;
+  width: auto;
+  display: block;
+}
+
+.bc-distros .bc-distros__name {
+  font-weight: 600;
+}
+
+.bc-distros tr.is-current {
+  background: rgba(255, 122, 26, 0.12);
+}
+
+.bc-distros tr.is-current td {
+  border-bottom-color: var(--bc-industrial);
+}
+
+.bc-badge {
+  display: inline-block;
+  font-family: var(--bc-font-mono);
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--bc-border);
+  color: var(--bc-text-muted);
+}
+
+.bc-badge--lts {
+  color: var(--bc-success);
+  border-color: var(--bc-success);
+}
+
+.bc-badge--rolling {
+  color: var(--bc-accent);
+  border-color: var(--bc-accent);
+}
+
+.bc-badge--eol {
+  color: var(--bc-danger);
+  border-color: var(--bc-danger);
 }
