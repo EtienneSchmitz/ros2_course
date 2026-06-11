@@ -36,8 +36,8 @@ classe** (navigation, Jour 2) → dépôt. Un pipeline ROS 2 complet :
 
 ## Architecture cible
 
-Tout le système est orchestré par un nœud central, le `mission_coordinator`, qui relie
-les trois sous-systèmes via des **topics**, **services** et **actions** :
+Tout le système est orchestré par un **nœud coordinateur** central qui relie les trois
+sous-systèmes via des **topics**, **services** et **actions** (à titre d'exemple) :
 
 ```mermaid
 flowchart LR
@@ -48,34 +48,36 @@ flowchart LR
   base -->|result| coord
 ```
 
-<Aside type="tip" title="Vous avez déjà construit ce graphe">
-Au **Jour 1**, vous avez monté **exactement ce graphe** avec des nœuds **factices**
-(détections en dur, pick simulé, navigation bidon). Le projet final consiste à remplacer
-chaque nœud factice par le vrai sous-système des Jours 2 à 4 — sans changer les interfaces.
+<Aside type="tip" title="Vous avez déjà conçu ce graphe">
+Au **Jour 1**, vous avez **conçu et monté un graphe factice équivalent** (détections en dur,
+pick simulé, navigation bidon). Le projet final consiste à remplacer chaque nœud factice par
+le vrai sous-système des Jours 2 à 4 — **sans changer vos interfaces**.
 </Aside>
 
 ## Les interfaces à respecter
 
-Pour que les sous-systèmes s'assemblent sans réécriture, les **interfaces sont figées**
-(voir [le contrat des briques](https://github.com/EtienneSchmitz/ros2_course/blob/main/plan/briques-j1-pour-j5.md)) :
+Pour que les sous-systèmes s'assemblent sans réécriture, **figez vos interfaces** dès
+maintenant : une fois définies, on n'y touche plus. Voici une **forme possible** (la vôtre,
+conçue au Jour 1, peut différer — l'essentiel est qu'elle reste stable ; un exemple complet
+est donné dans [le contrat des briques](https://github.com/EtienneSchmitz/ros2_course/blob/main/plan/briques-j1-pour-j5.md)) :
 
 | Interface | Forme | Producteur → consommateur |
 | --- | --- | --- |
-| `/detections` (`Detection.msg`) | `string class_id` + `geometry_msgs/Pose pose` | detector (J4) → coordinator |
-| `PickRequest.srv` | requête `Pose target` → réponse `bool success` | coordinator → arm (J3) |
-| `NavigateToPose` (action Nav2) | goal `PoseStamped` | coordinator → base (J2) |
+| topic de détections (`Detection.msg`) | `string class_id` + `geometry_msgs/Pose pose` | détection (J4) → coordinateur |
+| service de saisie (`PickRequest.srv`) | requête `Pose target` → réponse `bool success` | coordinateur → bras (J3) |
+| action de navigation (`NavigateToPose`) | goal `PoseStamped` | coordinateur → base (J2) |
 
 ## Démarrer
 
 <Steps>
 
-1. **Repartez de votre package du Jour 1.** Vous y avez déjà les interfaces (`Detection.msg`,
-   `PickRequest.srv`), le `mission_coordinator` paramétré et `mission.launch.py`.
+1. **Repartez du graphe factice que vous avez conçu au Jour 1** : vos interfaces, votre nœud
+   coordinateur paramétré et votre launch file.
 
 2. **Remplacez les nœuds factices, un par un**, par les vrais sous-systèmes :
-   - le `detector` factice → la perception du Jour 4 ;
-   - le `arm_server` factice → le pick MoveIt 2 du Jour 3 ;
-   - le serveur de navigation bidon → Nav2 sur le LeKiwi (Jour 2).
+   - le nœud de détection factice → la perception du Jour 4 ;
+   - le nœud factice du bras → le pick MoveIt 2 du Jour 3 ;
+   - le nœud factice de navigation → Nav2 sur le LeKiwi (Jour 2).
 
 3. **Validez le pipeline complet**, puis soignez la robustesse (reprises, cas d'échec).
 

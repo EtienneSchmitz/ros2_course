@@ -1,241 +1,70 @@
 ---
 title: "Première brique du projet"
-description: Créer un package ROS 2 et coder le graphe du projet final avec des nœuds factices — message, service, action, paramètres, launch.
+description: "Consigne ouverte : concevez et montez vous-même le graphe factice du projet final (topics, services, actions, paramètres, launch), puis présentez votre solution en validant chaque nœud."
 sidebar:
   label: "Première brique du projet"
   order: 3
 ---
 
-import { Aside, Steps } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
-Place à **votre** projet. Vous allez créer un package ROS 2 et y monter le **graphe du
-projet final** (Jours 5-6) — mais avec des **nœuds factices**. Chaque brique réutilise un
-concept de la partie précédente, et sera remplacée par un vrai robot aux Jours 2 à 4.
+## Le projet final
 
-<Aside type="note" title="Le graphe à construire">
+Avant de coder, voici **où l'on va**. Le fil rouge de la semaine est un **robot de
+mission** : il **détecte** un objet (caméra), **le saisit** (bras SO-101), puis **navigue**
+(base mobile LeKiwi) vers une **zone de dépôt** choisie selon la classe de l'objet.
 
-```text
-[detector] --/detections (Detection.msg)--> [mission_coordinator] --PickRequest.srv--> [arm_server]
-                                                    |
-                                                    +-- (plus tard) action NavigateToPose --> [base]
+```mermaid
+flowchart LR
+  detector["détection<br/>(caméra)"] -->|"topic : détections"| coord["coordinateur"]
+  coord -->|"service : saisir"| arm["bras<br/>(ordre de saisie)"]
+  coord -.->|"action : aller à une pose"| base["base mobile<br/>(ordre de déplacement)"]
 ```
 
-Aujourd'hui, le `detector` invente des détections, le `arm_server` répond toujours
-« pris ». Aux Jours 2-4, vous brancherez la vraie caméra, le vrai bras, le vrai robot
-mobile — **sans changer les interfaces**.
+Ce graphe **est** le squelette du projet final (Jours 5-6). À vous de le monter
+**aujourd'hui avec vos propres nœuds factices** : la détection invente des objets, le bras
+répond toujours « pris », la base se contente de logger la pose visée. Aux **Jours 2-4**,
+vous remplacerez chaque nœud factice par le vrai robot (vraie caméra, vrai bras, vrai robot
+mobile) — **sans changer vos interfaces**. Aux **Jours 5-6**, vous assemblerez le tout.
 
+## La consigne
+
+Pour cette deuxième partie, **rien n'est fourni** : à vous de **concevoir et construire** ce
+graphe factice en réutilisant les **cinq briques** de la partie 1 — nodes, topics, services,
+actions, paramètres — et un **launch file** pour tout démarrer.
+
+Votre graphe doit contenir :
+
+- **Un nœud de détection** qui **publie des détections factices** sur un **topic** (une
+  classe d'objet + une pose, inventées et publiées à intervalle régulier).
+- **Deux nœuds factices qui exécutent un ordre** : l'un **déplace le bras** (ordre de
+  saisie), l'autre **déplace la base mobile** (ordre de déplacement vers une pose). Ce sont
+  ces deux nœuds qui seront **remplacés à terme par les vrais robots** — le bras au Jour 3,
+  la base au Jour 2. Aujourd'hui ils se contentent de répondre / logger.
+- **Un nœud coordinateur** qui **orchestre** la mission : il **s'abonne** au topic de
+  détection, puis **donne ses ordres** via **un service** (saisir avec le bras — court, avec
+  réponse) et **une action** (déplacer la base — long, avec feedback et annulable). La **zone
+  de dépôt par classe** est lue dans un **paramètre** (pas de valeurs en dur).
+- **Un launch file** qui démarre les nœuds d'une seule commande.
+
+<Aside type="tip" title="C'est vous qui figez les interfaces">
+Choisissez **vos** noms, **votre** découpage et surtout **vos interfaces** (le type des
+messages de topic, la requête/réponse du service, le but de l'action). Justifiez chaque
+choix : **topic** pour un flux continu, **service** pour une requête courte avec réponse,
+**action** pour une tâche longue et annulable. Ces interfaces sont le **contrat** qui
+restera stable quand les nœuds factices céderont la place aux vrais robots — soignez-les.
 </Aside>
 
-## 1. Créer les packages
-
-On sépare les **interfaces** (messages/services) des **nœuds** — c'est la convention ROS 2.
-
-<Steps>
-
-1. **Le package d'interfaces** (`ament_cmake`, car les `.msg`/`.srv` se génèrent en C++) :
-
-   ```bash
-   cd ~/ros2_bootcamp_ws/src
-   ros2 pkg create mission_interfaces --build-type ament_cmake \
-     --dependencies geometry_msgs
-   ```
-
-2. **Le package des nœuds** (`ament_python`) :
-
-   ```bash
-   ros2 pkg create mission --build-type ament_python \
-     --dependencies rclpy geometry_msgs mission_interfaces
-   ```
-
-</Steps>
-
-## 2. Brique 1 — le message `Detection.msg`
-
-Créez `mission_interfaces/msg/Detection.msg` :
-
-```text
-string class_id
-geometry_msgs/Pose pose
-```
-
-Déclarez-le dans `mission_interfaces/CMakeLists.txt` :
-
-```cmake
-find_package(rosidl_default_generators REQUIRED)
-find_package(geometry_msgs REQUIRED)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Detection.msg"
-  "srv/PickRequest.srv"
-  DEPENDENCIES geometry_msgs
-)
-```
-
-(et `<member_of_group>rosidl_interface_packages</member_of_group>` dans `package.xml`).
-
-## 3. Brique 1 (suite) — le nœud `detector` (publisher)
-
-Un nœud qui **publie** des détections factices sur `/detections` (concept : **topic**).
-Créez `mission/mission/detector.py` :
-
-```python
-import itertools
-import rclpy
-from rclpy.node import Node
-from mission_interfaces.msg import Detection
-
-
-class Detector(Node):
-    def __init__(self):
-        super().__init__("detector")
-        self.pub = self.create_publisher(Detection, "/detections", 10)
-        self.classes = itertools.cycle(["rouge", "bleu"])   # détections en dur
-        self.create_timer(2.0, self.tick)
-
-    def tick(self):
-        msg = Detection()
-        msg.class_id = next(self.classes)
-        msg.pose.position.x = 0.30
-        msg.pose.orientation.w = 1.0
-        self.pub.publish(msg)
-        self.get_logger().info(f"Détecté : {msg.class_id}")
-
-
-def main():
-    rclpy.init()
-    rclpy.spin(Detector())
-    rclpy.shutdown()
-```
-
-## 4. Brique 2 — le service `PickRequest.srv` + `arm_server`
-
-Créez `mission_interfaces/srv/PickRequest.srv` (concept : **service**) :
-
-```text
-geometry_msgs/Pose target
----
-bool success
-```
-
-Le serveur factice répond toujours « pris ». Créez `mission/mission/arm_server.py` :
-
-```python
-import rclpy
-from rclpy.node import Node
-from mission_interfaces.srv import PickRequest
-
-
-class ArmServer(Node):
-    def __init__(self):
-        super().__init__("arm_server")
-        self.srv = self.create_service(PickRequest, "/pick", self.on_pick)
-
-    def on_pick(self, request, response):
-        self.get_logger().info("Saisie (factice)…")
-        response.success = True          # le vrai pick MoveIt arrive au Jour 3
-        return response
-
-
-def main():
-    rclpy.init()
-    rclpy.spin(ArmServer())
-    rclpy.shutdown()
-```
-
-## 5. Brique 4 — le `mission_coordinator` (paramètres + orchestration)
-
-Le coordinateur **souscrit** `/detections`, **appelle** le service de pick, et choisit la
-**zone de dépôt** selon la classe — zone lue dans un **paramètre** (concept : **paramètres**).
-Créez `mission/mission/mission_coordinator.py` :
-
-```python
-import rclpy
-from rclpy.node import Node
-from mission_interfaces.msg import Detection
-from mission_interfaces.srv import PickRequest
-
-
-class MissionCoordinator(Node):
-    def __init__(self):
-        super().__init__("mission_coordinator")
-        # zones de dépôt par classe, surchargeables par paramètre / YAML
-        self.declare_parameter("zone_rouge", [1.0, 0.0])
-        self.declare_parameter("zone_bleu", [-1.0, 0.0])
-        self.create_subscription(Detection, "/detections", self.on_detection, 10)
-        self.pick = self.create_client(PickRequest, "/pick")
-
-    def on_detection(self, msg):
-        zone = self.get_parameter(f"zone_{msg.class_id}").value
-        self.get_logger().info(f"{msg.class_id} → dépôt en {zone}")
-        # 1) appeler /pick  2) (Jour 2) envoyer l'action NavigateToPose vers `zone`
-
-
-def main():
-    rclpy.init()
-    rclpy.spin(MissionCoordinator())
-    rclpy.shutdown()
-```
-
-Déclarez les trois exécutables dans `mission/setup.py` :
-
-```python
-entry_points={
-    "console_scripts": [
-        "detector = mission.detector:main",
-        "arm_server = mission.arm_server:main",
-        "mission_coordinator = mission.mission_coordinator:main",
-    ],
-},
-```
-
-<Aside type="tip" title="Brique 3 — l'action de navigation">
-L'envoi vers la zone se fera via l'**action** `NavigateToPose` (client) — branchée sur le
-vrai Nav2 du LeKiwi au Jour 2. Aujourd'hui, contentez-vous de logger la zone cible.
+<Aside type="note" title="Livrable : présentez et validez chaque nœud">
+À la fin de la partie, **présentez votre solution en validant chaque nœud** : montrez qu'il
+fait bien son travail, outils ROS 2 à l'appui — `rqt_graph` (qui parle à qui), `ros2 topic
+echo` (les détections sortent), `ros2 service call` (le bras répond), `ros2 action
+send_goal` (la base accepte un but), `ros2 param get` (la zone est paramétrable).
 </Aside>
-
-## 6. Brique 5 — `mission.launch.py` + le graphe
-
-Assemblez les trois nœuds (concept : **launch file**) dans `mission/launch/mission.launch.py` :
-
-```python
-from launch import LaunchDescription
-from launch_ros.actions import Node
-
-def generate_launch_description():
-    return LaunchDescription([
-        Node(package="mission", executable="detector"),
-        Node(package="mission", executable="arm_server"),
-        Node(package="mission", executable="mission_coordinator"),
-    ])
-```
-
-<Steps>
-
-1. **Compiler** et sourcer :
-
-   ```bash
-   cd ~/ros2_bootcamp_ws
-   colcon build --packages-select mission_interfaces mission
-   source install/setup.bash
-   ```
-
-2. **Lancer** le graphe :
-
-   ```bash
-   ros2 launch mission mission.launch.py
-   ```
-
-3. **Visualiser** le graphe (concept : graphe ROS) :
-
-   ```bash
-   rqt_graph
-   ```
-
-</Steps>
 
 <Aside type="tip" title="Vérifiez votre compréhension">
-1. Pourquoi les interfaces sont-elles dans un package séparé (`mission_interfaces`) ?
-2. Pourquoi un **service** pour le pick et une **action** pour la navigation ?
+1. Pourquoi isoler les **interfaces** (messages/services) dans un package séparé ?
+2. Pourquoi un **service** pour la saisie et une **action** pour la navigation ?
 3. Que faut-il refaire après avoir modifié un `.msg` ?
 
 <details class="quiz-answers">
@@ -243,17 +72,17 @@ def generate_launch_description():
 
 1. Les `.msg`/`.srv` se génèrent via `ament_cmake` (code C++/Python auto-généré) ; les
    isoler permet à plusieurs packages de les réutiliser sans dépendre du code des nœuds.
-2. Le pick est **court avec une réponse** (réussi ou non) → service ; la navigation est
+2. La saisie est **courte avec une réponse** (réussie ou non) → service ; la navigation est
    **longue, avec feedback et annulable** → action.
 3. Re-`colcon build` le package d'interfaces puis re-sourcer le workspace.
 
 </details>
 </Aside>
 
-<Aside type="caution" title="Le fil rouge">
-Ce graphe **est** le squelette du projet final (Jours 5-6). Gardez ce package : aux Jours 2,
-3 et 4, vous remplacerez chaque nœud factice par le vrai robot, et aux Jours 5-6 vous
-assemblerez le tout.
+<Aside type="caution" title="Gardez votre graphe">
+Ce package factice est le **squelette de votre projet final** : vous le ferez évoluer toute
+la semaine. Aux Jours 2, 3 et 4, vous remplacerez vos nœuds factices par les vrais robots,
+**sans toucher à vos interfaces**.
 </Aside>
 
 ## Prochaine étape

@@ -1,12 +1,12 @@
 ---
 title: "Découverte de ROS 2"
-description: Qu'est-ce que ROS 2, son architecture, et ses concepts (nodes, topics, services, actions, paramètres) illustrés avec turtlesim.
+description: Qu'est-ce que ROS 2, son architecture, et ses concepts (nodes, topics, services, actions, paramètres) — chaque brique renvoie au tutoriel turtlesim officiel pour la pratique.
 sidebar:
   label: "Découverte de ROS 2"
   order: 2
 ---
 
-import { Aside, Tabs, TabItem, Steps } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
 Dans cette première partie, vous découvrez **ce qu'est ROS 2** et ses **concepts
 fondamentaux**, en les manipulant tout de suite avec `turtlesim` — un petit simulateur
@@ -59,41 +59,35 @@ Sur un réseau partagé (salle de cours !), tous les ROS 2 se découvrent par d�
 export ROS_DOMAIN_ID=42   # choisissez un nombre par binôme
 ```
 
+Ajoutez-le à votre `~/.bashrc` (à côté des `source` ROS / workspace de
+l'[installation](/installation/01-ubuntu/#sourcer-ros-et-le-workspace)) pour qu'il
+s'applique à **chaque** terminal — sinon il faut le ré-exporter à chaque ouverture :
+
+```bash
+echo "export ROS_DOMAIN_ID=42" >> ~/.bashrc
+source ~/.bashrc
+```
+
 </Aside>
 
 ## 3. Bac à sable : turtlesim
 
-`turtlesim` est un mini-simulateur (une tortue dans une fenêtre) idéal pour voir les
-concepts en action. Lancez-le :
+`turtlesim` est un mini-simulateur (une tortue dans une fenêtre) qui sert de bac à sable
+pour voir les concepts en action. Plutôt que de réécrire les commandes ici, vous suivez
+les **tutoriels officiels ROS 2** (à jour, distribution Kilted) : chaque brique ci-dessous
+renvoie au tutoriel correspondant, à faire en pratique.
 
-<Tabs>
-<TabItem label="Terminal 1 — le simulateur">
-
-```bash
-ros2 run turtlesim turtlesim_node
-```
-
-</TabItem>
-<TabItem label="Terminal 2 — la téléop">
-
-```bash
-ros2 run turtlesim turtle_teleop_key
-```
-
-Les flèches du clavier déplacent la tortue.
-
-</TabItem>
-</Tabs>
+➜ **Pratique** : [Using turtlesim, ros2, and rqt](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html)
+— installer, lancer la tortue et la déplacer au clavier.
 
 ## 4. Les nœuds
 
 Un **nœud** est un programme ROS 2 qui fait **une** tâche (lire un capteur, piloter un
-moteur…). `turtlesim_node` et `turtle_teleop_key` sont deux nœuds.
+moteur…). Un système ROS 2 est un assemblage de nœuds qui communiquent ; `turtlesim_node`
+et `turtle_teleop_key` en sont deux.
 
-```bash
-ros2 node list          # liste les nœuds actifs
-ros2 node info /turtlesim
-```
+➜ **Pratique** : [Understanding nodes](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html)
+(`ros2 node list`, `ros2 node info`).
 
 ## 5. Les topics & messages
 
@@ -101,12 +95,8 @@ Un **topic** est un canal nommé en **publication / abonnement** (pub/sub) : un 
 *publie* des **messages** typés, d'autres s'y *abonnent*. C'est **anonyme** et
 **asynchrone** — idéal pour des flux continus (positions, images, vitesses).
 
-```bash
-ros2 topic list
-ros2 topic echo /turtle1/pose                 # voir les messages publiés
-ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
-  "{linear: {x: 1.0}, angular: {z: 0.5}}"     # publier une commande
-```
+➜ **Pratique** : [Understanding topics](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html)
+(`ros2 topic echo /turtle1/pose`, `ros2 topic pub /turtle1/cmd_vel …`).
 
 <Aside type="tip" title="Vérifiez votre compréhension">
 1. Combien de nœuds peuvent publier / s'abonner à un même topic ?
@@ -127,14 +117,10 @@ ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist \
 
 Un **service** est un appel **requête / réponse** (comme une fonction distante) :
 **synchrone**, ponctuel. Utile pour une action brève qui renvoie un résultat
-(« remets la tortue à zéro », « calcule X »).
+(« remets la tortue à zéro », « calcule X », « fais apparaître une 2e tortue »).
 
-```bash
-ros2 service list
-ros2 service call /clear std_srvs/srv/Empty            # efface le tracé
-ros2 service call /spawn turtlesim/srv/Spawn \
-  "{x: 5.0, y: 5.0, theta: 0.0, name: 'turtle2'}"      # crée une 2e tortue
-```
+➜ **Pratique** : [Understanding services](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html)
+(`ros2 service call /clear …`, `/spawn …`).
 
 ## 7. Les actions
 
@@ -142,11 +128,8 @@ Une **action** est faite pour les tâches **longues** : requête + **feedback** 
 résultat final, et **annulable**. C'est la brique que Nav2 utilise pour « aller à une
 pose » (Jour 2).
 
-```bash
-ros2 action list
-ros2 action send_goal /turtle1/rotate_absolute \
-  turtlesim/action/RotateAbsolute "{theta: 1.57}" --feedback
-```
+➜ **Pratique** : [Understanding actions](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html)
+(`ros2 action send_goal /turtle1/rotate_absolute …`).
 
 <Aside type="tip" title="Topic vs service vs action ?">
 - **Topic** : flux continu, anonyme, asynchrone (capteurs, commandes).
@@ -157,48 +140,34 @@ ros2 action send_goal /turtle1/rotate_absolute \
 ## 8. Les paramètres
 
 Les **paramètres** configurent un nœud au lancement (sans recompiler) : couleurs,
-fréquences, seuils… Sur `turtlesim`, la couleur de fond est un paramètre :
+fréquences, seuils… Sur `turtlesim`, la couleur de fond est un paramètre.
 
-```bash
-ros2 param list
-ros2 param get /turtlesim background_b
-ros2 param set /turtlesim background_b 255   # fond plus bleu
-```
+➜ **Pratique** : [Understanding parameters](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html)
+(`ros2 param get/set /turtlesim background_b`).
 
 ## 9. Les launch files
 
 Lancer chaque nœud à la main devient vite pénible. Un **launch file** démarre plusieurs
 nœuds (avec leurs paramètres) d'une seule commande — vous en avez déjà utilisé pour le
-SO-101 et le LeKiwi.
+SO-101 et le LeKiwi, et vous en écrirez un dans la partie suivante.
 
-```python
-# exemple minimal : launch/demo.launch.py
-from launch import LaunchDescription
-from launch_ros.actions import Node
-
-def generate_launch_description():
-    return LaunchDescription([
-        Node(package="turtlesim", executable="turtlesim_node"),
-    ])
-```
-
-```bash
-ros2 launch mon_package demo.launch.py
-```
+➜ **Pratique** : [Launching nodes](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Launching-Multiple-Nodes/Launching-Multiple-Nodes.html)
+(`ros2 launch …`).
 
 ## 10. Inspecter le graphe
 
 `rqt_graph` affiche le graphe nœuds / topics en direct — votre meilleur outil pour
-comprendre « qui parle à qui » :
+comprendre « qui parle à qui ». Il est présenté dans le tutoriel **topics** ci-dessus,
+section *rqt_graph*.
 
-```bash
-rqt_graph
-```
+<Aside type="note" title="Pour aller plus loin — la série complète">
+Les sections ci-dessus pointent vers la série **Beginner: CLI Tools** des
+[tutoriels ROS 2 officiels](https://docs.ros.org/en/kilted/Tutorials.html). Pour compléter
+l'auto-formation, faites aussi :
 
-<Aside type="note" title="Pour aller plus loin — tutoriels officiels">
-Les [tutoriels ROS 2 officiels](https://docs.ros.org/en/kilted/Tutorials.html) reprennent
-chacun de ces concepts en détail (nodes, topics, services, params, actions, `rqt`,
-`ros2 launch`, `ros2 bag`). Excellents en auto-formation pour approfondir.
+- [Configuring environment](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html) — `source`, `ROS_DOMAIN_ID`.
+- [Using rqt_console](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Using-Rqt-Console/Using-Rqt-Console.html) — lire les logs.
+- [Recording and playing back data](https://docs.ros.org/en/kilted/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html) — `ros2 bag`.
 </Aside>
 
 ## Prochaine étape
