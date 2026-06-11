@@ -28,6 +28,11 @@ body,
   margin-bottom: 0.5em;
 }
 
+/* Titre de slide (h1) : un peu plus d'air avant le contenu */
+.slidev-layout:not(.bc-two-cols) > h1:first-child {
+  margin-bottom: 0.9em;
+}
+
 .slidev-layout h1 {
   font-size: 3.2rem;
   font-weight: 700;

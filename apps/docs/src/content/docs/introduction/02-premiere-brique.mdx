@@ -23,33 +23,23 @@ flowchart LR
   coord -.->|"action : aller à une pose"| base["base mobile<br/>(ordre de déplacement)"]
 ```
 
-Ce graphe **est** le squelette du projet final (Jours 5-6). À vous de le monter
-**aujourd'hui avec vos propres nœuds factices** : la détection invente des objets, le bras
-répond toujours « pris », la base se contente de logger la pose visée. Aux **Jours 2-4**,
-vous remplacerez chaque nœud factice par le vrai robot (vraie caméra, vrai bras, vrai robot
-mobile). L'**architecture** — qui parle à qui, et via quel mode de communication — reste la
-même ; vos **interfaces** (types de messages, services, actions), elles, pourront être
-**ajustées** au contact des vrais robots. Aux **Jours 5-6**, vous assemblerez le tout.
+Ce graphe est une **proposition de départ** — **à vous de l'adapter** : renommez, découpez
+ou complétez les nœuds selon vos choix. Aujourd'hui vous le montez avec des **nœuds
+factices** (la détection invente des objets, le bras répond toujours « pris », la base logge
+la pose visée). Aux **Jours 2-4**, chaque nœud factice laissera place au vrai robot :
+l'architecture restera proche, mais vos **interfaces** pourront évoluer au contact du réel.
+Aux **Jours 5-6**, vous assemblerez le tout.
 
 ## La consigne
 
-Pour cette deuxième partie, **rien n'est fourni** : à vous de **concevoir et construire** ce
-graphe factice en réutilisant les **cinq briques** de la partie 1 — nodes, topics, services,
-actions, paramètres — et un **launch file** pour tout démarrer.
+**Rien n'est fourni.** À vous de concevoir et de construire ce graphe factice, à partir des
+cinq briques de la partie 1 — nodes, topics, services, actions, paramètres — plus un launch
+file pour tout démarrer d'une commande.
 
-Votre graphe doit contenir :
-
-- **Un nœud de détection** qui **publie des détections factices** sur un **topic** (une
-  classe d'objet + une pose, inventées et publiées à intervalle régulier).
-- **Deux nœuds factices qui exécutent un ordre** : l'un **déplace le bras** (ordre de
-  saisie), l'autre **déplace la base mobile** (ordre de déplacement vers une pose). Ce sont
-  ces deux nœuds qui seront **remplacés à terme par les vrais robots** — le bras au Jour 3,
-  la base au Jour 2. Aujourd'hui ils se contentent de répondre / logger.
-- **Un nœud coordinateur** qui **orchestre** la mission : il **s'abonne** au topic de
-  détection, puis **donne ses ordres** via **un service** (saisir avec le bras — court, avec
-  réponse) et **une action** (déplacer la base — long, avec feedback et annulable). La **zone
-  de dépôt par classe** est lue dans un **paramètre** (pas de valeurs en dur).
-- **Un launch file** qui démarre les nœuds d'une seule commande.
+Reprenez les nœuds du schéma ci-dessus en choisissant le **bon mode de communication** : un
+**topic** pour le flux de détections, un **service** pour la saisie (courte, avec réponse),
+une **action** pour la navigation (longue, avec feedback). La zone de dépôt par classe vit
+dans un **paramètre**, jamais en dur.
 
 <Aside type="tip" title="C'est vous qui figez les interfaces">
 Choisissez **vos** noms, **votre** découpage et surtout **vos interfaces** (le type des
