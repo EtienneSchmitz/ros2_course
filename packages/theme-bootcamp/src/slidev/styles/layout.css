@@ -92,6 +92,15 @@ body,
   margin-bottom: 0.4rem;
 }
 
+/* Puces oranges sur les listes markdown simples (le reset Slidev les masque) */
+.slidev-layout ul:not([class]) {
+  list-style: disc;
+}
+
+.slidev-layout ul:not([class]) > li::marker {
+  color: var(--bc-industrial);
+}
+
 /* Mermaid ============================================================= */
 
 .slidev-layout .mermaid {
@@ -232,6 +241,10 @@ body,
 
 .bc-cover__day {
   color: var(--bc-industrial);
+}
+
+.bc-cover__brand {
+  color: var(--bc-text-muted);
 }
 
 /* Section ============================================================= */

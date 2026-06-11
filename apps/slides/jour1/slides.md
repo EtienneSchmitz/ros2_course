@@ -26,7 +26,7 @@ layout: default
 <li><span>L'<strong>architecture</strong> : graphe de nœuds, RMW, DDS</span></li>
 <li><span>Les <strong>concepts</strong> : nodes, topics, services, actions, paramètres</span></li>
 <li><span>L'<strong>organisation</strong> d'un projet : packages, workspace, launch, CLI</span></li>
-<li><span>Une <strong>application</strong> : la première brique du projet final</span></li>
+<li><span>La <strong>mise en pratique</strong> : découverte des tutoriels ROS 2 + préparation du projet</span></li>
 </ul>
 
 ---
@@ -96,6 +96,18 @@ layout: default
 <div class="bc-card" v-click><div class="bc-card__title">🦾 Manipulation</div><p>Bras manipulateurs et robots de service</p></div>
 </div>
 
+<v-click>
+
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">🚀</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Des projets phares construits sur ROS 2</div>
+<p><strong>Autoware</strong> pour la conduite autonome, <strong>ROS-Industrial</strong> pour l'usine (ABB, Fanuc, UR…) — on y revient en fin de partie.</p>
+</div>
+</div>
+
+</v-click>
+
 ---
 layout: two-cols
 ---
@@ -105,8 +117,9 @@ layout: two-cols
 <ul class="bc-timeline">
 <li><span class="bc-timeline__year">2010</span> ROS 1 (Willow Garage, robot PR2)</li>
 <li><span class="bc-timeline__year">2012</span> ROS-Industrial + création OSRF → Open Robotics</li>
-<li><span class="bc-timeline__year">2017</span> ROS 2 : réécriture complète (temps réel, sécurité, DDS)</li>
-<li><span class="bc-timeline__year">2025</span> Kilted Kaiju — la distribution de cette session</li>
+<li><span class="bc-timeline__year">2017</span> ROS 2 : <strong>réécriture complète</strong> (temps réel, sécurité, DDS)</li>
+<li><span class="bc-timeline__year">2020</span> Noetic — <strong>dernière</strong> distribution ROS 1</li>
+<li><span class="bc-timeline__year">2025</span> Noetic en <strong>fin de vie</strong> · Kilted Kaiju, distribution de cette session</li>
 </ul>
 
 ::right::
@@ -154,6 +167,7 @@ layout: default
 <div class="bc-card"><div class="bc-card__title">📅 Une par an</div><p>Une nouvelle version chaque <strong>23 mai</strong> (World Turtle Day)</p></div>
 <div class="bc-card"><div class="bc-card__title">🐢 Nom de tortue</div><p>Adjectif + tortue, dans l'ordre <strong>alphabétique</strong></p></div>
 <div class="bc-card"><div class="bc-card__title">🛡️ LTS tous les 2 ans</div><p>Support <strong>5 ans</strong> (sinon ~1,5 an)</p></div>
+<div class="bc-card"><div class="bc-card__title">🐧 Calée sur Ubuntu</div><p>Chaque distro cible une version d'Ubuntu et <strong>suit son support</strong> (ex. Kilted ↔ Ubuntu 24.04)</p></div>
 </div>
 
 <div class="bc-callout bc-callout--info">
@@ -193,7 +207,7 @@ La distribution **non-LTS** de cette session, sur **Ubuntu 24.04**.
 
 <v-clicks>
 
-- 📦 packages = nom ROS 1 + suffixe **2** : `MoveIt 2`, `Nav2`
+- 📦 beaucoup de packages reprennent leur nom ROS 1 suivi d'un **« 2 »** : `Nav2`, `MoveIt 2`
 - 🐢 sortie le **23 mai 2025**, support jusqu'à **déc. 2026**
 - 🔄 ROS 1 (Noetic) est en **fin de vie** depuis mai 2025
 
@@ -247,6 +261,22 @@ layout: default
 layout: default
 ---
 
+# Du simu au réel : un piège classique
+
+Le **même code** passe du simulateur au robot — c'est un vrai atout. Mais ⚠️ **attention** :
+
+<div class="bc-callout bc-callout--warn">
+<div class="bc-callout__icon">⚠️</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Le sim-to-real gap</div>
+<p>La simulation <strong>ne reproduit pas tout</strong>. Le réel ajoute <strong>friction</strong>, <strong>bruit des capteurs</strong>, <strong>latences</strong> et <strong>calibration</strong>. Un système qui marche en simu demande <strong>toujours</strong> une phase d'ajustement sur le vrai robot.</p>
+</div>
+</div>
+
+---
+layout: default
+---
+
 # Limites
 
 <div class="bc-cards bc-cards--3">
@@ -289,10 +319,10 @@ layout: default
 
 # Robots compatibles
 
-- 🚗 robots à roues : AGV, AMR (ex. **LeKiwi**)
-- 🦾 cobots et bras manipulateurs (ex. **SO-101**)
-- 🚁 robots volants : drones, UAV
-- 🦿 robots à pattes et humanoïdes
+- 🚗 Robots à roues : AGV, AMR (ex. **LeKiwi**)
+- 🦾 Cobots et bras manipulateurs (ex. **SO-101**)
+- 🚁 Robots volants : drones, UAV
+- 🦿 Robots à pattes et humanoïdes
 
 <v-click>
 
@@ -305,6 +335,23 @@ layout: default
 </div>
 
 </v-click>
+
+---
+layout: two-cols
+---
+
+# Architecture en couches
+
+De votre **code applicatif** jusqu'au **réseau**, ROS 2 s'organise en **5 couches**
+empilées : chacune masque la complexité de la suivante.
+
+> On détaille chaque couche dans les slides suivantes.
+
+::right::
+
+<div class="bc-media bc-media--frame">
+<img src="./img/ros-architecture.jpg" alt="ROS 2 Architecture Overview" />
+</div>
 
 ---
 layout: two-cols
@@ -359,9 +406,11 @@ layout: two-cols
 
 **Couche 3 / 5 — 🔌 RMW**
 
-*ROS MiddleWare interface*. Une couche d'**abstraction** qui masque le middleware
-réseau : changer de DDS = changer une variable (`RMW_IMPLEMENTATION`),
-**sans toucher à votre code**.
+*ROS MiddleWare interface* : un **adaptateur universel** entre ROS 2 et le DDS.
+
+Chaque DDS a sa propre API → le RMW expose une **interface unique** par-dessus.
+
+→ Changer de DDS = une variable (`RMW_IMPLEMENTATION`), **sans toucher au code**.
 
 ::right::
 
@@ -381,9 +430,9 @@ layout: two-cols
 
 **Couche 4 / 5 — 🛰️ DDS**
 
-Le **transport réel** (standard OMG) : découverte des nœuds, fiabilité et **QoS**.
-Plusieurs implémentations interchangeables — **Fast DDS** (défaut),
-**Cyclone DDS**…
+Le **transport réel** : découverte des nœuds, fiabilité et **QoS**. Standard ouvert
+publié par l'**OMG** (*Object Management Group*, qui maintient aussi UML) → plusieurs
+implémentations **interchangeables** : **Fast DDS** (défaut), **Cyclone DDS**…
 
 ::right::
 
@@ -428,36 +477,23 @@ standardisé par l'**OMG** (qui maintient aussi UML).
 
 <v-clicks>
 
-- 🛠️ **QoS** : fiabilité, fréquence, persistance
+- 🛠️ **QoS** (*Quality of Service*) : règle la **fiabilité**, le **débit**, l'**historique** et la durée de vie des échanges
 - 🔒 **sécurité** (`sros2`) : chiffrement, authentification, contrôle d'accès
-- 🔄 **interopérabilité** : Fast DDS, Cyclone DDS…
+- 🔄 **interopérabilité** : Fast DDS, Cyclone DDS, Connext…
 
 </v-clicks>
 
 <v-click>
 
-> ✅ Ces options rendent ROS 2 robuste, adapté à la **robotique industrielle critique**.
-
-</v-click>
-
----
-layout: default
----
-
-# Trois modes de communication
-
-<div class="bc-cards">
-<div class="bc-card" v-click><div class="bc-card__title">📬 Topic</div><p>Publish/subscribe <strong>asynchrone</strong> — flux continus (<code>/scan</code>, <code>/cmd_vel</code>)</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">🔁 Service</div><p>Requête/réponse <strong>synchrone</strong> — interrogation ponctuelle</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">🎯 Action</div><p>Tâche <strong>longue</strong> avec feedback et annulation (aller à une pose)</p></div>
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">🔁</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">« Changer de DDS », ça veut dire quoi ?</div>
+<p>Toutes ces implémentations suivent le <strong>même standard OMG</strong>. On bascule de l'une à l'autre via la variable <code>RMW_IMPLEMENTATION</code>, <strong>sans toucher à votre code</strong> — pour des raisons de licence, de performance, de temps réel ou d'embarqué.</p>
+</div>
 </div>
 
-```mermaid
-flowchart LR
-  A["nœud A"] -->|"topic"| B["nœud B"]
-  B -->|"service"| C["nœud C"]
-  A -->|"action"| C
-```
+</v-click>
 
 ---
 layout: section
@@ -493,10 +529,10 @@ layout: two-cols
 
 # Briques applicatives
 
-- 🚗 **Nav2** — navigation autonome (Jour 2)
-- 🦾 **MoveIt 2** — manipulation (Jour 3)
-- ⚙️ **ros2_control** — contrôle bas-niveau temps réel
-- 🌲 **Behavior Trees** — décision (Nav2, Groot 2)
+- 🚗 **Nav2** — Navigation autonome (Jour 2)
+- 🦾 **MoveIt 2** — Manipulation (Jour 3)
+- ⚙️ **ros2_control** — Contrôle bas-niveau temps réel
+- 🌲 **Behavior Trees** — Décision (Nav2, Groot 2)
 
 > Le logiciel reste **indépendant du hardware** du robot.
 
@@ -533,9 +569,13 @@ layout: default
 
 ROS 2 sert de **socle** à de nombreux projets spécialisés :
 
-<div class="bc-cards bc-cards--2">
-<div class="bc-card"><div class="bc-card__title">🚗 Autoware</div><p>Middleware open-source pour la conduite autonome (voitures, navettes)</p></div>
-<div class="bc-card"><div class="bc-card__title">🏭 ROS-Industrial</div><p>Adaptation aux besoins industriels (ABB, Fanuc, UR…)</p></div>
+<div class="bc-cards bc-cards--3">
+<div class="bc-card"><div class="bc-card__title">🚗 Autoware</div><p>Conduite autonome open-source (voitures, navettes)</p></div>
+<div class="bc-card"><div class="bc-card__title">🏭 ROS-Industrial</div><p>Besoins industriels et bras constructeurs (ABB, Fanuc, UR…)</p></div>
+<div class="bc-card"><div class="bc-card__title">🚦 Open-RMF</div><p>Coordination de <strong>flottes</strong> de robots de service (hôpitaux, bâtiments)</p></div>
+<div class="bc-card"><div class="bc-card__title">🛰️ Space ROS</div><p>ROS 2 durci pour le <strong>spatial</strong> et les systèmes critiques (NASA)</p></div>
+<div class="bc-card"><div class="bc-card__title">🔬 micro-ROS</div><p>ROS 2 sur <strong>microcontrôleurs</strong> (ESP32, STM32…)</p></div>
+<div class="bc-card"><div class="bc-card__title">🚁 PX4 / MAVROS</div><p>Pont vers les autopilotes de <strong>drones</strong> et UAV</p></div>
 </div>
 
 > 🧩 Un écosystème en pleine expansion dans la robotique moderne.
@@ -546,24 +586,16 @@ layout: two-cols
 
 # Conventions partagées
 
-<v-clicks>
+Tout le monde « parle le même langage » → **interopérabilité**.
 
-- 📏 **unités SI** : mètre, seconde, radian, newton
-- 📨 **messages standardisés** : `geometry_msgs`, `sensor_msgs`
-- 🧩 **nommage** : `/joint_states`, `/scan`, `/cmd_vel`
-- 📂 **formats** : URDF, SRDF, YAML
-
-</v-clicks>
-
-<v-click>
-
-> Tout le monde « parle le même langage » → interopérabilité.
-
-</v-click>
+- 📏 **Unités SI** : mètre, seconde, radian, newton
+- 📨 **Messages standardisés** : `geometry_msgs`, `sensor_msgs`
+- 🧩 **Nommage** : `/joint_states`, `/scan`, `/cmd_vel`
+- 📂 **Formats** : URDF, SRDF, YAML
 
 ::right::
 
-## Boîte à outils
+## La boîte à outils associée
 
 - 🧩 **URDF** — description du robot
 - 🔄 **tf2** — transformations entre repères datées
@@ -604,12 +636,14 @@ layout: two-cols
 
 # Topics & messages
 
-Canaux **asynchrones** publish/subscribe.
+Le bus **publish / subscribe** : des nœuds publient, d'autres s'abonnent — **sans se connaître**.
 
-- N publishers, N subscribers
-- anonyme, flux continus
+- 📡 **asynchrone** : N publishers, N subscribers
+- 🏷️ identifié par un **nom** (`/scan`) et un **type** de message
+- 🔁 idéal pour les **flux continus** (capteurs, commandes)
+- 🕵️ communication **anonyme** et **découplée**
 
-`/camera/image_raw` → `sensor_msgs/msg/Image`
+Ex : `/camera/image_raw` → `sensor_msgs/msg/Image`
 
 ::right::
 
@@ -623,13 +657,14 @@ layout: two-cols
 
 # Services
 
-Communication **synchrone** client/serveur.
+Communication **synchrone** client → serveur, en **requête / réponse**.
 
-- requête → réponse
-- tâche courte avec résultat
-- **un seul** serveur, plusieurs clients
+- 🙋 le client **envoie une requête** puis **attend** la réponse
+- 🧑‍🔧 **un seul** serveur, plusieurs clients possibles
+- ⏱️ pour une **tâche courte** avec un résultat immédiat
+- ⚠️ bloquant → **à éviter** pour les tâches longues (→ action)
 
-Ex : « remets le robot à l'origine »
+Ex : « remets le robot à l'origine », « prends une photo »
 
 ::right::
 
@@ -643,13 +678,15 @@ layout: two-cols
 
 # Actions
 
-Pour les **tâches longues** :
+Pour les **tâches longues**, suivies dans le temps :
 
-- objectif + **feedback** continu
-- **résultat** final
-- **annulable**
+- 🎯 le client envoie un **objectif** (goal)
+- 📡 le serveur renvoie du **feedback** continu (progression)
+- ✅ puis un **résultat** final
+- 🛑 **annulable** à tout moment
+- 🧱 bâtie sur **topics + services** sous le capot
 
-Ex : « va à cette pose » (Nav2)
+Ex : « va à cette pose » (Nav2) — on suit la progression, on peut annuler
 
 ::right::
 
@@ -663,19 +700,24 @@ layout: default
 
 # Paramètres
 
-Configurent un nœud **sans recompiler** :
+Configurent un nœud **sans recompiler** — chaque nœud expose ses propres paramètres **typés**.
 
 <v-clicks>
 
-- seuils, fréquences, vitesses, couleurs
-- accessibles par le code **ou** la CLI (`ros2 param`)
-- surchargés au lancement ou via YAML
+- 🎛️ seuils, fréquences, vitesses, repères, couleurs…
+- 💻 lus / écrits par le **code** ou la **CLI** (`ros2 param list/get/set`)
+- 📄 chargés depuis un **fichier YAML** ou surchargés au **lancement**
+- 🔔 un nœud peut **réagir** à un changement (callback)
 
 </v-clicks>
 
 <v-click>
 
-> Très utiles pour **tester**, **ajuster** et **déployer** un système de façon flexible.
+Exporter la configuration complète d'un nœud en YAML :
+
+```bash
+ros2 param dump /turtlesim > turtlesim.yaml
+```
 
 </v-click>
 
@@ -743,39 +785,6 @@ export ROS_DOMAIN_ID=12
 ```
 
 ---
-layout: default
----
-
-# La CLI `ros2`
-
-```bash
-ros2 node list                 # nœuds actifs
-ros2 topic echo /turtle1/pose  # messages d'un topic
-ros2 service call /clear std_srvs/srv/Empty
-ros2 action send_goal ...      # lancer une action
-ros2 param get /turtlesim background_b
-rqt_graph                      # voir le graphe
-```
-
-> La CLI est votre couteau suisse pour **inspecter** et **interagir** avec le graphe.
-
----
-layout: default
----
-
-# CLI — commandes courantes
-
-| Catégorie | Exemple | Description |
-|---|---|---|
-| 📦 Packages | `ros2 pkg list` | packages installés |
-| 🧠 Nœuds | `ros2 node list` | nœuds actifs |
-| 📨 Topics | `ros2 topic echo /scan` | messages d'un topic |
-| ⚙️ Paramètres | `ros2 param list` | paramètres d'un nœud |
-| 🔁 Services | `ros2 service list` | services disponibles |
-| 🎯 Actions | `ros2 action list` | actions disponibles |
-| 🧪 Diagnostic | `ros2 doctor` | état de l'installation |
-
----
 layout: section
 eyebrow: Partie 05 · Pratique
 ---
@@ -784,29 +793,6 @@ eyebrow: Partie 05 · Pratique
 
 ::note::
 La première brique du projet final.
-
----
-layout: default
----
-
-# Le fil rouge de la semaine
-
-Vous allez monter **le graphe du projet final** — avec des nœuds factices :
-
-```mermaid
-flowchart LR
-  cam["detector"] -->|"/detections"| coord["mission_coordinator"]
-  coord -->|"PickRequest.srv"| arm["arm_server (SO-101)"]
-  coord -->|"action NavigateToPose"| base["base (LeKiwi)"]
-```
-
-<v-clicks>
-
-- chaque concept du jour = une **brique** du graphe
-- aux Jours 2-4, les nœuds factices deviennent les **vrais robots**
-- au Jour 5, on **assemble** le tout
-
-</v-clicks>
 
 ---
 layout: default

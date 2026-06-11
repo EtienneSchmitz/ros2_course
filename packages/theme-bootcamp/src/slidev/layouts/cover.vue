@@ -18,6 +18,7 @@ import logoIso from "../../assets/logo-iso.svg";
     <p v-if="$frontmatter.author" class="bc-cover__author">{{ $frontmatter.author }}</p>
     <div v-if="$frontmatter.day" class="bc-cover__footer">
       <span class="bc-cover__day">Jour {{ $frontmatter.day }}</span>
+      <span class="bc-cover__brand">ROS 2 — Bootcamp</span>
     </div>
   </div>
 </template>
