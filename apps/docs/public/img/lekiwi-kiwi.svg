@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 460" width="480" height="460" role="img" aria-labelledby="title desc" font-family="'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="title">Configuration kiwi à 120° de la base LeKiwi</title>
+  <desc id="desc">Base mobile à trois roues omnidirectionnelles : left_wheel à 60 degrés (avant-gauche), right_wheel à 300 degrés (avant-droit) et back_wheel à 180 degrés (arrière). L'avant correspond à l'axe +X.</desc>
+
+  <!-- panneau -->
+  <rect x="1" y="1" width="478" height="458" rx="14" fill="#212833" stroke="#323b48" stroke-width="2"/>
+
+  <!-- spokes (centre -> roues) -->
+  <g stroke="#323b48" stroke-width="7" stroke-linecap="round">
+    <line x1="240" y1="210" x2="136" y2="150"/>
+    <line x1="240" y1="210" x2="344" y2="150"/>
+    <line x1="240" y1="210" x2="240" y2="330"/>
+  </g>
+
+  <!-- flèche avant (+X) -->
+  <text x="240" y="48" fill="#ff7a1a" font-size="17" font-weight="700" text-anchor="middle">avant (+X)</text>
+  <g stroke="#ff7a1a" stroke-width="4" fill="#ff7a1a">
+    <line x1="240" y1="146" x2="240" y2="78" stroke-linecap="round"/>
+    <polygon points="240,62 231,84 249,84" stroke="none"/>
+  </g>
+
+  <!-- châssis -->
+  <circle cx="240" cy="210" r="64" fill="#2a323d" stroke="#40a8c4" stroke-width="2.5"/>
+  <!-- LiDAR 360° (laser_link) -->
+  <circle cx="240" cy="210" r="20" fill="#1f6f8b" stroke="#40a8c4" stroke-width="2"/>
+  <circle cx="240" cy="210" r="20" fill="none" stroke="#40a8c4" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
+  <text x="240" y="215" fill="#e6edf3" font-size="12" font-weight="700" text-anchor="middle">LiDAR</text>
+  <text x="240" y="254" fill="#9ba7b4" font-size="12.5" text-anchor="middle">base_footprint</text>
+
+  <!-- roue : rectangle tangentiel + galets latéraux -->
+  <!-- left_wheel (60°) -->
+  <g transform="translate(136,150) rotate(-60)">
+    <rect x="-34" y="-14" width="68" height="28" rx="9" fill="#1f6f8b" stroke="#40a8c4" stroke-width="2"/>
+    <g stroke="#9fd6e6" stroke-width="2" opacity="0.85">
+      <line x1="-23" y1="-14" x2="-23" y2="14"/>
+      <line x1="-11.5" y1="-14" x2="-11.5" y2="14"/>
+      <line x1="0" y1="-14" x2="0" y2="14"/>
+      <line x1="11.5" y1="-14" x2="11.5" y2="14"/>
+      <line x1="23" y1="-14" x2="23" y2="14"/>
+    </g>
+  </g>
+  <text x="112" y="86" fill="#e6edf3" font-size="15" font-weight="700" text-anchor="middle">left_wheel</text>
+  <text x="112" y="103" fill="#9ba7b4" font-size="12.5" text-anchor="middle">60°</text>
+
+  <!-- right_wheel (300°) -->
+  <g transform="translate(344,150) rotate(60)">
+    <rect x="-34" y="-14" width="68" height="28" rx="9" fill="#1f6f8b" stroke="#40a8c4" stroke-width="2"/>
+    <g stroke="#9fd6e6" stroke-width="2" opacity="0.85">
+      <line x1="-23" y1="-14" x2="-23" y2="14"/>
+      <line x1="-11.5" y1="-14" x2="-11.5" y2="14"/>
+      <line x1="0" y1="-14" x2="0" y2="14"/>
+      <line x1="11.5" y1="-14" x2="11.5" y2="14"/>
+      <line x1="23" y1="-14" x2="23" y2="14"/>
+    </g>
+  </g>
+  <text x="368" y="86" fill="#e6edf3" font-size="15" font-weight="700" text-anchor="middle">right_wheel</text>
+  <text x="368" y="103" fill="#9ba7b4" font-size="12.5" text-anchor="middle">300°</text>
+
+  <!-- back_wheel (180°) -->
+  <g transform="translate(240,330)">
+    <rect x="-34" y="-14" width="68" height="28" rx="9" fill="#1f6f8b" stroke="#40a8c4" stroke-width="2"/>
+    <g stroke="#9fd6e6" stroke-width="2" opacity="0.85">
+      <line x1="-23" y1="-14" x2="-23" y2="14"/>
+      <line x1="-11.5" y1="-14" x2="-11.5" y2="14"/>
+      <line x1="0" y1="-14" x2="0" y2="14"/>
+      <line x1="11.5" y1="-14" x2="11.5" y2="14"/>
+      <line x1="23" y1="-14" x2="23" y2="14"/>
+    </g>
+  </g>
+  <text x="240" y="372" fill="#e6edf3" font-size="15" font-weight="700" text-anchor="middle">back_wheel</text>
+  <text x="240" y="389" fill="#9ba7b4" font-size="12.5" text-anchor="middle">180°</text>
+
+  <!-- légende -->
+  <text x="240" y="430" fill="#9ba7b4" font-size="13" text-anchor="middle">3 roues omnidirectionnelles à 120° — base holonome</text>
+</svg>

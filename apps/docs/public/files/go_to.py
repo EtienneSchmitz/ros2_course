@@ -28,10 +28,11 @@ from geometry_msgs.msg import PoseStamped
 from nav2_msgs.action import NavigateToPose
 
 
-# Coordonnées du goal dans le repère `map`, à adapter à votre carte
-# `lekiwi_world`. Valeurs provisoires : un point accessible d'une carte ~10x10 m.
+# Coordonnées du goal dans le repère `map`, à adapter à votre carte.
+# Le monde `bootcamp.sdf` est une enceinte ~5x5 m : visez ±2 m autour de
+# l'origine. (1.0, 0.5) est un point accessible validé en simulation.
 GOAL_X = 1.0
-GOAL_Y = 1.0
+GOAL_Y = 0.5
 # Orientation cible (quaternion). (z=0, w=1) = cap neutre, face à +X.
 GOAL_YAW_Z = 0.0
 GOAL_YAW_W = 1.0

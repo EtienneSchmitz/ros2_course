@@ -1,6 +1,6 @@
 ---
 title: La base mobile LeKiwi
-description: Anatomie d'une base 3 roues omnidirectionnelles kiwi, URDF, première téléop.
+description: Anatomie d'une base 3 roues omnidirectionnelles kiwi, lecture du graphe ROS 2 et première téléop.
 sidebar:
   order: 2
 ---
@@ -12,83 +12,184 @@ omnidirectionnelles** réparties à 120°. Cette configuration en fait une
 base **holonome** : elle peut se déplacer dans n'importe quelle direction
 sans avoir à se réorienter au préalable.
 
+Dans cette partie, vous lancez la base en simulation, vous inspectez son
+**graphe ROS 2** pour comprendre **qui parle à qui**, puis vous la téléopérez
+pour valider sa cinématique.
+
 ## Configuration kiwi à 120°
 
-```text
-            roue 0 (avant)
-                 │
-                 ▼
-              ╱──────╲
-             ╱        ╲
-            │  base    │
-             ╲        ╱
-              ╲──────╱
-            ╱           ╲
-        roue 1         roue 2
-       (arr. gauche)  (arr. droit)
-```
+<img
+  src="/img/lekiwi-kiwi.svg"
+  alt="Base LeKiwi vue de dessus : left_wheel à 60°, right_wheel à 300°, back_wheel à 180°, LiDAR au centre, avant vers le haut (axe +X)."
+  style="float: right; width: 320px; max-width: 42%; height: auto; margin: 0 0 1rem 1.5rem;"
+/>
 
-Les trois roues sont identiques, montées sur des moteurs indépendants.
-Chaque roue est **omnidirectionnelle** (roue + galets latéraux) :
-elle peut glisser latéralement librement et n'entraîne le sol que dans
-son axe principal.
+Les trois roues sont identiques, montées sur des moteurs indépendants et
+réparties à 120° autour du châssis :
+
+- `left_wheel` à **60°** (avant-gauche) ;
+- `right_wheel` à **300°** (avant-droit) ;
+- `back_wheel` à **180°** (arrière).
+
+Chaque roue est **omnidirectionnelle** (roue + galets latéraux) : elle
+n'entraîne le sol que dans son axe principal et **glisse librement
+latéralement**. C'est la combinaison des trois qui produit un mouvement
+holonome — la base translate dans n'importe quelle direction sans avoir à se
+réorienter.
+
+Au centre, un **LiDAR 360°** (`laser_link`) balaie l'environnement — c'est lui
+qui rendra la cartographie possible. La pose est estimée à partir de
+l'**odométrie des roues** (affinée, en simulation, par une IMU ; sur un robot
+réel sans IMU, les roues seules suffisent et le SLAM corrige la dérive).
+
+<div style="clear: both;"></div>
 
 ## Cinématique inverse simplifiée
 
 Pour une consigne `(vx, vy, ω)` (translation X, translation Y, rotation
-autour de Z), la vitesse linéaire de chaque roue `i` (i ∈ {0, 1, 2})
-située à l'angle `θᵢ` du centre est :
+autour de Z), la vitesse linéaire de chaque roue `i` située à l'angle `θᵢ`
+du centre est :
 
 $$
 v_i = -\sin(\theta_i)\, v_x + \cos(\theta_i)\, v_y + L\, \omega
 $$
 
-avec `L` = rayon entre le centre du robot et chaque roue.
+avec `L` = rayon entre le centre du robot et chaque roue (≈ 0,13 m sur le
+LeKiwi).
 
-Cette transformation est typiquement implémentée par un nœud
-**`base_controller`** qui consomme `/cmd_vel` (type `Twist`) et publie
-les commandes de vitesse pour chaque moteur.
+Sur le robot, ce calcul **n'est pas** un nœud maison : il est réalisé par le
+contrôleur **`omni_wheel_drive_controller`** (un plugin `ros2_control`) qui
+consomme `/cmd_vel`. Mais entre votre clavier et les roues, plusieurs nœuds
+s'intercalent (`twist_mux`, EKF d'odométrie…). Plutôt que de vous les énumérer
+ici, vous allez **reconstituer cette chaîne vous-même, à coups de commandes**,
+dans la section [« Découvrir le graphe »](#découvrir-le-graphe-du-robot)
+ci-dessous — une fois la simulation lancée.
 
-## URDF
+## Visualiser l'URDF
 
-L'URDF de la base LeKiwi définit :
-
-- un `base_link` central ;
-- trois `wheel_link` placés à 120° (avec leur `<joint>` continuous) ;
-- un `laser_link` pour le LiDAR 360° (placé en haut du robot) ;
-- les inerties et collisions approximées par des cylindres / boîtes.
-
-<Aside type="note" title="Hands-on (à venir)">
-Une fois `lekiwi_description` publié dans
-[lekiwi_ros2](https://github.com/EtienneSchmitz/lekiwi_ros2), vous pouvez
-visualiser l'URDF avec :
+Avant la sim physique, on peut afficher le modèle seul (URDF + RViz) :
 
 ```bash
 ros2 launch lekiwi_description display.launch.py
 ```
 
 Cela démarre `robot_state_publisher` + RViz avec une config qui charge le
-modèle.
+modèle ; vous pouvez agiter les roues avec le `joint_state_publisher_gui`.
+
+<Aside type="tip" title="Exercice express — le graphe minimal">
+Avec **uniquement** `display.launch.py` lancé (pas de sim physique), explorez le
+graphe et répondez **avant** le corrigé :
+
+```bash
+ros2 node list      # quels nœuds tournent ?
+ros2 topic list      # quels topics existent ?
+ros2 topic echo /joint_states --once
+```
+
+1. Combien de nœuds tournent, et lesquels ?
+2. Qui publie `/robot_description` ? Qui publie `/joint_states` ?
+3. Notez si `/scan` et `/cmd_vel` sont présents (on en reparle juste après).
+
+<details class="quiz-answers">
+<summary>Afficher les réponses</summary>
+
+1. Trois : `/robot_state_publisher`, `/joint_state_publisher_gui` et `/rviz2`.
+2. `/robot_state_publisher` publie `/robot_description` (et `/tf`, `/tf_static`) ;
+   `/joint_state_publisher_gui` publie `/joint_states` (les positions que vous
+   bougez avec les curseurs).
+3. **Ni l'un ni l'autre n'est là.** Gardez ce constat en tête : on lance la
+   simulation à l'étape suivante et on observe ce qui change.
+
+</details>
 </Aside>
 
-## Premier lancement en simulation
-
-<Aside type="note" title="Hands-on (à venir)">
-Quand `lekiwi_bringup` sera prêt, vous lancez la sim Gazebo + bridges :
+## Lancer la simulation
 
 ```bash
 ros2 launch lekiwi_bringup sim_base.launch.py
 ```
 
-Cela ouvre un monde plat avec quelques obstacles, spawn la base LeKiwi,
-et bridge les topics ROS / Gazebo (`/cmd_vel`, `/odom`, `/scan`,
-`/clock`, `tf`).
+Ce launch ouvre **Gazebo Ionic** sur le monde `bootcamp.sdf` (une enceinte
+5 × 5 m avec deux obstacles), spawn la base LeKiwi et démarre toute la
+chaîne logicielle : `robot_state_publisher`, le pont `ros_gz`
+(`/clock`, `/scan`, `/imu/data`), les contrôleurs `ros2_control`,
+`twist_mux` et l'EKF.
+
+<Aside type="tip" title="Une seule sim à la fois">
+La sim utilise `ros2_control` : ne lancez **pas** deux `sim_base` en
+parallèle (collision du `controller_manager`). Entre deux essais, tuez les
+`gz sim` / `robot_state_publisher` orphelins.
+</Aside>
+
+## Découvrir le graphe du robot
+
+Le robot tourne : avant de le piloter, **inspectez son graphe ROS 2**. Dans
+un nouveau terminal :
+
+```bash
+ros2 node list      # les processus actifs
+ros2 topic list     # les canaux de données
+ros2 service list   # les appels requête/réponse
+ros2 action list    # les tâches longues
+rqt_graph           # visualisation "qui parle à qui"
+```
+
+Pour creuser un élément précis :
+
+```bash
+ros2 topic info /scan --verbose      # type + publishers/subscribers
+ros2 topic hz /scan                  # fréquence du LiDAR
+ros2 node info /twist_mux            # entrées/sorties d'un nœud
+ros2 topic info /cmd_vel --verbose   # qui publie /cmd_vel, qui le consomme ?
+```
+
+<Aside type="tip" title="Vérifiez votre compréhension">
+En explorant le graphe, répondez **avant** de regarder le corrigé :
+
+1. **Voyez-vous maintenant `/scan` et `/cmd_vel`** (absents avec `display.launch.py`) ? Pourquoi sont-ils apparus ?
+2. Quel nœud **publie** `/scan` ? De quel type est ce topic ?
+3. Qui **consomme** `/cmd_vel` pour faire bouger les roues ?
+4. D'où vient `/odometry/filtered`, et quelle transformation tf ce nœud publie-t-il ?
+5. Voyez-vous déjà l'action `/navigate_to_pose` ? Pourquoi ?
+
+<details class="quiz-answers">
+<summary>Afficher les réponses</summary>
+
+1. **Oui**, les deux sont là maintenant. La différence avec `display.launch.py` :
+   la simulation ajoute un **LiDAR simulé** (→ `/scan`) et des **contrôleurs**
+   (→ `/cmd_vel`). Avec `display`, on ne faisait qu'**afficher** le modèle ;
+   ici Gazebo le **fait vivre** (capteurs + actionneurs).
+2. Le **pont `ros_gz`** (`parameter_bridge`) republie le LiDAR simulé sur
+   `/scan`, de type `sensor_msgs/msg/LaserScan`.
+3. Le contrôleur **`omni_wheel_drive_controller`** (via le
+   `controller_manager`). En amont, c'est `twist_mux` qui alimente `/cmd_vel`.
+4. Du nœud **`ekf_filter_node`** (`robot_localization`), qui fusionne
+   `/odom` (roues) + `/imu/data` et publie la tf **`odom → base_footprint`**.
+5. **Non** : `/navigate_to_pose` est exposée par Nav2, qui n'est pas encore
+   lancé. Ici on n'a que la base + la perception, pas la pile de navigation.
+
+En reliant ces réponses, vous reconstituez la **chaîne des commandes de
+vitesse** (annoncée plus haut) :
+
+```text
+  téléop ──► /cmd_vel_teleop ─┐
+                              ├─► twist_mux ──► /cmd_vel ──► omni_wheel_drive_controller ──► roues
+  (Nav2) ──► /cmd_vel_nav   ──┘                                            │
+                                                                          └─► /odom
+```
+
+`twist_mux` arbitre les sources (la téléop est prioritaire sur Nav2) et tous
+ces topics sont en **`geometry_msgs/TwistStamped`** — c'est pourquoi le téléop
+AZERTY publie directement des `TwistStamped` sur `/cmd_vel_teleop`.
+
+</details>
 </Aside>
 
 ## Téléop clavier
 
-Pour valider la cinématique, le plus simple est la téléop clavier
-standard `teleop_twist_keyboard` :
+Pour valider la cinématique, pilotez la base au clavier avec le téléop
+**AZERTY** fourni par le bootcamp : il publie directement des `TwistStamped`
+sur `/cmd_vel_teleop` — aucun remap ni option à ajouter.
 
 <Tabs>
 <TabItem label="Terminal 1 — sim">
@@ -101,23 +202,51 @@ ros2 launch lekiwi_bringup sim_base.launch.py
 <TabItem label="Terminal 2 — téléop">
 
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+ros2 run lekiwi_bringup teleop_azerty
 ```
 
 </TabItem>
 </Tabs>
 
-Touches utiles :
+Touches (clavier AZERTY) :
 
-- `i` / `,` : avancer / reculer
-- `j` / `l` : translation latérale gauche / droite (la magie d'une base
+- `z` / `s` : avancer / reculer
+- `q` / `d` : **translation latérale** gauche / droite (la magie d'une base
   holonome)
-- `u` / `o` : rotation
-- `q` / `z` : modifier la vitesse
+- `a` / `e` : rotation gauche / droite
+- `espace` : arrêt
+- `+` / `-` : vitesse linéaire ; `*` / `:` : vitesse angulaire
 
-Si la base bouge dans la bonne direction sans changer de cap, la
-cinématique est correcte.
+Si la base se déplace **latéralement sans changer de cap**, la cinématique
+est correcte. ✅
+
+<Aside type="note" title="Clavier QWERTY ?">
+Vous pouvez aussi utiliser le téléop standard, en le remappant vers
+`/cmd_vel_teleop` et en activant les messages stampés :
+
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard \
+  --ros-args -r /cmd_vel:=/cmd_vel_teleop -p stamped:=true
+```
+
+</Aside>
+
+## Observer pendant la téléop
+
+Pendant que vous pilotez, regardez les données circuler :
+
+```bash
+ros2 topic echo /cmd_vel_teleop      # vos consignes (TwistStamped)
+ros2 topic echo /odometry/filtered   # la pose estimée par l'EKF
+ros2 run tf2_tools view_frames       # arbre des frames -> frames.pdf
+```
+
+Dans `frames.pdf`, vous obtenez la chaîne `odom → base_footprint → base_link
+→ roues / laser_link`. **Il n'y a pas encore de frame `map`** : sans SLAM, le
+robot sait *comment il a bougé* (odométrie) mais pas *où il est dans une
+carte*. C'est précisément ce qu'on ajoute à la page suivante.
 
 ## Prochaine étape
 
-[Navigation autonome avec Nav2](/navigation/02-nav2/).
+[Navigation autonome avec Nav2](/navigation/02-nav2/) — cartographier puis
+naviguer.
