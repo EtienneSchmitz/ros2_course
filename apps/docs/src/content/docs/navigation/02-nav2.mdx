@@ -227,7 +227,8 @@ ros2 run lekiwi_navigation go_to
 ```
 
 Adaptez les coordonnées du goal (`GOAL_X`, `GOAL_Y` en tête de fichier) à votre carte —
-le monde `bootcamp` est une enceinte ~5 × 5 m, visez ±2 m autour de l'origine.
+le monde `bootcamp` est une enceinte 8 × 8 m (origine au centre). Visez par exemple une
+zone repère, p. ex. `zone_a` en `(-3, 3)` (cf. [exercice 5](#exercice-5--mission-finale--le-tour-des-3-zones-)).
 
 ### Recoveries
 
@@ -282,20 +283,7 @@ Indices :
 Que se passe-t-il si vous placez l'objet *exactement* dans la trajectoire ? Combien de
 temps avant qu'il réagisse ?
 
-### Exercice 4 — Mission multi-waypoints
-
-**Objectif** : enchaîner plusieurs goals automatiquement.
-
-Indices :
-
-- Utilisez l'action `/follow_waypoints` exposée par `waypoint_follower`.
-- Publiez une liste de `PoseStamped` (en Python ou via la CLI).
-- Le robot doit visiter chaque waypoint dans l'ordre, avec une pause entre chacun.
-
-Bonus : émettez un message ROS personnalisé à chaque waypoint atteint (préparation aux
-Jours 5-6 — intégration).
-
-### Exercice 5 — Monitorer la navigation avec Foxglove
+### Exercice 4 — Monitorer la navigation avec Foxglove
 
 **Objectif** : inspecter en direct ce que produit la pile de navigation avec
 [Foxglove](https://foxglove.dev), en complément de RViz.
@@ -322,6 +310,44 @@ Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
 
 *Livrable* : la valeur de pose `/odom` relevée à l'arrivée + une description de la courbe
 `/cmd_vel` pendant le trajet.
+
+### Exercice 5 — Mission finale : le tour des 3 zones 🏁
+
+**Objectif (capstone)** : sur **votre** carte `bootcamp` (cartographiée à l'exercice 1),
+faites visiter au robot les **trois zones repères** du monde, **dans l'ordre de votre
+choix**, sans collision.
+
+Le monde `bootcamp` est une pièce de **8 × 8 m** (origine au centre, `x` et `y` de −4 à +4)
+contenant trois zones colorées :
+
+| Zone | Couleur | Position `(x, y)` | Emplacement |
+| --- | --- | --- | --- |
+| `zone_a` | 🔴 rouge | `(-3, 3)` | coin haut-gauche |
+| `zone_b` | 🟢 vert | `(3, 3)` | coin haut-droite |
+| `zone_c` | 🔵 bleu | `(0, -3)` | bas, au centre |
+
+Lancez la navigation en **localisation** sur votre carte, puis initialisez la pose
+(*2D Pose Estimate* dans RViz) :
+
+```bash
+ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
+```
+
+Choisissez **votre ordre de visite** (ex. `zone_a → zone_c → zone_b`) puis, au choix :
+
+- **Au clic (RViz)** : posez un *Nav2 Goal* sur chaque zone l'une après l'autre, en
+  attendant l'arrivée avant d'enchaîner la suivante.
+- **Par le code (recommandé)** : enchaînez les trois poses automatiquement —
+  - soit en adaptant [`go_to.py`](/files/go_to.py) pour boucler sur une liste de goals ;
+  - soit via l'action **`/follow_waypoints`** (`waypoint_follower`) : publiez les trois
+    `PoseStamped` (l'orientation `yaw` finale est libre) et le robot les visite dans
+    l'ordre, avec une pause à chaque zone.
+
+*Livrable* : l'ordre choisi + le temps total de la mission, le robot atteignant les trois
+zones sans collision.
+
+Bonus : émettez un **message ROS personnalisé** à chaque zone atteinte (préparation aux
+Jours 5-6 — intégration).
 
 ## Prochaine étape
 
