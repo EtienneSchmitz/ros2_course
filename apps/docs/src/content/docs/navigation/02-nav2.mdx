@@ -6,7 +6,7 @@ sidebar:
   order: 3
 ---
 
-import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
 Naviguer de façon autonome se fait en **deux temps**, qui structurent cette page :
 
@@ -37,6 +37,15 @@ référence pour des bases 2D avec LiDAR est
                                        ──► /map_metadata
 ```
 
+<figure>
+<img
+  src="/img/jour2-rqt-graph-slam.png"
+  alt="rqt_graph avec slam_toolbox actif : /scan et /tf en entrée, /map en sortie."
+  style="width: 100%; height: auto;"
+/>
+<figcaption>À quoi ça ressemble dans <code>rqt_graph</code>, <code>slam_toolbox</code> lancé.</figcaption>
+</figure>
+
 Ce qu'il faut surtout retenir : `slam_toolbox` publie la transformation
 **`map → odom`**, qui **corrige la dérive de l'odométrie** en recalant les scans laser.
 On obtient enfin la chaîne complète `map → odom → base_footprint`.
@@ -51,31 +60,26 @@ Le launch `slam.launch.py` expose l'argument `slam_mode` :
 | `localize` | Localisation sur une carte sérialisée existante (`slam_toolbox`). |
 | `amcl` | Localisation AMCL sur une carte statique (`nav2_map_server` + `amcl`). |
 
-### Lancer SLAM en parallèle de la sim
+### Lancer le SLAM (tout-en-un)
 
-<Tabs>
-<TabItem label="Terminal 1 — sim">
-
-```bash
-ros2 launch lekiwi_bringup sim_base.launch.py
-```
-
-</TabItem>
-<TabItem label="Terminal 2 — SLAM (mapping)">
+Un seul launch démarre **Gazebo + SLAM + RViz** (le scan apparaît en bleu) :
 
 ```bash
-ros2 launch lekiwi_navigation slam.launch.py slam_mode:=map
+ros2 launch lekiwi_navigation slam.launch.py sim:=true
 ```
 
-</TabItem>
-<TabItem label="Terminal 3 — RViz">
+<Aside type="tip" title="Variantes utiles">
+Le launch expose des options pour alléger ou adapter l'affichage :
 
 ```bash
-rviz2 -d $(ros2 pkg prefix lekiwi_navigation)/share/lekiwi_navigation/rviz/nav.rviz
+# Gazebo sans GUI (un peu plus léger)
+ros2 launch lekiwi_navigation slam.launch.py sim:=true headless:=true
+
+# Couper RViz
+ros2 launch lekiwi_navigation slam.launch.py sim:=true rviz:=false
 ```
 
-</TabItem>
-</Tabs>
+</Aside>
 
 Dans RViz, vous devez voir :
 
@@ -85,7 +89,7 @@ Dans RViz, vous devez voir :
 
 ### Téléop pour cartographier
 
-Lancez en plus la téléop clavier (cf. [première page](/navigation/01-base-mobile/#téléop-clavier))
+Lancez en plus la téléop clavier (cf. [première page](/navigation/01-base-mobile/#téléopération-clavier))
 et baladez le robot dans le monde :
 
 ```bash
@@ -290,6 +294,34 @@ Indices :
 
 Bonus : émettez un message ROS personnalisé à chaque waypoint atteint (préparation aux
 Jours 5-6 — intégration).
+
+### Exercice 5 — Monitorer la navigation avec Foxglove
+
+**Objectif** : inspecter en direct ce que produit la pile de navigation avec
+[Foxglove](https://foxglove.dev), en complément de RViz.
+
+<Aside type="note">
+RViz reste l'outil de **commande** : le goal Nav2 se pose **toujours dans RViz** (*2D Pose
+Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
+</Aside>
+
+Étapes :
+
+1. Lancer la navigation (`navigation.launch.py`) puis le pont Foxglove dans un autre terminal :
+
+   ```bash
+   ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
+   ```
+
+2. Se connecter à `ws://localhost:8765` dans Foxglove et préparer les panneaux :
+   - **3D** : afficher la carte `/map`, le scan `/scan` et les **costmaps** (global + local) ;
+   - **Plot** : tracer les composantes de `/cmd_vel` ;
+   - **Raw Messages** : s'abonner à `/odom` pour **relever une valeur** de pose.
+3. Poser un **Nav2 Goal dans RViz** et observer, côté Foxglove : la trajectoire suivie, le
+   local costmap qui s'allume autour des obstacles, et la courbe `/cmd_vel`.
+
+*Livrable* : la valeur de pose `/odom` relevée à l'arrivée + une description de la courbe
+`/cmd_vel` pendant le trajet.
 
 ## Prochaine étape
 

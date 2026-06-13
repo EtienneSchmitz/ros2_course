@@ -3,8 +3,9 @@ theme: ../../../packages/theme-bootcamp/src/slidev
 title: ROS 2 — Bootcamp — Jour 2 Navigation
 author: Etienne Schmitz
 info: |
-  Deck Jour 2 — Navigation (LeKiwi + slam_toolbox + Nav2).
-  Base mobile holonome, lecture du graphe ROS 2, cartographie SLAM, navigation autonome.
+  Deck Jour 2 — Navigation (théorie).
+  Pourquoi naviguer, capteurs & localisation, SLAM, AMCL, architecture Nav2.
+  Base mobile holonome LeKiwi en fil rouge. La pratique est détaillée dans la doc.
 mdc: true
 layout: cover
 day: 2
@@ -26,22 +27,84 @@ layout: default
 <v-clicks>
 
 - décrire la cinématique d'une base **omnidirectionnelle Kiwi** (3 roues à 120°) ;
-- **lire le graphe ROS 2** d'un robot qui tourne (nœuds, topics, services, actions) ;
-- piloter la base en téléop dans **Gazebo Ionic** (gz-sim 9) ;
-- construire **et sauvegarder** une carte avec **slam_toolbox** ;
-- planifier et exécuter des trajectoires autonomes avec **Nav2** (goal au clic).
+- expliquer les grands **capteurs de localisation** (IMU, odométrie, LiDAR, GPS-RTK, UWB) ;
+- comprendre le **SLAM** : dérive, scan matching, fermeture de boucle ;
+- distinguer **SLAM** (cartographier) et **AMCL** (se localiser dans une carte connue) ;
+- décrire l'**architecture de Nav2** (behavior tree, planner, controller, costmaps).
 
 </v-clicks>
 
 <v-click>
 
-> Pré-requis : workspace `~/ros2_bootcamp_ws/` compilé + concepts ROS 2 du Jour 1 (nodes, topics, tf, frames).
+> Ce deck est **théorique**. La mise en pratique (lancements, RViz, cartographie, goals)
+> est détaillée dans la **documentation** du bootcamp.
 
 </v-click>
 
 ---
 layout: section
-eyebrow: Partie 01 · Base mobile
+eyebrow: Partie 01 · Pourquoi naviguer ?
+---
+
+# Naviguer, c'est répondre à 3 questions
+
+::note::
+Se localiser, planifier, et avancer sans rien heurter.
+
+---
+layout: two-cols
+---
+
+# Pourquoi un robot doit-il naviguer ?
+
+Pour **accomplir une mission** dans un environnement réel :
+
+- livrer un colis 🧺 ;
+- nettoyer une pièce 🧹 ;
+- explorer un lieu inconnu 🗺️ ;
+- suivre une personne 👣.
+
+::right::
+
+<div class="bc-cards" style="grid-template-columns: 1fr;">
+<div class="bc-card" v-click><div class="bc-card__title">📍 Où suis-je ?</div><p><strong>Localisation</strong> — estimer sa pose dans l'environnement.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🎯 Où aller ?</div><p><strong>Planification</strong> — calculer un chemin vers l'objectif.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🚧 Comment, sans heurter ?</div><p><strong>Perception & contrôle</strong> — suivre le chemin en évitant les obstacles.</p></div>
+</div>
+
+---
+layout: two-cols
+---
+
+# La réponse : la stack Nav2
+
+**Nav2** est la stack de navigation de ROS 2. Elle combine tout ce qu'il faut pour naviguer **de façon autonome** :
+
+<v-clicks>
+
+- 🧠 **se localiser** — SLAM / AMCL ;
+- 🗺️ **créer ou utiliser une carte** ;
+- 📦 **planifier** un chemin — global *et* local ;
+- 📡 **fusionner les capteurs** — LiDAR, IMU, odométrie ;
+- ⚙️ **exécuter** les mouvements avec feedback.
+
+</v-clicks>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/logo_nav2.png" alt="Logo Nav2" style="max-height: 300px;" />
+</div>
+
+<v-click>
+
+> Nav2 orchestre ces briques pour un comportement **intelligent et adaptable**.
+
+</v-click>
+
+---
+layout: section
+eyebrow: Partie 02 · Base mobile
 ---
 
 # La base mobile LeKiwi
@@ -107,28 +170,14 @@ Nav2   ─► /cmd_vel_nav   ──┘
 layout: two-cols
 ---
 
-# Découvrir le graphe
+# Le graphe ROS 2
 
-Le robot tourne — **inspectez-le avant de le piloter** :
+Avant de piloter un robot, on **comprend son graphe** : qui parle à qui ?
 
-```bash
-ros2 node list
-ros2 topic list
-ros2 service list
-ros2 action list
-rqt_graph
-```
-
-<v-click>
-
-Pour creuser :
-
-```bash
-ros2 topic info /scan --verbose
-ros2 node info /twist_mux
-```
-
-</v-click>
+- **nœuds** — les processus actifs ;
+- **topics** — les flux de données (`/scan`, `/cmd_vel`…) ;
+- **services** — les appels ponctuels ;
+- **actions** — les tâches longues avec feedback.
 
 ::right::
 
@@ -137,53 +186,217 @@ ros2 node info /twist_mux
 <div class="bc-callout__body">
 <div class="bc-callout__title">Faites deviner</div>
 <p>Qui <strong>publie</strong> <code>/scan</code> ? Qui <strong>consomme</strong> <code>/cmd_vel</code> ? D'où vient <code>/odometry/filtered</code> ?</p>
-<p>Voit-on déjà l'action <code>/navigate_to_pose</code> ?</p>
 </div>
 </div>
 
 <v-click>
 
-> Réponses : pont `ros_gz` → `/scan` ; `omni_wheel_drive_controller` → roues ; EKF `robot_localization` → `/odometry/filtered`. **Pas** de `/navigate_to_pose` : Nav2 n'est pas lancé.
+> Réponses : pont `ros_gz` → `/scan` ; `omni_wheel_drive_controller` → roues ; EKF `robot_localization` → `/odometry/filtered`. **Pas** d'action `/navigate_to_pose` tant que **Nav2 n'est pas lancé**.
 
 </v-click>
 
 ---
-layout: default
+layout: two-cols
 ---
 
-# Téléop & observer
+# La magie holonome
 
-Lancer la sim, puis piloter au clavier **AZERTY** (publie `TwistStamped` sur `/cmd_vel_teleop`, sans remap) :
-
-```bash
-# Terminal 1 — sim (Gazebo Ionic, monde bootcamp.sdf + bridges + contrôleurs + EKF)
-ros2 launch lekiwi_bringup sim_base.launch.py
-
-# Terminal 2 — téléop clavier AZERTY
-ros2 run lekiwi_bringup teleop_azerty
-```
+La téléop clavier **AZERTY** illustre les 3 degrés de liberté de la base :
 
 | Touches | Action |
 |---|---|
 | `z` / `s` | avancer / reculer |
-| `q` / `d` | **translation latérale** (la magie holonome) |
+| `q` / `d` | **translation latérale** |
 | `a` / `e` | rotation |
+
+::right::
 
 <v-click>
 
-> Observez : `ros2 topic echo /odometry/filtered` + `tf2_tools view_frames`. Frames `odom → base_footprint`… mais **pas encore de `map`** (pas de SLAM).
+La ligne `q` / `d` est la **signature holonome** : le robot se décale **sans tourner** — impossible sur une base différentielle.
+
+</v-click>
+
+<v-click>
+
+<div class="bc-callout bc-callout--warn">
+<div class="bc-callout__icon">⚠️</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Pas encore de carte</div>
+<p>À ce stade : frames <code>odom → base_footprint</code> seulement. <strong>Pas de frame <code>map</code></strong> — il faut le SLAM.</p>
+</div>
+</div>
 
 </v-click>
 
 ---
 layout: section
-eyebrow: Partie 02 · Cartographier
+eyebrow: Partie 03 · Se localiser
 ---
 
-# SLAM avec slam_toolbox
+# Capteurs & principes de localisation
 
 ::note::
-Construire la carte **en même temps** qu'on s'y localise.
+« Où suis-je ? » — aucun capteur n'est parfait, on les combine.
+
+---
+layout: two-cols
+---
+
+# IMU — Inertial Measurement Unit
+
+Mesure le **mouvement propre** du robot :
+
+- **vitesses angulaires** (gyroscope) ;
+- **accélérations linéaires** (accéléromètre) ;
+- parfois le **champ magnétique** (magnétomètre).
+
+::right::
+
+<div class="bc-callout bc-callout--warn">
+<div class="bc-callout__icon">⚠️</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Dérive rapide</div>
+<p>Intégrer une accélération cumule l'erreur. Utile en <strong>fusion</strong> et sur des mouvements <strong>courts</strong>, pas seule.</p>
+</div>
+</div>
+
+<v-click>
+
+> IMU numérique typique : 1 gyroscope, 3 accéléromètres, 3 magnétomètres.
+
+</v-click>
+
+---
+layout: two-cols
+---
+
+# Odométrie
+
+Combine **IMU** et **encodeurs de roues** pour une estimation **continue** de la pose.
+
+- toujours disponible, haute fréquence ;
+- **erreur cumulative** : la pose dérive avec le temps (glissements, imprécisions).
+
+<v-click>
+
+> Seule, elle ne suffit pas. Elle doit être **fusionnée** (LiDAR, GPS…) ou **recalée** (SLAM).
+
+</v-click>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/odometry.png" alt="Illustration de l'odométrie" style="max-height: 320px;" />
+</div>
+
+---
+layout: two-cols
+---
+
+# Multilatération (2D / 3D)
+
+Estime la position en mesurant les **distances** à plusieurs **stations fixes** :
+
+- **3** stations → localisation 2D ;
+- **4** stations → localisation 3D.
+
+<v-clicks>
+
+- ⚠️ à ne pas confondre avec la **triangulation** (qui utilise des **angles**) ;
+- ⚠️ sensible aux **réflexions** de signal (rebonds, interférences).
+
+</v-clicks>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/multiateration.jpeg" alt="Schéma de multilatération" style="max-height: 340px;" />
+</div>
+
+---
+layout: two-cols
+---
+
+# GPS-RTK & UWB
+
+**GPS-RTK** *(Real Time Kinematic)* — extérieur :
+
+- combine le GPS avec une **station de référence au sol** ;
+- précision **centimétrique**, en temps réel ;
+- exige une zone **dégagée** (agriculture, topo, véhicules autonomes).
+
+::right::
+
+**UWB** *(Ultra Wide Band)* — intérieur :
+
+- mêmes principes, avec des **ancres fixes** dans le bâtiment ;
+- mesure les **temps de vol** du signal ;
+- précision **±10 à 30 cm** (usines, entrepôts).
+
+<v-click>
+
+> Deux réponses au même besoin — **un repère absolu** — selon l'environnement.
+
+</v-click>
+
+---
+layout: two-cols
+---
+
+# LiDAR — Light Detection and Ranging
+
+Un **laser** mesure les **distances** à l'environnement → une carte de **profondeur**.
+
+**Types :**
+
+- 📍 fixe ;
+- 🔁 rotatif 360° (mono-faisceau, 2D) ;
+- 🌐 multi-beam rotatif (3D).
+
+**Usages :** détection d'obstacles, **cartographie (SLAM)**, suivi de murs / de personnes.
+
+::right::
+
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">📡</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Le capteur clé du cours</div>
+<p>Le LeKiwi embarque un <strong>LiDAR 360° 2D</strong> (<code>/scan</code>) — c'est lui qui rend le SLAM possible.</p>
+</div>
+</div>
+
+---
+layout: two-cols
+---
+
+# LiDAR multi-beam (3D)
+
+Superpose plusieurs **faisceaux** verticaux et horizontaux → une **perception 3D dense**.
+
+<v-clicks>
+
+- très précis pour l'**évitement d'obstacles 3D** ;
+- compréhension fine de la **scène** autour du robot ;
+- au prix d'un volume de données bien plus lourd.
+
+</v-clicks>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/multibeam_laser.jpeg" alt="Nuage de points d'un LiDAR multi-beam" style="max-height: 340px;" />
+</div>
+
+---
+layout: section
+eyebrow: Partie 04 · Cartographier & se localiser
+---
+
+# SLAM & AMCL
+
+::note::
+Construire la carte… puis s'y retrouver.
 
 ---
 layout: default
@@ -191,7 +404,8 @@ layout: default
 
 # Qu'est-ce que le SLAM ?
 
-**SLAM** = *Simultaneous Localization And Mapping*.
+**SLAM** = *Simultaneous Localization And Mapping* — un problème de **l'œuf et la poule** :
+pour se localiser il faut une carte, pour cartographier il faut savoir où l'on est. Le SLAM résout **les deux à la fois**.
 
 <div class="bc-cards bc-cards--3">
 <div class="bc-card" v-click><div class="bc-card__title">🎯 Le problème</div><p>L'odométrie <strong>dérive</strong> : sans repère absolu, l'erreur s'accumule au fil du trajet.</p></div>
@@ -209,18 +423,95 @@ layout: default
 layout: two-cols
 ---
 
-# Modes & flux
+# La dérive odométrique
 
-```bash
-ros2 launch lekiwi_navigation \
-  slam.launch.py slam_mode:=map
+Pourquoi l'odométrie seule ne suffit pas :
+
+- les roues **glissent**, les encodeurs **arrondissent** ;
+- on **intègre** ces petites erreurs à chaque pas ;
+- la pose estimée **s'éloigne** peu à peu du réel.
+
+<v-click>
+
+> Il faut un **repère absolu** pour recaler : les **murs** vus au LiDAR ne bougent pas.
+
+</v-click>
+
+::right::
+
+```mermaid
+flowchart TB
+  start(("départ")) --> r["trajet réel"]
+  start --> o["pose odométrie"]
+  r --> rend(("arrivée réelle"))
+  o --> oend(("arrivée estimée<br/>≠ réelle"))
+  rend -. écart qui<br/>grandit .-> oend
 ```
 
-| `slam_mode` | Rôle |
+---
+layout: two-cols
+---
+
+# Scan matching & fermeture de boucle
+
+**Scan matching** — à chaque nouveau `/scan`, on **aligne** le nuage de points sur la carte déjà construite. L'alignement donne le **déplacement réel** → on corrige la dérive.
+
+<v-click>
+
+**Fermeture de boucle** — en **reconnaissant un lieu déjà visité**, l'algo « referme » la boucle et **redistribue** l'erreur accumulée sur tout le trajet → carte cohérente.
+
+</v-click>
+
+::right::
+
+```mermaid
+flowchart LR
+  A["pose A<br/>(début)"] --> B --> C --> D["retour près de A"]
+  D -. boucle reconnue .-> A
+  D --> E["erreur redistribuée<br/>→ carte cohérente"]
+```
+
+---
+layout: two-cols
+---
+
+# slam_toolbox : modes
+
+`slam_toolbox` est l'implémentation de référence pour une base 2D + LiDAR. Quatre **modes internes** :
+
+| Mode | Quand l'utiliser |
 |---|---|
-| **map** | cartographie. **Mode du cours.** |
-| localize | localisation (carte slam_toolbox) |
-| amcl | localisation AMCL (carte statique) |
+| **`online async`** | robot en mouvement, quasi temps réel. **Mode du cours.** |
+| `online sync` | strict temps réel, sans drop. Coûteux. |
+| `offline` | replay d'un *bag* pour optimiser hors-ligne. |
+| `lifelong` | mise à jour continue d'une carte existante. |
+
+::right::
+
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">💡</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Modes ≠ rôles de lancement</div>
+<p>Ne pas confondre ces <strong>modes internes</strong> avec les <strong>rôles</strong> exposés par le launch du cours : <code>map</code> (cartographier), <code>localize</code> (slam_toolbox), <code>amcl</code> (carte statique).</p>
+</div>
+</div>
+
+---
+layout: two-cols
+---
+
+# slam_toolbox : flux
+
+**Entrées** → `slam_toolbox` → **sorties** :
+
+- in : `/scan` + `/tf (odom → base_footprint)` ;
+- out : `/map`, `/tf (map → odom)`, `/map_metadata`.
+
+<v-click>
+
+> L'essentiel : il publie **`map → odom`**, la transformation qui **corrige la dérive** en recalant les scans.
+
+</v-click>
 
 ::right::
 
@@ -233,88 +524,101 @@ flowchart TB
   st --> meta["/map_metadata"]
 ```
 
+---
+layout: two-cols
+---
+
+# AMCL — Monte-Carlo Localization
+
+Une fois la **carte connue**, plus besoin de la reconstruire : on s'y **localise** avec **AMCL**.
+
+- repose sur un **filtre à particules** : des centaines d'**hypothèses** de pose ;
+- chaque scan **renforce** les bonnes hypothèses, **élimine** les mauvaises ;
+- combine **LiDAR** + **odométrie** + **IMU**.
+
 <v-click>
 
-À retenir : `slam_toolbox` publie **`map → odom`**, qui corrige la dérive via les features du scan.
+> SLAM = **construire** la carte · AMCL = **se repérer** dans une carte existante.
 
 </v-click>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/robot_mcl.webp" alt="Particules AMCL en 1D" style="max-height: 280px;" />
+</div>
 
 ---
 layout: default
 ---
 
-# Lancer SLAM + sim
+# AMCL — convergence des particules (2D)
 
-```bash
-# Terminal 1 — sim
-ros2 launch lekiwi_bringup sim_base.launch.py
-
-# Terminal 2 — SLAM (mapping)
-ros2 launch lekiwi_navigation slam.launch.py slam_mode:=map
-
-# Terminal 3 — RViz
-rviz2 -d $(ros2 pkg prefix lekiwi_navigation)/share/lekiwi_navigation/rviz/nav.rviz
-```
-
-Dans RViz, vous devez voir :
-
-<v-clicks>
-
-- l'`OccupancyGrid` `/map` apparaître progressivement ;
-- la silhouette du LeKiwi suivre la base ;
-- les rayons laser en couleur.
-
-</v-clicks>
-
----
-layout: two-cols
----
-
-# Bien cartographier
-
-Téléopérez et baladez le robot :
-
-- **Vitesses modérées** (< 0,3 m/s) — le SLAM a le temps de fitter chaque scan.
-- **Fermez les boucles** — revenez sur vos pas pour corriger la dérive.
-- **Couverture complète** — longez les murs.
-
-::right::
-
-Sauvegarder la carte (un dossier = `map.yaml` + `map.pgm`) :
-
-```bash
-ros2 run nav2_map_server map_saver_cli \
-  -f ~/ros2_bootcamp_ws/src/lekiwi_ros2/\
-lekiwi_navigation/maps/bootcamp/map
-```
+<div class="bc-media">
+<img src="./img/AMCL_2D.png" alt="Nuage de particules AMCL convergeant en 2D" style="max-height: 420px;" />
+</div>
 
 <v-click>
 
-Recharger en **localisation pure** :
-
-```bash
-ros2 launch lekiwi_navigation \
-  navigation.launch.py \
-  slam_mode:=localize map_name:=bootcamp
-```
+> Le nuage de particules se **resserre** autour de la vraie pose à mesure que les scans concordent avec la carte.
 
 </v-click>
 
 ---
 layout: section
-eyebrow: Partie 03 · Naviguer
+eyebrow: Partie 05 · Naviguer avec Nav2
 ---
 
-# Navigation autonome avec Nav2
+# L'architecture de Nav2
 
 ::note::
-Planning global, suivi local, recovery, obstacles dynamiques.
+Planifier globalement, réagir localement.
 
 ---
 layout: default
 ---
 
-# Pipeline Nav2
+# La stack Nav2
+
+Une **boîte à outils complète** pour naviguer de façon autonome dans un environnement **inconnu ou non structuré** :
+
+<div class="bc-cards bc-cards--3">
+<div class="bc-card" v-click><div class="bc-card__title">🗺️ Planifier</div><p>Chemin <strong>global</strong> (vers le but) et <strong>local</strong> (suivi temps réel).</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🛑 Éviter</div><p>Obstacles <strong>statiques et dynamiques</strong>.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">📡 Percevoir</div><p>Fusionner LiDAR, odométrie, IMU.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🧭 Se localiser</div><p>SLAM ou AMCL.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">⚙️ Exécuter</div><p>Mouvements avec <strong>feedback</strong>.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🌲 Orchestrer</div><p>Un <strong>behavior tree</strong> coordonne le tout.</p></div>
+</div>
+
+---
+layout: two-cols
+---
+
+# Structure interne
+
+Nav2 n'est pas un nœud unique mais un **ensemble de serveurs** spécialisés, démarrés et supervisés par un **`lifecycle_manager`** :
+
+- `bt_navigator`, `planner_server`, `controller_server` ;
+- `behavior_server`, `velocity_smoother`, `collision_monitor`.
+
+<v-click>
+
+> Chacun a un **cycle de vie** (configure → activate) géré proprement par le manager.
+
+</v-click>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/nav2_architecture.png" alt="Architecture interne de Nav2" style="max-height: 420px;" />
+</div>
+
+---
+layout: default
+---
+
+# Le pipeline, vu de haut
 
 ```mermaid
 graph LR
@@ -329,41 +633,39 @@ graph LR
   LC --> C
 ```
 
-- **`bt_navigator`** — orchestre via un *behavior tree* (planifier, suivre, recovery).
-- **Planner** / **Controller** — trajectoire globale (Smac, NavFn) puis suivi local (MPPI).
-
----
-layout: default
----
-
-# Les costmaps
-
-Nav2 raisonne sur deux **grilles de coût** (`base_footprint`) :
-
-<div class="bc-cards bc-cards--2">
-<div class="bc-card" v-click><div class="bc-card__title">🗺️ Global costmap</div><p>La carte statique <code>/map</code> + obstacles connus. Sert au <strong>planner</strong> pour le chemin global.</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">📡 Local costmap</div><p>Fenêtre glissante alimentée par le <strong>LiDAR temps réel</strong>. Sert au <strong>controller</strong> pour éviter les obstacles dynamiques.</p></div>
-</div>
-
-<v-click>
-
-<div class="bc-callout bc-callout--info">
-<div class="bc-callout__icon">💡</div>
-<div class="bc-callout__body">
-<div class="bc-callout__title">Inflation</div>
-<p>Une marge de coût est « gonflée » autour des obstacles (<code>inflation_radius</code>) pour garder le robot à distance des murs.</p>
-</div>
-</div>
-
-</v-click>
+On donne un **but**, le **planner** trace le chemin global, le **controller** le suit en temps réel → `/cmd_vel`.
 
 ---
 layout: two-cols
 ---
 
-# Contrôleur holonome
+# BT Navigator & Planner
 
-Une base omni **(kiwi)** peut translater sans tourner — tous les controllers ne le savent pas :
+**`bt_navigator`** — le **cœur** de la stack :
+
+- orchestre via un **behavior tree** ;
+- reçoit une cible → planifie, suit, **récupère** ;
+- guide le robot du début à la fin de la mission.
+
+::right::
+
+**`planner_server`** — la **planification globale** :
+
+- entrées : **pose actuelle** + **objectif** ;
+- calcule un **itinéraire optimal** (court, sûr, sans obstacle) ;
+- planners : **Smac**, **NavFn** ;
+- sort un **chemin global** à suivre.
+
+---
+layout: two-cols
+---
+
+# Controller : suivi local
+
+**`controller_server`** transforme le chemin global en **commandes de vitesse** :
+
+- suit le chemin et **réagit en temps réel** (obstacles, glissements) ;
+- garde le robot sur la voie dans un monde **changeant**.
 
 | Controller | Holonome ? |
 |---|---|
@@ -371,13 +673,9 @@ Une base omni **(kiwi)** peut translater sans tourner — tous les controllers n
 | **MPPI** | **Oui, `motion_model: Omni`** |
 | Reg. Pure Pursuit | Non (différentielle) |
 
-<v-click>
-
-Pour LeKiwi → **MPPI Omni** : meilleur tracking, sortie sur `/cmd_vel_nav`.
-
-</v-click>
-
 ::right::
+
+Le LeKiwi est **holonome** → **MPPI Omni** : meilleur tracking, sortie sur `/cmd_vel_nav`.
 
 ```yaml
 controller_server:
@@ -394,30 +692,51 @@ controller_server:
 ```
 
 ---
-layout: default
+layout: two-cols
 ---
 
-# Premier goal au clic
+# Behavior & Smoother
 
-```bash
-# Empile sim + slam/localisation + Nav2 + RViz
-ros2 launch lekiwi_navigation navigation.launch.py
-# ... ou sur une carte sauvegardée :
-#   navigation.launch.py slam_mode:=localize map_name:=bootcamp
-```
+**`behavior_server`** — réagit aux imprévus :
 
-Dans RViz :
+- robot **bloqué** ? obstacle **soudain** ?
+- lance des **comportements de récupération** : reculer, tourner, attendre, réessayer.
 
-<v-clicks>
+::right::
 
-1. **2D Pose Estimate** — cliquez la pose réelle du robot + orientez la flèche.
-2. **Nav2 Goal** — cliquez la destination. Nav2 planifie et exécute.
+**`velocity_smoother`** — lisse la trajectoire :
 
-</v-clicks>
+- **courbes plus douces**, vitesses réalistes ;
+- déplacement **fluide**, moins d'à-coups.
 
 <v-click>
 
-> Par le code : action `navigate_to_pose` (cf. `go_to.py`).
+> Ensemble, ils rendent la navigation **robuste** *et* **confortable**.
+
+</v-click>
+
+---
+layout: default
+---
+
+# Les costmaps
+
+Nav2 raisonne sur **deux grilles de coût** complémentaires — il **planifie globalement** et **réagit localement** :
+
+<div class="bc-cards bc-cards--2">
+<div class="bc-card" v-click><div class="bc-card__title">🗺️ Global costmap</div><p>La carte statique <code>/map</code> + obstacles connus. Sert au <strong>planner</strong> pour le chemin global.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">📡 Local costmap</div><p>Fenêtre glissante alimentée par le <strong>LiDAR temps réel</strong>. Sert au <strong>controller</strong> pour éviter les obstacles dynamiques.</p></div>
+</div>
+
+<v-click>
+
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">💡</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Inflation</div>
+<p>Une marge de coût est « gonflée » autour des obstacles (<code>inflation_radius</code>) pour garder le robot à distance des murs.</p>
+</div>
+</div>
 
 </v-click>
 
@@ -442,68 +761,6 @@ graph LR
 <v-click>
 
 > Pour une base holonome, préférez **`drive_on_heading`** à `back_up` — manœuvres latérales possibles.
-
-</v-click>
-
----
-layout: section
-eyebrow: Partie 04 · Exercices
----
-
-# Exercices
-
-::note::
-Quatre exercices guidés — sim + SLAM + Nav2.
-
----
-layout: two-cols
----
-
-# Exercices 1 & 2
-
-**1 — Cartographier une pièce**
-
-- Sim + `slam.launch.py slam_mode:=map`.
-- Couvrir toute la zone, fermer une boucle.
-- `map_saver_cli`, puis recharger en **localisation** (`slam_mode:=localize`).
-
-::right::
-
-**2 — Tuner le controller MPPI**
-
-Un paramètre à la fois (`config/nav2/nav2.yaml`) :
-
-- `vx_max`, `vy_max`, `wz_max`
-- `time_steps` × `model_dt` (horizon)
-- `critic_names` (Obstacles, GoalAngle…)
-- `inflation_radius`
-
-Mesurez : temps, distance, confort.
-
----
-layout: two-cols
----
-
-# Exercices 3 & 4
-
-**3 — Obstacle dynamique**
-
-- Spawn un cube pendant la navigation.
-- Le `local_costmap` s'allume quand le LiDAR le voit.
-- MPPI **replanifie** localement.
-
-> Combien de temps avant réaction ?
-
-::right::
-
-**4 — Mission multi-waypoints**
-
-- Action `/follow_waypoints` (`waypoint_follower`).
-- Liste de `PoseStamped`, visite ordonnée + pauses.
-
-<v-click>
-
-> **Bonus** : émettre un message ROS à chaque waypoint atteint → prépare le Jour 5 (intégration).
 
 </v-click>
 

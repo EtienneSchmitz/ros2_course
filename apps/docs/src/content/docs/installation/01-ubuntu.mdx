@@ -130,7 +130,7 @@ ROS 2 et Gazebo s'installent ensemble : le bridge `ros_gz` fait le lien entre le
       | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
     ```
 
-3. **Installer les paquets.** Le métapaquet `ros-kilted-desktop` inclut RViz 2, les démos, et la majorité des paquets utiles ; on y ajoute `joint-state-publisher` (visualisation URDF, sliders de joints) utilisé tout au long du cours.
+3. **Installer les paquets.** Le métapaquet `ros-kilted-desktop` inclut RViz 2, les démos, et la majorité des paquets utiles ; on y ajoute `joint-state-publisher` (visualisation URDF, sliders de joints) et `foxglove-bridge` (pont WebSocket pour Foxglove), tous deux utilisés tout au long du cours.
 
     ```bash
     sudo apt update && sudo apt upgrade -y
@@ -138,8 +138,22 @@ ROS 2 et Gazebo s'installent ensemble : le bridge `ros_gz` fait le lien entre le
       ros-kilted-desktop \
       python3-argcomplete \
       ros-kilted-joint-state-publisher \
-      ros-kilted-joint-state-publisher-gui
+      ros-kilted-joint-state-publisher-gui \
+      ros-kilted-foxglove-bridge
     ```
+
+    <Aside type="note" title="Foxglove — visualiseur de complément">
+    En plus de RViz (qui reste l'outil d'**interaction** : goals Nav2, planification MoveIt),
+    le cours utilise **[Foxglove](https://foxglove.dev)** pour l'**inspection / monitoring** :
+    visu 3D web, lecture des valeurs de topics, courbes. Le paquet ci-dessus installe seulement
+    le **pont** côté ROS ; installez l'application depuis [foxglove.dev](https://foxglove.dev)
+    (ou utilisez-la dans le navigateur). On lance le pont quand on en a besoin :
+
+    ```bash
+    ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
+    ```
+
+    </Aside>
 
 4. **Sourcer ROS 2** dans votre `~/.bashrc`, puis vérifier que `ros2` répond.
 

@@ -141,17 +141,40 @@ ros2 topic hz /joint_states                 # la fréquence des états de joints
 </details>
 </Aside>
 
-<Aside type="note" title="Aller plus loin — autres visualiseurs">
-[Foxglove](https://foxglove.dev) affiche le robot dans un panneau **3D** à partir
-de `/robot_description` + tf. Lancez le pont WebSocket en parallèle du launch :
+### Inspecter le bras avec Foxglove
+
+RViz est notre outil d'**interaction** (planification MoveIt à la partie suivante), mais pour
+**inspecter** le bras — le voir en 3D *et* **lire les valeurs** des articulations —
+[Foxglove](https://foxglove.dev) est plus confortable (interface web, panneaux *Raw Messages*
+et *Plot*).
+
+Gardez le launch de découverte du bras actif et démarrez le **pont** dans un autre terminal :
 
 ```bash
-ros2 run foxglove_bridge foxglove_bridge   # ws://localhost:8765
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
 ```
 
-Connectez-vous à `ws://localhost:8765` dans Foxglove puis ajoutez un panneau
-**3D** : le bras et ses repères suivent les sliders en direct.
+Connectez-vous à `ws://localhost:8765` dans Foxglove (cf. [Installation](/installation/01-ubuntu/)),
+puis ajoutez :
 
+- un panneau **3D** : le bras et ses repères, à partir de `/robot_description` + `tf` ;
+- un panneau **Raw Messages** sur `/joint_states` : les angles articulaires en direct.
+
+<Aside type="tip" title="Exercice — Suivre une articulation dans Foxglove">
+Pont Foxglove lancé et le bras affiché en 3D :
+
+1. Bougez une articulation (sliders, ou plus tard via MoveIt) et **relevez son angle**
+   (en radians) dans un panneau **Raw Messages** sur `/joint_states`.
+2. Ajoutez un panneau **Plot** sur ce même joint et observez la courbe pendant le mouvement.
+
+À la partie suivante, vous **piloterez le bras depuis RViz** (*drag → Plan → Execute*) tout
+en **observant la trajectoire articulaire dans Foxglove** — c'est la complémentarité visée :
+RViz commande, Foxglove inspecte.
+
+*Livrable* : l'angle relevé et une description de la courbe pendant un mouvement.
+</Aside>
+
+<Aside type="note" title="Aller plus loin — visualisation autonome">
 Pour une visualisation 3D **autonome** (sans RViz ni nœud ROS),
 [`urdf-viz`](https://github.com/openrr/urdf-viz) ouvre directement le
 `/tmp/so101.urdf` généré plus haut (workspace sourcé pour résoudre les
