@@ -456,7 +456,7 @@ layout: default
 
 Du **but** à la **commande moteur** : qui calcule quoi, et avec quelles données.
 
-<div class="bc-media" style="justify-content: flex-start;">
+<div class="bc-media" style="justify-content: flex-start; height: auto;">
 <img src="./img/nav2-pipeline.svg" alt="Pipeline Nav2 : goal → bt_navigator → planner → controller → cmd_vel, alimenté par les costmaps (map, scan)" style="max-height: 300px; width: auto; max-width: 100%;" />
 </div>
 
@@ -646,8 +646,8 @@ layout: default
 
 Quand le robot est bloqué, le behavior tree déclenche un **recovery** :
 
-<div class="bc-media">
-<img src="./img/recoveries.svg" alt="Recovery : échec → spin / drive_on_heading / wait → clear_costmap → réessai" style="max-height: 300px;" />
+<div class="bc-media" style="justify-content: flex-start; padding-top: 0.5rem; height: auto;">
+<img src="./img/recoveries.svg" alt="Recovery : échec → spin / drive_on_heading / wait → clear_costmap → réessai" style="max-height: 235px; width: auto; max-width: 100%;" />
 </div>
 
 <v-click>

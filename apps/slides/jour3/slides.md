@@ -95,8 +95,9 @@ Chaque joint a des **limites** : butées de position, vitesse max, effort max.
 
 <div class="bc-media bc-media--frame" style="height: 80%;">
 
-<!-- TODO : remplacer ce placeholder par l'image du joint (à recevoir).
-     <img src="./img/joint_types.png" alt="Types de joints : rotationnel (revolute) vs linéaire (prismatic)" style="max-height: 72vh; width: auto; max-width: 100%;" /> -->
+<!-- TODO : déposer l'image du joint (rotationnel vs linéaire) dans le dossier des
+     ressources, puis ajouter ici la balise image correspondante. Chemin laissé vide
+     volontairement pour ne pas faire échouer le link-checker CI tant que le fichier manque. -->
 
 <p style="opacity: 0.45; font-style: italic;">🖼️ Image joint — à insérer (rotationnel vs linéaire)</p>
 
