@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 400" font-family="'JetBrains Mono', ui-monospace, monospace">
+  <defs>
+    <marker id="sf-in" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#40a8c4"/>
+    </marker>
+    <marker id="sf-out" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#5bc07a"/>
+    </marker>
+  </defs>
+
+  <!-- entrées -->
+  <rect x="20" y="40" width="210" height="46" rx="8" fill="#212833" stroke="#40a8c4" stroke-width="2"/>
+  <text x="125" y="68" fill="#e6edf3" font-size="14" text-anchor="middle">/scan (LaserScan)</text>
+  <rect x="20" y="110" width="210" height="46" rx="8" fill="#212833" stroke="#40a8c4" stroke-width="2"/>
+  <text x="125" y="132" fill="#e6edf3" font-size="13" text-anchor="middle">/tf</text>
+  <text x="125" y="149" fill="#9ba7b4" font-size="12" text-anchor="middle">odom → base_footprint</text>
+
+  <!-- noeud -->
+  <rect x="200" y="180" width="160" height="60" rx="10" fill="#2a323d" stroke="#ff7a1a" stroke-width="2.5"/>
+  <text x="280" y="216" fill="#ff7a1a" font-size="16" text-anchor="middle">slam_toolbox</text>
+
+  <!-- sorties -->
+  <rect x="20" y="300" width="150" height="44" rx="8" fill="#212833" stroke="#5bc07a" stroke-width="2"/>
+  <text x="95" y="327" fill="#e6edf3" font-size="14" text-anchor="middle">/map</text>
+  <rect x="205" y="300" width="150" height="44" rx="8" fill="#212833" stroke="#5bc07a" stroke-width="2.5"/>
+  <text x="280" y="327" fill="#e6edf3" font-size="13" text-anchor="middle">/tf (map→odom)</text>
+  <rect x="390" y="300" width="150" height="44" rx="8" fill="#212833" stroke="#5bc07a" stroke-width="2"/>
+  <text x="465" y="327" fill="#e6edf3" font-size="13" text-anchor="middle">/map_metadata</text>
+
+  <!-- flèches entrées -> noeud -->
+  <path d="M230 63 Q 280 110 280 178" fill="none" stroke="#40a8c4" stroke-width="2.5" marker-end="url(#sf-in)"/>
+  <path d="M230 133 Q 280 150 280 178" fill="none" stroke="#40a8c4" stroke-width="2.5" marker-end="url(#sf-in)"/>
+
+  <!-- flèches noeud -> sorties -->
+  <path d="M250 242 Q 150 270 100 296" fill="none" stroke="#5bc07a" stroke-width="2.5" marker-end="url(#sf-out)"/>
+  <path d="M280 242 L280 296" fill="none" stroke="#5bc07a" stroke-width="3" marker-end="url(#sf-out)"/>
+  <path d="M320 242 Q 430 270 460 296" fill="none" stroke="#5bc07a" stroke-width="2.5" marker-end="url(#sf-out)"/>
+</svg>

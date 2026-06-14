@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" font-family="'JetBrains Mono', ui-monospace, monospace">
+  <defs>
+    <marker id="fb-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9ba7b4"/>
+    </marker>
+    <marker id="fb-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#40a8c4"/>
+    </marker>
+  </defs>
+
+  <!-- pose A -->
+  <circle cx="80" cy="90" r="40" fill="#212833" stroke="#ff7a1a" stroke-width="2.5"/>
+  <text x="80" y="86" fill="#e6edf3" font-size="15" text-anchor="middle">pose A</text>
+  <text x="80" y="104" fill="#9ba7b4" font-size="12" text-anchor="middle">(début)</text>
+
+  <!-- B -->
+  <rect x="220" y="62" width="56" height="56" rx="8" fill="#212833" stroke="#323b48" stroke-width="2"/>
+  <text x="248" y="96" fill="#e6edf3" font-size="16" text-anchor="middle">B</text>
+  <!-- C -->
+  <rect x="360" y="62" width="56" height="56" rx="8" fill="#212833" stroke="#323b48" stroke-width="2"/>
+  <text x="388" y="96" fill="#e6edf3" font-size="16" text-anchor="middle">C</text>
+  <!-- retour près de A -->
+  <rect x="380" y="200" width="150" height="50" rx="8" fill="#212833" stroke="#323b48" stroke-width="2"/>
+  <text x="455" y="231" fill="#e6edf3" font-size="13" text-anchor="middle">retour près de A</text>
+
+  <!-- chemin -->
+  <line x1="123" y1="90" x2="214" y2="90" stroke="#9ba7b4" stroke-width="2.5" marker-end="url(#fb-ar)"/>
+  <line x1="278" y1="90" x2="354" y2="90" stroke="#9ba7b4" stroke-width="2.5" marker-end="url(#fb-ar)"/>
+  <path d="M398 120 Q 430 170 450 196" fill="none" stroke="#9ba7b4" stroke-width="2.5" marker-end="url(#fb-ar)"/>
+
+  <!-- boucle reconnue : retour vers A -->
+  <path d="M380 228 Q 200 270 92 128" fill="none" stroke="#40a8c4" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#fb-loop)"/>
+  <rect x="170" y="244" width="170" height="28" rx="6" fill="#161b22"/>
+  <text x="255" y="263" fill="#40a8c4" font-size="13" text-anchor="middle">boucle reconnue</text>
+
+  <!-- erreur redistribuée -->
+  <line x1="455" y1="250" x2="455" y2="294" stroke="#9ba7b4" stroke-width="2.5" marker-end="url(#fb-ar)"/>
+  <rect x="320" y="298" width="230" height="50" rx="8" fill="#212833" stroke="#5bc07a" stroke-width="2"/>
+  <text x="435" y="320" fill="#e6edf3" font-size="13" text-anchor="middle">erreur redistribuée</text>
+  <text x="435" y="338" fill="#5bc07a" font-size="13" text-anchor="middle">→ carte cohérente</text>
+</svg>
