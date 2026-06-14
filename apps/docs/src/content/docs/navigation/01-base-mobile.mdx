@@ -100,21 +100,60 @@ ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
 Dans l'application Foxglove (cf. [Installation](/installation/01-ubuntu/)), connectez-vous à
 `ws://localhost:8765`, puis ajoutez deux panneaux :
 
-- un panneau **3D** : il affiche le robot à partir de `/robot_description` + `tf` (la base
-  suit les `joint_states` que vous bougez avec les sliders) ;
+- un panneau **3D** : pour voir le **maillage** du robot (et pas seulement les repères),
+  ajoutez une couche **URDF** via *Custom layers → + → URDF*. Réglez **Source = `Parameter`**
+  et **Parameter = `robot_description`** (la source `Topic` refuse `/robot_description`, qui est
+  un `std_msgs/String`). La base suit ensuite la `tf` en direct ;
 - un panneau **Raw Messages** abonné à `/joint_states` : vous y lisez en direct la **valeur**
   de chaque articulation.
 
-<Aside type="tip" title="Exercice — Lire les topics dans Foxglove">
-Avec `display.launch.py` + le pont Foxglove lancés :
+<Aside type="caution" title="Robot mal orienté ou meshes invisibles : trois réglages">
+La visu 3D de Foxglove a trois pièges classiques avec un robot ROS — tous **côté affichage**,
+la TF reste correcte :
 
-1. Affichez le robot dans un panneau **3D** et bougez une roue avec le `joint_state_publisher_gui`.
-2. Dans un panneau **Raw Messages** sur `/joint_states`, **relevez la valeur** (en radians)
-   de l'articulation que vous bougez.
-3. Ajoutez un panneau **Plot** sur ce même champ et observez la courbe pendant que vous agitez
-   le slider.
+1. **Meshes tournés de 90°** (roues/lidar « couchés ») : les `.stl` n'ont pas d'axe vertical,
+   et Foxglove est par défaut en **Y-up**. Mettez **Scene → Mesh up-axis = `Z-up`** (la
+   convention ROS). C'est le réglage qui fait que RViz est correct mais pas Foxglove.
+2. **Vue de travers** : réglez **Display frame = `base_footprint`** (repère au sol) et
+   **Follow mode = `Position only`** pour que la caméra ne bascule pas quand le robot tourne.
+3. **Meshes absents** (robot réduit à des axes) : `foxglove_bridge` n'a pas pu résoudre
+   `package://lekiwi_description/...`. Relancez le pont depuis un terminal **sourcé**
+   (`source ~/ros2_bootcamp_ws/install/setup.bash`).
 
-*Livrable* : la valeur lue et une capture (ou description) de la courbe du Plot.
+</Aside>
+
+<Aside type="tip" title="Exercice — Plotter un joint qui bouge dans Foxglove">
+Le topic `/joint_states` (`sensor_msgs/JointState`) publie les positions des trois roues :
+`left_wheel_joint`, `back_wheel_joint`, `right_wheel_joint`. Faisons tourner les roues et
+traçons leur valeur en direct.
+
+1. Faites **bouger** les roues : soit en téléop (`teleop_azerty`, le robot roule donc les roues
+   tournent), soit avec le `joint_state_publisher_gui` si vous êtes en `display.launch.py`.
+2. Dans un panneau **Raw Messages** sur `/joint_states`, **relevez la valeur** (en radians) du
+   champ `position` de la roue qui tourne.
+3. Ajoutez un panneau **Plot** et saisissez le **message path** par index :
+
+   ```text
+   /joint_states.position[0]
+   ```
+
+   `/joint_states` (`sensor_msgs/JointState`) utilise des **tableaux parallèles** :
+   `name[]` et `position[]` sont indexés dans le même ordre. Le filtre par nom
+   (`position[:]{name==...}`) **ne marche pas** ici, car `position` est un tableau de
+   flottants nus, sans champ `name` par élément. On adresse donc par index — repérez
+   l'ordre dans un panneau *Raw Messages* :
+
+   | Index | Roue |
+   | --- | --- |
+   | `position[0]` | `left_wheel_joint` |
+   | `position[1]` | `back_wheel_joint` |
+   | `position[2]` | `right_wheel_joint` |
+
+   La courbe monte en marche avant (roue `continuous` : la position s'incrémente sans
+   borne) et descend en marche arrière. Ajoutez `position[1]` et `position[2]` pour comparer
+   les trois roues.
+
+*Livrable* : la valeur lue + une capture du Plot des trois roues pendant un aller-retour.
 </Aside>
 
 ## Lancer la simulation
@@ -137,34 +176,16 @@ parallèle (collision du `controller_manager`). Entre deux essais, tuez les
 
 ### Découvrir le graphe du robot
 
-Le robot tourne : avant de le piloter, **inspectez son graphe ROS 2**. Dans
-un nouveau terminal :
+Le robot tourne : avant de le piloter, **inspectez son graphe ROS 2** pour comprendre
+**qui parle à qui**. Dans un nouveau terminal, lancez vous-même la visualisation :
 
 ```bash
-ros2 node list      # les processus actifs
-ros2 topic list     # les canaux de données
-ros2 service list   # les appels requête/réponse
-ros2 action list    # les tâches longues
-rqt_graph           # visualisation "qui parle à qui"
+rqt_graph
 ```
 
-Pour creuser un élément précis :
-
-```bash
-ros2 topic info /scan --verbose      # type + publishers/subscribers
-ros2 topic hz /scan                  # fréquence du LiDAR
-ros2 node info /twist_mux            # entrées/sorties d'un nœud
-ros2 topic info /cmd_vel --verbose   # qui publie /cmd_vel, qui le consomme ?
-```
-
-<figure>
-<img
-  src="/img/jour2-rqt-graph-sim.png"
-  alt="Capture rqt_graph de la sim LeKiwi : nœuds et topics reliés (ros_gz, twist_mux, controller_manager, ekf_filter_node)."
-  style="width: 100%; height: auto;"
-/>
-<figcaption>La vraie tête du graphe dans <code>rqt_graph</code>, sim lancée.</figcaption>
-</figure>
+Activez l'affichage des topics (cochez *Nodes/Topics*) : vous devez retrouver les
+nœuds `ros_gz`, `twist_mux`, `controller_manager` et `ekf_filter_node` reliés par
+leurs topics.
 
 <Aside type="tip" title="Vérifiez votre compréhension">
 En explorant le graphe, répondez **avant** de regarder le corrigé :
@@ -199,12 +220,14 @@ En explorant le graphe, répondez **avant** de regarder le corrigé :
 En reliant les réponses ci-dessus, vous reconstituez la **chaîne des commandes
 de vitesse** — du clavier (ou de Nav2) jusqu'aux roues :
 
-```text
-  téléop ──► /cmd_vel_teleop ─┐
-                              ├─► twist_mux ──► /cmd_vel ──► omni_wheel_drive_controller ──► roues
-  (Nav2) ──► /cmd_vel_nav   ──┘                                            │
-                                                                          └─► /odom
-```
+<figure style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+<img
+  src="/img/cmd-vel-chain.svg"
+  alt="Chaîne des commandes de vitesse : téléop AZERTY (prioritaire) → /cmd_vel_teleop et Nav2 → /cmd_vel_nav sont arbitrés par twist_mux → /cmd_vel → omni_wheel_drive_controller, qui pilote les 3 roues et publie /odom."
+  style="width: 100%; max-width: 900px; height: auto;"
+/>
+<figcaption>Du clavier (ou de Nav2) jusqu'aux roues, en passant par <code>twist_mux</code> et <code>omni_wheel_drive_controller</code>.</figcaption>
+</figure>
 
 `twist_mux` arbitre les sources (la téléop est prioritaire sur Nav2) et tous
 ces topics sont en **`geometry_msgs/TwistStamped`** — c'est pourquoi le téléop
@@ -223,6 +246,15 @@ avec `L` = rayon entre le centre du robot et chaque roue (≈ 0,13 m sur le
 LeKiwi). C'est cette **cinématique inverse** qui, en combinant les trois roues,
 produit le mouvement holonome. En retour, le contrôleur publie l'odométrie
 `/odom` (intégration des vitesses de roues), que l'EKF fusionnera avec l'IMU.
+
+<figure style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+<img
+  src="/img/ros2-control-archi.svg"
+  alt="Architecture ros2_control de la base : /cmd_vel entre dans le controller_manager (omni_wheel_drive_controller + joint_state_broadcaster), qui écrit les consignes via les command_interfaces vers le hardware interface (gz_ros2_control en sim, driver moteurs en réel) et lit l'état via les state_interfaces ; le hardware interface pilote le robot et le contrôleur publie /odom, le broadcaster /joint_states."
+  style="width: 100%; max-width: 640px; height: auto;"
+/>
+<figcaption>L'architecture <code>ros2_control</code> de la base : la même pile en simulation et sur le robot réel — seul le <em>hardware interface</em> change.</figcaption>
+</figure>
 
 <Aside type="note" title="Pourquoi passer par ros2_control ?">
 Le calcul cinématique vit dans un **contrôleur standard, configurable et

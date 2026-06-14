@@ -8,16 +8,18 @@ sidebar:
 
 import { Aside } from "@astrojs/starlight/components";
 
-Naviguer de façon autonome se fait en **deux temps**, qui structurent cette page :
+À la page précédente, le robot savait *comment il avait bougé* (l'odométrie) mais pas
+*où il se trouvait* : il lui manquait une frame `map`, la référence absolue. Lui donner
+ce qui lui manque pour se déplacer **vers un but** dans un environnement qu'il découvre
+se fait en **deux temps**, qui structurent cette page :
 
 1. **[Cartographier](#1--cartographier-lenvironnement)** l'environnement pendant
    qu'on s'y localise — le **SLAM** (`slam_toolbox`) — puis **sauvegarder** la carte.
 2. **[Naviguer](#2--naviguer-dans-la-carte)** dans cette carte : planifier et suivre
    des trajectoires en évitant les obstacles — la stack **Nav2**.
 
-À la page précédente, on a constaté qu'**il manquait une frame `map`** : sans elle, le
-robot connaît son déplacement (odométrie) mais pas sa position absolue. Le SLAM comble
-exactement ce manque.
+Le premier temps comble exactement le manque repéré à la page précédente : c'est le SLAM
+qui (re)construit la frame `map` et y ancre le robot.
 
 ## 1 · Cartographier l'environnement
 
@@ -28,37 +30,28 @@ référence pour des bases 2D avec LiDAR est
 
 ### Entrées / sorties
 
-```text
-   /scan (LaserScan)        ───┐
-   /tf (odom → base_footprint) ─┤
-                                ▼
-                         slam_toolbox  ──► /map (OccupancyGrid)
-                                       ──► /tf (map → odom)
-                                       ──► /map_metadata
-```
-
 <figure>
 <img
-  src="/img/jour2-rqt-graph-slam.png"
-  alt="rqt_graph avec slam_toolbox actif : /scan et /tf en entrée, /map en sortie."
+  src="/img/slam-io.svg"
+  alt="Entrées et sorties de slam_toolbox : /scan (LaserScan) et /tf (odom → base_footprint) en entrée ; /map (OccupancyGrid), /tf (map → odom, qui corrige la dérive) et /map_metadata en sortie."
   style="width: 100%; height: auto;"
 />
-<figcaption>À quoi ça ressemble dans <code>rqt_graph</code>, <code>slam_toolbox</code> lancé.</figcaption>
+<figcaption>Ce que <code>slam_toolbox</code> consomme et ce qu'il produit.</figcaption>
 </figure>
+
+<Aside type="tip" title="À vous de jouer">
+Une fois le SLAM lancé (section suivante), ouvrez `rqt_graph` dans un nouveau
+terminal pour retrouver ce schéma sur le graphe réel : `/scan` et `/tf` entrent
+dans `slam_toolbox`, `/map` en sort.
+
+```bash
+rqt_graph
+```
+</Aside>
 
 Ce qu'il faut surtout retenir : `slam_toolbox` publie la transformation
 **`map → odom`**, qui **corrige la dérive de l'odométrie** en recalant les scans laser.
 On obtient enfin la chaîne complète `map → odom → base_footprint`.
-
-### Modes de slam_toolbox
-
-Le launch `slam.launch.py` expose l'argument `slam_mode` :
-
-| `slam_mode` | Rôle |
-| --- | --- |
-| **`map`** | Cartographie (`slam_toolbox` en *mapping*). **Mode pour construire la carte.** |
-| `localize` | Localisation sur une carte sérialisée existante (`slam_toolbox`). |
-| `amcl` | Localisation AMCL sur une carte statique (`nav2_map_server` + `amcl`). |
 
 ### Lancer le SLAM (tout-en-un)
 
@@ -106,9 +99,14 @@ Quelques principes pour une bonne carte :
 ### Sauvegarder la carte
 
 Une fois satisfait, sauvegardez la carte dans un **sous-dossier** de `maps/` (une carte =
-un dossier `map.yaml` + `map.pgm`) :
+un dossier `map.yaml` + `map.pgm`). `map_saver_cli` ne crée pas le dossier : créez-le
+d'abord, puis sauvegardez :
 
 ```bash
+# 1. créer le dossier de la carte
+mkdir -p ~/ros2_bootcamp_ws/src/lekiwi_ros2/lekiwi_navigation/maps/bootcamp
+
+# 2. sauvegarder la carte dedans
 ros2 run nav2_map_server map_saver_cli \
   -f ~/ros2_bootcamp_ws/src/lekiwi_ros2/lekiwi_navigation/maps/bootcamp/map
 ```
@@ -124,10 +122,6 @@ Plus besoin de cartographier : on relance en mode **localisation** sur la carte
 `bootcamp`, via le launch tout-en-un :
 
 ```bash
-# slam_toolbox en localisation
-ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
-
-# ... ou AMCL sur carte statique
 ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=amcl map_name:=bootcamp
 ```
 
@@ -228,7 +222,7 @@ ros2 run lekiwi_navigation go_to
 
 Adaptez les coordonnées du goal (`GOAL_X`, `GOAL_Y` en tête de fichier) à votre carte —
 le monde `bootcamp` est une enceinte 8 × 8 m (origine au centre). Visez par exemple une
-zone repère, p. ex. `zone_a` en `(-3, 3)` (cf. [exercice 5](#exercice-5--mission-finale--le-tour-des-3-zones-)).
+zone repère, p. ex. `zone_a` en `(-3, 3)` (cf. [exercice final](#3--exercice-final--le-tour-des-3-zones-)).
 
 ### Recoveries
 
@@ -301,12 +295,21 @@ Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
    ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
    ```
 
-2. Se connecter à `ws://localhost:8765` dans Foxglove et préparer les panneaux :
-   - **3D** : afficher la carte `/map`, le scan `/scan` et les **costmaps** (global + local) ;
-   - **Plot** : tracer les composantes de `/cmd_vel` ;
-   - **Raw Messages** : s'abonner à `/odom` pour **relever une valeur** de pose.
-3. Poser un **Nav2 Goal dans RViz** et observer, côté Foxglove : la trajectoire suivie, le
-   local costmap qui s'allume autour des obstacles, et la courbe `/cmd_vel`.
+2. Se connecter à `ws://localhost:8765` dans Foxglove et préparer un panneau **3D**. Dans ses
+   réglages, fixez **Fixed frame = `odom`** (ou `map`), puis activez les topics dans la section
+   **Topics** :
+   - **`/scan`** (`sensor_msgs/LaserScan`) — **ce que « voit » le robot** : les rayons du LiDAR
+     se dessinent autour de lui et épousent les murs/obstacles. Ajustez taille et couleur des
+     points dans les réglages du topic ;
+   - **`/map`** (`nav_msgs/OccupancyGrid`) — la carte du SLAM, qui se remplit au fil du
+     déplacement (n'apparaît que SLAM lancé) ;
+   - les **costmaps** global et local pour voir l'inflation autour des obstacles.
+3. Ajoutez en plus :
+   - un panneau **Plot** sur les composantes de `/cmd_vel` ;
+   - un panneau **Raw Messages** sur `/odom` pour **relever une valeur** de pose.
+4. Poser un **Nav2 Goal dans RViz** et observer, côté Foxglove : le `/scan` qui balaie, la
+   trajectoire suivie, le local costmap qui s'allume autour des obstacles, et la courbe
+   `/cmd_vel`.
 
 *Livrable* : la valeur de pose `/odom` relevée à l'arrivée + une description de la courbe
 `/cmd_vel` pendant le trajet.

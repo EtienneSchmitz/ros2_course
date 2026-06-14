@@ -157,8 +157,16 @@ ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
 Connectez-vous à `ws://localhost:8765` dans Foxglove (cf. [Installation](/installation/01-ubuntu/)),
 puis ajoutez :
 
-- un panneau **3D** : le bras et ses repères, à partir de `/robot_description` + `tf` ;
+- un panneau **3D** : le bras et ses repères. Ajoutez une couche **URDF** (*Custom layers → +
+  → URDF*) avec **Source = `Parameter`**, **Parameter = `robot_description`** ;
 - un panneau **Raw Messages** sur `/joint_states` : les angles articulaires en direct.
+
+<Aside type="caution" title="Bras mal orienté / meshes invisibles ?">
+Mêmes pièges d'affichage que pour la base mobile — voir
+[Inspecter le robot avec Foxglove](/navigation/01-base-mobile/#inspecter-le-robot-avec-foxglove) :
+**Scene → Mesh up-axis = `Z-up`** (sinon meshes tournés de 90°), et relancez le pont depuis un
+terminal **sourcé** si les meshes n'apparaissent pas.
+</Aside>
 
 <Aside type="tip" title="Exercice — Suivre une articulation dans Foxglove">
 Pont Foxglove lancé et le bras affiché en 3D :

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 220" width="1180" height="220" role="img" aria-labelledby="cvc-title cvc-desc" font-family="'JetBrains Mono', ui-monospace, monospace">
+  <title id="cvc-title">Chaîne des commandes de vitesse de la base LeKiwi</title>
+  <desc id="cvc-desc">Deux sources de vitesse — la téléopération AZERTY (prioritaire) qui publie sur /cmd_vel_teleop et Nav2 qui publie sur /cmd_vel_nav — sont arbitrées par twist_mux, qui produit /cmd_vel. Le contrôleur omni_wheel_drive_controller transforme /cmd_vel en rotation des trois roues et publie l'odométrie /odom.</desc>
+
+  <defs>
+    <marker id="cvc-cmd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#ff7a1a"/>
+    </marker>
+    <marker id="cvc-out" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#5bc07a"/>
+    </marker>
+  </defs>
+
+  <!-- sources -->
+  <rect x="20" y="24" width="140" height="48" rx="8" fill="#212833" stroke="#40a8c4" stroke-width="2"/>
+  <text x="90" y="45" fill="#e6edf3" font-size="13" text-anchor="middle">téléop AZERTY</text>
+  <text x="90" y="62" fill="#ff7a1a" font-size="11" text-anchor="middle">prioritaire</text>
+
+  <rect x="20" y="148" width="140" height="48" rx="8" fill="#212833" stroke="#40a8c4" stroke-width="2"/>
+  <text x="90" y="177" fill="#e6edf3" font-size="14" text-anchor="middle">Nav2</text>
+
+  <!-- topics sources -->
+  <rect x="180" y="25" width="160" height="46" rx="8" fill="#212833" stroke="#ff7a1a" stroke-width="2"/>
+  <text x="260" y="53" fill="#e6edf3" font-size="13" text-anchor="middle">/cmd_vel_teleop</text>
+
+  <rect x="180" y="149" width="160" height="46" rx="8" fill="#212833" stroke="#ff7a1a" stroke-width="2"/>
+  <text x="260" y="177" fill="#e6edf3" font-size="13" text-anchor="middle">/cmd_vel_nav</text>
+
+  <line x1="160" y1="48" x2="176" y2="48" stroke="#ff7a1a" stroke-width="2.5" marker-end="url(#cvc-cmd)"/>
+  <line x1="160" y1="172" x2="176" y2="172" stroke="#ff7a1a" stroke-width="2.5" marker-end="url(#cvc-cmd)"/>
+
+  <!-- jonction des deux sources -> twist_mux -->
+  <path d="M340 48 L 366 48 L 366 110" fill="none" stroke="#ff7a1a" stroke-width="2.5"/>
+  <path d="M340 172 L 366 172 L 366 110" fill="none" stroke="#ff7a1a" stroke-width="2.5"/>
+  <line x1="366" y1="110" x2="386" y2="110" stroke="#ff7a1a" stroke-width="2.5" marker-end="url(#cvc-cmd)"/>
+
+  <!-- twist_mux (nœud mis en avant) -->
+  <rect x="390" y="82" width="140" height="56" rx="8" fill="#2a323d" stroke="#ff7a1a" stroke-width="2.5"/>
+  <text x="460" y="108" fill="#e6edf3" font-size="14" text-anchor="middle">twist_mux</text>
+  <text x="460" y="125" fill="#9ba7b4" font-size="10" text-anchor="middle">arbitre les sources</text>
+
+  <!-- /cmd_vel -->
+  <rect x="580" y="87" width="120" height="46" rx="8" fill="#212833" stroke="#ff7a1a" stroke-width="2.5"/>
+  <text x="640" y="115" fill="#e6edf3" font-size="14" text-anchor="middle">/cmd_vel</text>
+  <line x1="530" y1="110" x2="576" y2="110" stroke="#ff7a1a" stroke-width="2.5" marker-end="url(#cvc-cmd)"/>
+
+  <!-- omni_wheel_drive_controller (contrôleur clé) -->
+  <rect x="750" y="82" width="210" height="56" rx="8" fill="#2a323d" stroke="#ff7a1a" stroke-width="2.5"/>
+  <text x="855" y="106" fill="#ff7a1a" font-size="13" text-anchor="middle">omni_wheel_</text>
+  <text x="855" y="124" fill="#ff7a1a" font-size="13" text-anchor="middle">drive_controller</text>
+  <line x1="700" y1="110" x2="746" y2="110" stroke="#ff7a1a" stroke-width="2.5" marker-end="url(#cvc-cmd)"/>
+
+  <!-- roues -->
+  <rect x="1010" y="58" width="150" height="46" rx="8" fill="#212833" stroke="#323b48" stroke-width="2"/>
+  <text x="1085" y="86" fill="#e6edf3" font-size="14" text-anchor="middle">3 roues (120°)</text>
+  <path d="M960 100 L 985 100 L 985 81 L 1006 81" fill="none" stroke="#ff7a1a" stroke-width="2.5" marker-end="url(#cvc-cmd)"/>
+
+  <!-- /odom (retour) -->
+  <rect x="1010" y="140" width="150" height="46" rx="8" fill="#212833" stroke="#5bc07a" stroke-width="2"/>
+  <text x="1085" y="168" fill="#e6edf3" font-size="14" text-anchor="middle">/odom</text>
+  <path d="M960 120 L 985 120 L 985 163 L 1006 163" fill="none" stroke="#5bc07a" stroke-width="2.5" marker-end="url(#cvc-out)"/>
+</svg>
