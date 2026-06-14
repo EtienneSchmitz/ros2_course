@@ -48,10 +48,10 @@ layout: default
 Un robot mobile navigue pour **accomplir une mission** dans un environnement réel :
 
 <div class="bc-cards bc-cards--2">
-<div class="bc-card" v-click><div class="bc-card__title">🧺 Livrer</div><p>transporter un colis d'un point à un autre.</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">🧹 Nettoyer</div><p>couvrir toute la surface d'une pièce.</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">🗺️ Explorer</div><p>cartographier un lieu inconnu.</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">👣 Suivre</div><p>accompagner une personne en mouvement.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🧺 Livrer</div><p>Transporter un colis d'un point à un autre.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🧹 Nettoyer</div><p>Couvrir toute la surface d'une pièce.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🗺️ Explorer</div><p>Cartographier un lieu inconnu.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">👣 Suivre</div><p>Accompagner une personne en mouvement.</p></div>
 </div>
 
 <v-click>
@@ -96,17 +96,17 @@ layout: two-cols
 
 </v-clicks>
 
-::right::
-
-<div class="bc-media bc-media--frame">
-<img src="./img/logo_nav2.png" alt="Logo Nav2" style="max-height: 300px;" />
-</div>
-
 <v-click>
 
 > Nav2 orchestre ces briques pour un comportement **intelligent et adaptable**.
 
 </v-click>
+
+::right::
+
+<div class="bc-media bc-media--frame">
+<img src="./img/logo_nav2.png" alt="Logo Nav2" style="max-height: 260px; width: auto; max-width: 100%;" />
+</div>
 
 ---
 layout: section
@@ -127,10 +127,10 @@ layout: default
 Avant le tour d'horizon, **quatre familles** répondent à « où suis-je ? » — chacune avec ses forces :
 
 <div class="bc-cards bc-cards--2">
-<div class="bc-card" v-click><div class="bc-card__title">🌀 IMU</div><p>mouvement propre (gyroscope + accéléromètre). Haute fréquence, mais <strong>dérive</strong>.</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">🛞 Odométrie</div><p>encodeurs + IMU fusionnés → pose <strong>continue</strong>, mais cumulative.</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">📡 Multilatération</div><p>distances à des balises fixes — <strong>UWB</strong> (intérieur), <strong>GPS-RTK</strong> (extérieur).</p></div>
-<div class="bc-card" v-click><div class="bc-card__title">🔦 LiDAR</div><p>profondeur par laser → obstacles et <strong>cartographie (SLAM)</strong>.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🌀 IMU</div><p>Mouvement propre (gyroscope + accéléromètre). Haute fréquence, mais <strong>dérive</strong>.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🛞 Odométrie</div><p>Encodeurs + IMU fusionnés → pose <strong>continue</strong>, mais cumulative.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">📡 Multilatération</div><p>Distances à des balises fixes — <strong>UWB</strong> (intérieur), <strong>GPS-RTK</strong> (extérieur).</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🔦 LiDAR</div><p>Profondeur par laser → obstacles et <strong>cartographie (SLAM)</strong>.</p></div>
 </div>
 
 <v-click>
@@ -192,17 +192,17 @@ Combine **encodeurs de roues** et **IMU** pour estimer la pose en **continu**, p
 
 </v-clicks>
 
-::right::
-
-<div class="bc-media">
-<img src="./img/odometry.png" alt="Illustration de l'odométrie" style="max-height: 280px;" />
-</div>
-
 <v-click>
 
 > Seule, elle ne suffit pas : elle doit être **recalée** par un repère absolu (LiDAR + SLAM).
 
 </v-click>
+
+::right::
+
+<div class="bc-media">
+<img src="./img/odometry.png" alt="Illustration de l'odométrie" style="max-height: 360px; width: auto; max-width: 100%;" />
+</div>
 
 ---
 layout: two-cols
@@ -333,111 +333,70 @@ pour se localiser il faut une carte, pour cartographier il faut savoir où l'on 
 </v-click>
 
 ---
-layout: two-cols
+layout: default
 ---
 
-# La dérive odométrique
+# Comment le SLAM se recale
 
-Pourquoi l'odométrie seule ne suffit pas :
+L'odométrie seule **dérive** : le SLAM la recale en continu sur ce que voit le LiDAR.
 
-- les roues **glissent**, les encodeurs **arrondissent** ;
-- on **intègre** ces petites erreurs à chaque pas ;
-- la pose estimée **s'éloigne** peu à peu du réel.
+<div class="bc-cards bc-cards--3">
+<div class="bc-card" v-click><div class="bc-card__title">🌀 Dérive odométrique</div><p>Les roues <strong>glissent</strong>, les encodeurs <strong>arrondissent</strong> : l'erreur s'accumule à chaque pas.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🧩 Scan matching</div><p>Aligner chaque <code>/scan</code> sur la carte déjà construite → le <strong>déplacement réel</strong>, la dérive corrigée.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🔁 Fermeture de boucle</div><p>Un <strong>lieu reconnu</strong> ferme la boucle → l'erreur est <strong>redistribuée</strong> sur tout le trajet.</p></div>
+</div>
 
 <v-click>
 
-> Il faut un **repère absolu** pour recaler : les **murs** vus au LiDAR ne bougent pas.
+> `slam_toolbox` publie ainsi **`map → odom`**, la transformation qui **corrige la dérive** en recalant les scans.
 
 </v-click>
-
-::right::
-
-<div class="bc-media">
-<img src="./img/derive-odometrique.svg" alt="Trajet réel vs pose odométrique : l'écart grandit avec le temps" style="max-height: 340px;" />
-</div>
-
----
-layout: two-cols
----
-
-# Scan matching & fermeture de boucle
-
-**Scan matching** — à chaque nouveau `/scan`, on **aligne** le nuage de points sur la carte déjà construite. L'alignement donne le **déplacement réel** → on corrige la dérive.
-
-<v-click>
-
-**Fermeture de boucle** — en **reconnaissant un lieu déjà visité**, l'algo « referme » la boucle et **redistribue** l'erreur accumulée sur tout le trajet → carte cohérente.
-
-</v-click>
-
-::right::
-
-<div class="bc-media">
-<img src="./img/fermeture-boucle.svg" alt="Fermeture de boucle : retour près de A, boucle reconnue, erreur redistribuée" style="max-height: 320px;" />
-</div>
-
----
-layout: two-cols
----
-
-# slam_toolbox : flux
-
-**Entrées** → `slam_toolbox` → **sorties** :
-
-- in : `/scan` + `/tf (odom → base_footprint)` ;
-- out : `/map`, `/tf (map → odom)`, `/map_metadata`.
-
-<v-click>
-
-> L'essentiel : il publie **`map → odom`**, la transformation qui **corrige la dérive** en recalant les scans.
-
-</v-click>
-
-::right::
-
-<div class="bc-media">
-<img src="./img/slam-flux.svg" alt="Flux slam_toolbox : entrées scan + tf, sorties map, tf map-odom, map_metadata" style="max-height: 360px;" />
-</div>
-
----
-layout: two-cols
----
-
-# AMCL — Monte-Carlo Localization
-
-Une fois la **carte connue**, plus besoin de la reconstruire : on s'y **localise** avec **AMCL**.
-
-- repose sur un **filtre à particules** : des centaines d'**hypothèses** de pose ;
-- chaque scan **renforce** les bonnes hypothèses, **élimine** les mauvaises ;
-- combine **LiDAR** + **odométrie** + **IMU**.
-
-<v-click>
-
-> SLAM = **construire** la carte · AMCL = **se repérer** dans une carte existante.
-
-</v-click>
-
-::right::
-
-<div class="bc-media">
-<img src="./img/robot_mcl.webp" alt="Particules AMCL en 1D" style="max-height: 280px;" />
-</div>
 
 ---
 layout: default
 ---
 
-# AMCL — convergence 2D
+# AMCL — l'algorithme
 
-<div class="bc-media">
-<img src="./img/AMCL_2D.png" alt="Nuage de particules AMCL convergeant en 2D" style="max-height: 360px; width: auto; max-width: 100%;" />
-</div>
+Une fois la **carte connue**, plus besoin de la reconstruire : on s'y **localise** avec **AMCL** (*Adaptive Monte-Carlo Localization*).
+
+<v-clicks>
+
+- repose sur un **filtre à particules** : des centaines d'**hypothèses** de pose réparties sur la carte ;
+- chaque scan **renforce** les bonnes hypothèses, **élimine** les mauvaises ;
+- combine **LiDAR** + **odométrie** + **IMU**.
+
+</v-clicks>
 
 <v-click>
 
-> Le nuage de particules se **resserre** autour de la vraie pose à mesure que les scans concordent avec la carte.
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">🧭</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">SLAM ≠ AMCL</div>
+<p><strong>SLAM</strong> <em>construit</em> la carte tout en se localisant (aucune carte au départ, il modifie <code>/map</code>). <strong>AMCL</strong> <em>se localise seulement</em> dans une carte <strong>déjà connue</strong> — il ne touche jamais à la carte.</p>
+</div>
+</div>
 
 </v-click>
+
+---
+layout: default
+title: AMCL — le filtre à particules en action
+---
+
+<div class="bc-media" style="height: 100%;">
+<img src="./img/robot_mcl.webp" alt="Étapes du filtre à particules AMCL : initialisation, motion update, sensor update, resampling" style="max-height: 88vh; width: auto; max-width: 100%;" />
+</div>
+
+---
+layout: default
+title: AMCL — convergence 2D
+---
+
+<div class="bc-media" style="height: 100%;">
+<img src="./img/AMCL_2D.png" alt="Nuage de particules AMCL convergeant en 2D" style="max-height: 88vh; width: auto; max-width: 100%;" />
+</div>
 
 ---
 layout: section
@@ -495,11 +454,16 @@ layout: default
 
 # Le pipeline, vu de haut
 
-<div class="bc-media">
-<img src="./img/nav2-pipeline.svg" alt="Pipeline Nav2 : goal → bt_navigator → planner → controller → cmd_vel, alimenté par les costmaps (map, scan)" style="max-height: 380px;" />
+Du **but** à la **commande moteur** : qui calcule quoi, et avec quelles données.
+
+<div class="bc-media" style="justify-content: flex-start;">
+<img src="./img/nav2-pipeline.svg" alt="Pipeline Nav2 : goal → bt_navigator → planner → controller → cmd_vel, alimenté par les costmaps (map, scan)" style="max-height: 300px; width: auto; max-width: 100%;" />
 </div>
 
-On donne un **but**, le **planner** trace le chemin global, le **controller** le suit en temps réel → `/cmd_vel`.
+- **goal pose** (RViz ou code) → `bt_navigator` **orchestre** la mission ;
+- `planner_server` trace le **chemin global** — sur le `global_costmap` alimenté par `/map` ;
+- `controller_server` (**MPPI**) le suit **localement** — sur le `local_costmap` alimenté par `/scan` → `/cmd_vel_nav` ;
+- `twist_mux` **arbitre** les sources de vitesse → `/cmd_vel`, la commande finale envoyée au robot.
 
 ---
 layout: two-cols
