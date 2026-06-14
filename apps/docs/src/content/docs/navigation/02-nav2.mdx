@@ -47,6 +47,7 @@ dans `slam_toolbox`, `/map` en sort.
 ```bash
 rqt_graph
 ```
+
 </Aside>
 
 Ce qu'il faut surtout retenir : `slam_toolbox` publie la transformation
@@ -134,23 +135,14 @@ planning global, suivi local, recovery, comportements, gestion des obstacles dyn
 
 ### Vue d'ensemble
 
-```text
-   goal pose (RViz / code)
-            │
-            ▼
-      ┌───────────┐    plan global    ┌─────────────┐
-      │  Planner  │ ────────────────► │ Controller  │ ──► /cmd_vel_nav ──► twist_mux ──► /cmd_vel
-      │  (Smac,   │                   │   (MPPI)    │
-      │  NavFn)   │                   │             │
-      └───────────┘                   └─────────────┘
-            ▲                                ▲
-            │                                │
-       Global costmap                  Local costmap
-       (map + obstacles)               (LiDAR temps réel)
-            ▲                                ▲
-            │                                │
-            └──── /map, /scan, tf (base_footprint) ────┘
-```
+<figure>
+<img
+  src="/img/nav2-overview.svg"
+  alt="Vue d'ensemble de Nav2 : un goal pose (RViz ou code) entre dans le Planner (Smac, NavFn) qui produit un plan global pour le Controller (MPPI) ; celui-ci publie /cmd_vel_nav, arbitré par twist_mux en /cmd_vel. Le Planner s'appuie sur le global costmap (carte + obstacles), le Controller sur le local costmap (LiDAR temps réel) ; les deux costmaps sont alimentés par /map, /scan et la tf base_footprint."
+  style="width: 100%; height: auto;"
+/>
+<figcaption>Du goal jusqu'à <code>/cmd_vel</code> : planification globale, suivi local et costmaps.</figcaption>
+</figure>
 
 Les briques importantes :
 
@@ -231,22 +223,50 @@ behavior tree : `spin`, `back_up`, `wait`, puis `clear_costmap` ou réessai. Les
 holonomes peuvent utiliser **`drive_on_heading`** plutôt que `back_up` pour des manœuvres
 latérales.
 
-## 3 · Exercices
+## 3 · Exercice final — le tour des 3 zones 🏁
 
-### Exercice 1 — Cartographier une pièce
+**Objectif (capstone)** : sur **votre** carte `bootcamp` (cartographiée et sauvegardée à la
+[section 1](#1--cartographier-lenvironnement)), faites visiter au robot les **trois zones
+repères** du monde, **dans l'ordre de votre choix**, sans collision.
 
-**Objectif** : construire une carte complète du monde `bootcamp`, la sauvegarder, et la
-recharger en mode localisation pure.
+Le monde `bootcamp` est une pièce de **8 × 8 m** (origine au centre, `x` et `y` de −4 à +4)
+contenant trois zones colorées :
 
-Étapes :
+| Zone | Couleur | Position `(x, y)` | Emplacement |
+| --- | --- | --- | --- |
+| `zone_a` | 🔴 rouge | `(-3, 3)` | coin haut-gauche |
+| `zone_b` | 🟢 vert | `(3, 3)` | coin haut-droite |
+| `zone_c` | 🔵 bleu | `(0, -3)` | bas, au centre |
 
-1. Lancer la sim + `slam.launch.py slam_mode:=map`.
-2. Téléopérer le robot pour couvrir toute la zone (longez les murs, fermez une boucle).
-3. Sauvegarder avec `map_saver_cli` dans `maps/<votre_nom>/map`.
-4. Relancer avec `navigation.launch.py slam_mode:=localize map_name:=<votre_nom>` et
-   vérifier que le robot se localise sans dérive.
+Lancez la navigation en **localisation** sur votre carte :
 
-### Exercice 2 — Tuner le controller MPPI
+```bash
+ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
+```
+
+**Tout se pilote par le code, sans aucun clic dans RViz** — c'est la contrainte de
+l'exercice :
+
+1. **Initialisez la pose** en publiant **une fois** sur `/initialpose`
+   (`geometry_msgs/PoseWithCovarianceStamped`) au lieu du *2D Pose Estimate*.
+2. **Choisissez votre ordre de visite** (ex. `zone_a → zone_c → zone_b`) et enchaînez les
+   trois poses automatiquement —
+   - soit en adaptant [`go_to.py`](/files/go_to.py) pour boucler sur une liste de goals ;
+   - soit via l'action **`/follow_waypoints`** (`waypoint_follower`) : publiez les trois
+     `PoseStamped` (l'orientation `yaw` finale est libre) et le robot les visite dans
+     l'ordre, avec une pause à chaque zone.
+
+*Livrable* : l'ordre choisi + le temps total de la mission, le robot atteignant les trois
+zones sans collision.
+
+Bonus : émettez un **message ROS personnalisé** à chaque zone atteinte (préparation aux
+Jours 5-6 — intégration).
+
+## Aller plus loin
+
+Une fois la mission réussie, voici quelques pistes **optionnelles** pour approfondir.
+
+### Tuner le controller MPPI
 
 **Objectif** : observer l'effet de quelques paramètres clés du controller sur le
 comportement du robot. Le fichier `lekiwi_navigation/config/nav2/nav2.yaml` contient
@@ -262,7 +282,7 @@ Jouez avec, un par un :
 Pour chaque changement, relancez le même goal et notez : le temps total, la distance
 parcourue, le « confort » de la trajectoire (saccadée vs lisse).
 
-### Exercice 3 — Obstacle dynamique
+### Obstacle dynamique
 
 **Objectif** : ajouter un cube dans Gazebo pendant que le robot navigue, et vérifier que
 Nav2 le contourne.
@@ -277,7 +297,7 @@ Indices :
 Que se passe-t-il si vous placez l'objet *exactement* dans la trajectoire ? Combien de
 temps avant qu'il réagisse ?
 
-### Exercice 4 — Monitorer la navigation avec Foxglove
+### Monitorer la navigation avec Foxglove
 
 **Objectif** : inspecter en direct ce que produit la pile de navigation avec
 [Foxglove](https://foxglove.dev), en complément de RViz.
@@ -313,44 +333,6 @@ Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
 
 *Livrable* : la valeur de pose `/odom` relevée à l'arrivée + une description de la courbe
 `/cmd_vel` pendant le trajet.
-
-### Exercice 5 — Mission finale : le tour des 3 zones 🏁
-
-**Objectif (capstone)** : sur **votre** carte `bootcamp` (cartographiée à l'exercice 1),
-faites visiter au robot les **trois zones repères** du monde, **dans l'ordre de votre
-choix**, sans collision.
-
-Le monde `bootcamp` est une pièce de **8 × 8 m** (origine au centre, `x` et `y` de −4 à +4)
-contenant trois zones colorées :
-
-| Zone | Couleur | Position `(x, y)` | Emplacement |
-| --- | --- | --- | --- |
-| `zone_a` | 🔴 rouge | `(-3, 3)` | coin haut-gauche |
-| `zone_b` | 🟢 vert | `(3, 3)` | coin haut-droite |
-| `zone_c` | 🔵 bleu | `(0, -3)` | bas, au centre |
-
-Lancez la navigation en **localisation** sur votre carte, puis initialisez la pose
-(*2D Pose Estimate* dans RViz) :
-
-```bash
-ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
-```
-
-Choisissez **votre ordre de visite** (ex. `zone_a → zone_c → zone_b`) puis, au choix :
-
-- **Au clic (RViz)** : posez un *Nav2 Goal* sur chaque zone l'une après l'autre, en
-  attendant l'arrivée avant d'enchaîner la suivante.
-- **Par le code (recommandé)** : enchaînez les trois poses automatiquement —
-  - soit en adaptant [`go_to.py`](/files/go_to.py) pour boucler sur une liste de goals ;
-  - soit via l'action **`/follow_waypoints`** (`waypoint_follower`) : publiez les trois
-    `PoseStamped` (l'orientation `yaw` finale est libre) et le robot les visite dans
-    l'ordre, avec une pause à chaque zone.
-
-*Livrable* : l'ordre choisi + le temps total de la mission, le robot atteignant les trois
-zones sans collision.
-
-Bonus : émettez un **message ROS personnalisé** à chaque zone atteinte (préparation aux
-Jours 5-6 — intégration).
 
 ## Prochaine étape
 
