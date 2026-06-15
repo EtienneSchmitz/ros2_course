@@ -77,6 +77,8 @@ et repérez-y les deux éléments de base :
 | `<link>` | Un segment physique (épaule, avant-bras…) : géométrie visuelle, géométrie de collision, inertie |
 | `<joint>` | La liaison entre deux liens : axe de rotation, limites (`lower`/`upper`/`effort`/`velocity`), dynamique |
 
+![Arbre des repères du SO-101 dans RViz : chaque `<joint>` relie deux `<link>` (base_link → shoulder_link → upper_arm_link → lower_arm_link → wrist_link → gripper_link), formant la chaîne cinématique](/img/so101-joints-frames.png)
+
 Côté Xacro (`so101.urdf.xacro`), observez plutôt la **composition** :
 `<xacro:include>` pour assembler les fichiers, `<xacro:arg>` pour les paramètres
 et `<xacro:if>` pour activer `ros2_control` selon le mode.
