@@ -134,17 +134,6 @@ obstacle, **gris** = inconnu (jamais vu par le LiDAR). Une bonne carte a des mur
 et fins, peu de zones grises à l'intérieur de la pièce.
 </Aside>
 
-### Recharger la carte (localisation pure)
-
-Plus besoin de cartographier : on relance en mode **localisation** sur la carte
-`bootcamp`, via le launch tout-en-un :
-
-```bash
-ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=amcl map_name:=bootcamp
-```
-
-Vérifiez que le robot se localise correctement sur la carte sans dériver.
-
 ## 2 · Naviguer dans la carte
 
 [Nav2](https://docs.nav2.org/) est la stack de navigation de référence pour ROS 2 :
@@ -279,9 +268,6 @@ l'exercice :
      `PoseStamped` (l'orientation `yaw` finale est libre) et le robot les visite dans
      l'ordre, avec une pause à chaque zone.
 
-*Livrable* : l'ordre choisi + le temps total de la mission, le robot atteignant les trois
-zones sans collision.
-
 Bonus : émettez un **message ROS personnalisé** à chaque zone atteinte (préparation aux
 Jours 5-6 — intégration).
 
@@ -353,9 +339,6 @@ Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
 4. Poser un **Nav2 Goal dans RViz** et observer, côté Foxglove : le `/scan` qui balaie, la
    trajectoire suivie, le local costmap qui s'allume autour des obstacles, et la courbe
    `/cmd_vel`.
-
-*Livrable* : la valeur de pose `/odom` relevée à l'arrivée + une description de la courbe
-`/cmd_vel` pendant le trajet.
 
 ## Prochaine étape
 
