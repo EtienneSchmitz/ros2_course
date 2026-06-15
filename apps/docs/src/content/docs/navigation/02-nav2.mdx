@@ -191,7 +191,7 @@ Dans RViz :
 
 1. **2D Pose Estimate** (bouton dans la toolbar) : cliquez la pose réelle du robot et
    orientez la flèche selon le cap. C'est la pose initiale du filtre de localisation.
-2. **Nav2 Goal** : cliquez la destination. Nav2 planifie et exécute la trajectoire.
+2. **2D Goal Pose** : cliquez la destination. Nav2 planifie et exécute la trajectoire.
 
 Vous pouvez suivre l'avancement via :
 
@@ -313,7 +313,7 @@ temps avant qu'il réagisse ?
 
 <Aside type="note">
 RViz reste l'outil de **commande** : le goal Nav2 se pose **toujours dans RViz** (*2D Pose
-Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
+Estimate* + *2D Goal Pose*). Foxglove sert ici uniquement à **observer**.
 </Aside>
 
 Étapes :
@@ -336,7 +336,7 @@ Estimate* + *Nav2 Goal*). Foxglove sert ici uniquement à **observer**.
 3. Ajoutez en plus :
    - un panneau **Plot** sur les composantes de `/cmd_vel` ;
    - un panneau **Raw Messages** sur `/odom` pour **relever une valeur** de pose.
-4. Poser un **Nav2 Goal dans RViz** et observer, côté Foxglove : le `/scan` qui balaie, la
+4. Poser un **2D Goal Pose dans RViz** et observer, côté Foxglove : le `/scan` qui balaie, la
    trajectoire suivie, le local costmap qui s'allume autour des obstacles, et la courbe
    `/cmd_vel`.
 
