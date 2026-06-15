@@ -65,6 +65,20 @@ ros2 topic echo /clock
 
 Le terminal 3 doit afficher l'horloge Gazebo qui avance. C'est la preuve que ROS 2 ↔ Gazebo communique.
 
+## Foxglove se connecte au pont
+
+[Foxglove](https://foxglove.dev) est notre outil d'**inspection / monitoring** (complément de RViz, qui reste l'outil d'interaction) : visu 3D web, lecture des valeurs de topics, courbes. Vérifions que l'application se connecte bien au pont.
+
+Lancez le pont :
+
+```bash
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml   # ws://localhost:8765
+```
+
+Dans l'application Foxglove (installée à l'[étape précédente](/installation/01-ubuntu/), ou via [app.foxglove.dev](https://app.foxglove.dev) dans le navigateur), choisissez **Open connection → Foxglove WebSocket** et saisissez `ws://localhost:8765`.
+
+La connexion doit s'établir et la **liste des topics** apparaître (sélecteur de panneau non vide). C'est la preuve que Foxglove dialogue avec ROS 2.
+
 ## Et après ?
 
 À ce stade, la machine est prête, avec les **repos robots** (`lekiwi_ros2`, `so_arm101_ros2`) déjà dans le workspace.

@@ -6,18 +6,18 @@ suit la distance restante, puis affiche le résultat. C'est un point de départ
 pour les exercices du Jour 2 (navigation) et la préparation au Jour 5
 (intégration).
 
-À recopier dans un package ROS 2 (par ex. `lekiwi_navigation`) avec un point
-d'entrée déclaré pour `main()` dans le `setup.py` :
+À recopier dans le package ROS 2 de votre choix (`<votre_package>`) avec un
+point d'entrée déclaré pour `main()` dans le `setup.py` :
 
     entry_points={
         "console_scripts": [
-            "go_to = lekiwi_navigation.go_to:main",
+            "go_to = <votre_package>.go_to:main",
         ],
     },
 
 Puis, une fois la navigation lancée :
 
-    ros2 run lekiwi_navigation go_to
+    ros2 run <votre_package> go_to
 """
 
 import rclpy
@@ -29,8 +29,8 @@ from nav2_msgs.action import NavigateToPose
 
 
 # Coordonnées du goal dans le repère `map`, à adapter à votre carte.
-# Le monde `bootcamp.sdf` est une enceinte ~5x5 m : visez ±2 m autour de
-# l'origine. (1.0, 0.5) est un point accessible validé en simulation.
+# Le monde `bootcamp` est une enceinte 8 x 8 m (origine au centre, x/y de -4
+# à +4) : (1.0, 0.5) est un point accessible validé en simulation.
 GOAL_X = 1.0
 GOAL_Y = 0.5
 # Orientation cible (quaternion). (z=0, w=1) = cap neutre, face à +X.
