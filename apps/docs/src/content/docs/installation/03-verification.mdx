@@ -88,7 +88,13 @@ Si `bootcamp.repos` est mis à jour pendant le cours, resynchronisez le workspac
 ```bash
 cd ~/ros2_bootcamp_ws
 wget -O bootcamp.repos https://ros2.etienne-schmitz.com/bootcamp.repos
-vcs import src < bootcamp.repos
+vcs import src < bootcamp.repos   # clone les repos nouvellement ajoutés
+vcs pull src                       # git pull main sur les repos déjà clonés
+rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 ```
+
+`vcs import` clone les **nouveaux** dépôts et les place sur la bonne branche, mais ne récupère
+**pas** les nouveaux commits d'un repo déjà présent : c'est `vcs pull` qui fait le `git pull`
+sur `main` dans chaque dépôt.
