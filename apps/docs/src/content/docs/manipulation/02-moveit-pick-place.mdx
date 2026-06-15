@@ -1,23 +1,24 @@
 ---
 title: "MoveIt & pick and place"
-description: Planification de trajectoire avec MoveIt 2, cinématique inverse, collisions, puis un pick & place complet codé par l'étudiant.
+description: Planification de trajectoire avec MoveIt 2 — poses nommées, cibles cartésiennes, collisions — assemblées pas à pas en un pick & place complet.
 sidebar:
   label: "MoveIt & pick and place"
   order: 3
 ---
 
-import { Aside, Steps, LinkCard } from "@astrojs/starlight/components";
+import { Aside, Steps } from "@astrojs/starlight/components";
 
 Dans la partie précédente, vous pilotiez le bras **joint par joint**. Ici, vous laissez **MoveIt 2**
 faire le travail : vous lui donnez une **pose cible** et il calcule une trajectoire
-articulaire sans collision. Vous terminerez par un **pick & place** que vous codez
-vous-même dans un package fourni.
+articulaire sans collision. On construit **brique par brique** (pose nommée → cible
+cartésienne → ligne droite → collision), puis on assemble le tout en un **pick & place
+complet** que vous codez vous-même.
 
 <Aside type="note" title="Objectifs">
-- Comprendre ce qu'apporte MoveIt 2 (IK, planners, planning scene) et le rôle du SRDF.
+- Comprendre ce qu'apporte MoveIt 2 (IK, planners, planning scene).
 - Lancer `demo.launch.py`, planifier et exécuter une trajectoire depuis RViz.
-- Ajouter un obstacle au planning scene et observer l'évitement.
-- Coder une séquence **pick & place** complète dans le package `so101_pick_place`.
+- Maîtriser les briques en code (`moveit_py`) : pose nommée, cible cartésienne, collision.
+- Assembler une séquence **pick & place** complète et la tester en simulation.
 </Aside>
 
 [MoveIt 2](https://moveit.picknik.ai/) est **la** stack ROS 2 de
@@ -39,46 +40,34 @@ configuration cible) et il vous renvoie une trajectoire collision-free.
 
 ## 2. Architecture
 
-```text
-   RViz MotionPlanning panel
-            │
-            ▼
-   move_group node ────┬──► OMPL / STOMP planners
-            │          │
-            │          └──► IK plugin (KDL / TracIK)
-            │
-            ▼
-   /arm_controller/follow_joint_trajectory
-            │                          (pince : /gripper_controller/gripper_cmd)
-            ▼
-        Robot (sim ou réel)
-```
+<figure>
+<img
+  src="/img/moveit-archi.svg"
+  alt="Le panneau MotionPlanning de RViz envoie ses requêtes au nœud central move_group, qui s'appuie sur les planners OMPL / STOMP et un plugin de cinématique inverse (KDL / TracIK). move_group commande ensuite l'action /arm_controller/follow_joint_trajectory (et /gripper_controller/gripper_cmd pour la pince), qui pilote le robot en simulation ou réel."
+  style="width: 100%; height: auto;"
+/>
+<figcaption><code>move_group</code> orchestre la planification puis délègue l'exécution aux contrôleurs.</figcaption>
+</figure>
 
-`move_group` est le node central. Il consomme la description du robot
-(URDF + SRDF) et expose les services / actions de planification.
+`move_group` est le node central : il consomme la description du robot
+(URDF **+ SRDF**) et expose les services / actions de planification.
 
-## 3. Le SRDF — ce qu'on définit en plus de l'URDF
+## 3. Ce que le SRDF ajoute
 
-L'URDF décrit la géométrie. Pour MoveIt il faut **aussi** un **SRDF**
-(Semantic Robot Description Format), généré via le **MoveIt Setup
-Assistant**, qui ajoute :
+L'URDF décrit la **géométrie** ; le **SRDF** (Semantic Robot Description Format)
+ajoute la **sémantique** dont MoveIt a besoin — groupes de joints, poses nommées,
+paires de collisions à ignorer, end-effector. Pour le SO-101, **il est déjà fourni**
+dans le package `so101_moveit_config` de
+[so_arm101_ros2](https://github.com/EtienneSchmitz/so_arm101_ros2) : rien à générer,
+vous l'utilisez tel quel. Les éléments qui nous serviront :
 
-- les **groupes** de joints (`arm`, `gripper`) ;
-- les **poses nommées** (`home`, `ready` pour le groupe `arm` ; `gripper_open`, `gripper_close` pour le groupe `gripper`) ;
-- les **paires de collisions à ignorer** (calcul auto sur des poses
-  aléatoires) ;
-- les **end-effectors** (lien entre `arm` et `gripper`).
+| Groupe    | Poses nommées disponibles            |
+| --------- | ------------------------------------ |
+| `arm`     | `home`, `ready`                      |
+| `gripper` | `gripper_open`, `gripper_close`      |
 
-La config MoveIt du SO-101 vit dans le package `so101_moveit_config`
-de [so_arm101_ros2](https://github.com/EtienneSchmitz/so_arm101_ros2),
-générée via le MoveIt Setup Assistant :
-
-```bash
-ros2 launch moveit_setup_assistant setup_assistant.launch.py
-```
-
-On y charge `so101.urdf.xacro`, on suit les étapes (collision matrix, groupes,
-poses, end-effector) et on exporte dans `so101_moveit_config/`.
+La chaîne du bras va de `base_link` (base) à `gripper_link` (effecteur) — ce sont
+les deux repères qu'on manipulera en code.
 
 ## 4. Premier lancement
 
@@ -113,17 +102,122 @@ MoveIt 2 (Kilted) a une régression de locale : en `fr_FR`, le séparateur déci
 exportez la variable d'abord : `export LC_NUMERIC=C.UTF-8`.
 </Aside>
 
-## 5. Planification cartésienne
+## 5. Piloter le bras en code — les briques
 
-Pour des trajectoires en ligne droite (utile pour les approches de pick),
-MoveIt expose `compute_cartesian_path` (service `/compute_cartesian_path`
-ou méthode Python `MoveItPy`). Vous lui donnez une liste de waypoints
-cartésiens et vous obtenez une trajectoire interpolée.
+RViz, c'est bien pour explorer. Mais un pick & place doit s'enchaîner **tout seul** :
+on passe donc au code Python (`moveit_py`). Cette section construit les **quatre
+briques** qu'on assemblera ensuite. Chaque extrait s'ajoute au fichier
+`pick_and_place.py`.
 
-## 6. Collisions
+### 5.1 Se connecter à MoveIt
 
-Le **Planning Scene** est mis à jour en publiant des `CollisionObject`
-sur le topic `/collision_object`. Exemple :
+On instancie `MoveItPy`, on récupère les deux **planning components** (`arm` et
+`gripper`), et on se donne deux helpers réutilisables : un pour planifier+exécuter,
+un pour fabriquer une `PoseStamped`.
+
+```python
+import time
+
+import rclpy
+from rclpy.logging import get_logger
+
+from geometry_msgs.msg import PoseStamped
+from moveit.planning import MoveItPy
+
+BASE_FRAME = "base_link"
+EE_LINK = "gripper_link"
+
+
+def make_pose(x, y, z):
+    """PoseStamped dans base_link, orientation neutre (pince vers le bas simplifiée)."""
+    pose = PoseStamped()
+    pose.header.frame_id = BASE_FRAME
+    pose.pose.position.x = float(x)
+    pose.pose.position.y = float(y)
+    pose.pose.position.z = float(z)
+    pose.pose.orientation.w = 1.0
+    return pose
+
+
+def plan_and_execute(robot, component, logger, sleep_time=0.5):
+    """Planifie depuis l'état courant puis exécute. Retourne True si OK."""
+    plan_result = component.plan()
+    if plan_result:
+        robot.execute(plan_result.trajectory, controllers=[])
+    else:
+        logger.error("Échec de planification.")
+    time.sleep(sleep_time)
+    return bool(plan_result)
+```
+
+### 5.2 Brique 1 — Goal = une pose nommée
+
+Le moyen le plus simple de bouger : viser une **pose nommée** du SRDF. C'est ainsi
+qu'on rejoint `home` / `ready` (bras) et qu'on ouvre / ferme la pince.
+
+```python
+def move_arm_to_named(moveit, arm, name, logger):
+    """name ∈ {'home', 'ready'}."""
+    arm.set_start_state_to_current_state()
+    arm.set_goal_state(configuration_name=name)
+    return plan_and_execute(moveit, arm, logger)
+
+
+def set_gripper(moveit, gripper, name, logger):
+    """name ∈ {'gripper_open', 'gripper_close'}."""
+    gripper.set_start_state_to_current_state()
+    gripper.set_goal_state(configuration_name=name)
+    return plan_and_execute(moveit, gripper, logger)
+```
+
+### 5.3 Brique 2 — Goal = une pose cartésienne connue
+
+Pour viser un point précis de l'espace (l'objet, la zone de dépôt), on donne une
+`PoseStamped` et le **lien** à y amener (`gripper_link`). MoveIt résout l'IK.
+
+```python
+def move_arm_to_pose(moveit, arm, pose, logger):
+    """Amène le repère EE_LINK sur `pose`."""
+    arm.set_start_state_to_current_state()
+    arm.set_goal_state(pose_stamped_msg=pose, pose_link=EE_LINK)
+    return plan_and_execute(moveit, arm, logger)
+```
+
+<Aside type="tip" title="Volume atteignable du SO-101">
+Le bras a un rayon d'action d'environ **0.31 m**. Restez dans cette enveloppe pour
+que l'IK trouve une solution :
+
+- **X** (avant) : 0.15 – 0.25 m
+- **Y** (latéral) : −0.20 – 0.20 m
+- **Z** (hauteur) : 0.05 – 0.15 m
+
+Des valeurs sûres pour tester : objet à `(0.20, 0.0, 0.05)`, dépôt à `(0.0, 0.20, 0.05)`.
+</Aside>
+
+### 5.4 Brique 3 — Ligne droite cartésienne (approche / descente)
+
+Avec `set_goal_state`, MoveIt choisit librement le chemin articulaire. Pour une
+**descente bien verticale** au-dessus de l'objet, on préfère parfois une **ligne
+droite** dans l'espace cartésien : c'est le rôle de `compute_cartesian_path`, qui
+interpole entre des **waypoints**.
+
+```python
+# Optionnel — descente strictement verticale via une trajectoire cartésienne.
+# (Le pick & place du §6 fonctionne aussi avec de simples poses successives.)
+waypoints = [make_pose(0.20, 0.0, 0.10).pose, make_pose(0.20, 0.0, 0.05).pose]
+# trajectory, fraction = arm.compute_cartesian_path(waypoints, 0.01, 0.0)
+```
+
+<Aside type="note">
+Pour rester simple, le pick & place ci-dessous **enchaîne des poses cartésiennes**
+(au-dessus de l'objet, puis sur l'objet) plutôt que `compute_cartesian_path`. La
+version « ligne droite » est un raffinement (voir Exercice 2).
+</Aside>
+
+### 5.5 Brique 4 — Sécuriser avec une collision
+
+On déclare la **table** dans le Planning Scene : MoveIt l'évitera automatiquement.
+On publie un `CollisionObject` sur `/collision_object`.
 
 ```python
 from moveit_msgs.msg import CollisionObject
@@ -147,48 +241,95 @@ obj.primitive_poses.append(pose)
 obj.operation = CollisionObject.ADD
 ```
 
-MoveIt évitera automatiquement cet obstacle dans ses planifications.
+## 6. Pick & place complet
 
-## 7. Pick & place — à vous de coder
+On assemble les briques. La séquence enchaîne :
+**home → ouvrir pince → approche (+5 cm) → descente → fermer → retrait (+10 cm) →
+dépôt → ouvrir pince → home**.
 
-On passe à la pratique : enchaîner approche → préhension → transport → dépôt.
-Vous codez dans un **package squelette fourni**, `so101_pick_place`, où la
-logique est laissée en `# TODO`.
-
-<LinkCard
-  title="Package de départ : so101_pick_place"
-  description="Squelette à compléter (node moveit_py + launch). Récupérez-le et placez-le dans votre workspace."
-  href="/files/so101_pick_place.zip"
-/>
+Prérequis, dans **deux terminaux séparés** :
 
 ```bash
-# Décompressez le squelette dans votre workspace, puis :
-cd ~/ros2_bootcamp_ws
-colcon build --packages-select so101_pick_place
-source install/setup.bash
+# Terminal 1 — simulateur
+ros2 launch so101_bringup gazebo.launch.py
+
+# Terminal 2 — MoveIt
+ros2 launch so101_moveit_config move_group.launch.py
 ```
 
-Ouvrez `so101_pick_place/pick_and_place.py` : la structure est prête (connexion
-à MoveIt, groupes `arm` / `gripper`), il vous reste à remplir les `# TODO`.
+Les positions clés, en clair :
+
+```python
+OBJECT_XYZ = (0.20, 0.0, 0.05)   # objet à saisir
+PLACE_XYZ = (0.0, 0.20, 0.05)    # zone de dépôt
+APPROACH_HEIGHT = 0.05           # on s'arrête 5 cm au-dessus avant de descendre
+RETREAT_HEIGHT = 0.10            # on remonte de 10 cm après la préhension
+```
+
+La fonction `main()` qui orchestre tout :
 
 <Steps>
 
-1. **Approche** : déplacez la pince **5 cm au-dessus** de la pose de l'objet,
-   pince ouverte (pose nommée `gripper_open` ou commande `ParallelGripperCommand`).
-2. **Descente** : trajectoire **cartésienne** vers la pose de l'objet
-   (`compute_cartesian_path`).
-3. **Préhension** : fermez la pince (`gripper_close`).
-4. **Retrait** : remontez de 10 cm (trajectoire cartésienne).
-5. **Dépôt** : rejoignez la pose de dépôt, puis ouvrez la pince.
+1. **Démarrage** : connexion à MoveItPy, récupération des groupes `arm` / `gripper`,
+   retour à `home`.
+2. **Approche** : on ouvre la pince (`gripper_open`), puis on amène `gripper_link`
+   **5 cm au-dessus** de l'objet.
+3. **Descente** : on rejoint la pose de l'objet.
+4. **Préhension** : on ferme la pince (`gripper_close`).
+5. **Retrait** : on remonte de 10 cm.
+6. **Dépôt** : on rejoint la zone de dépôt (approche puis pose), puis on ouvre la pince.
+7. **Retour** : on revient à `home`.
 
 </Steps>
 
-Lancez votre solution :
+```python
+def main():
+    rclpy.init()
+    logger = get_logger("pick_and_place")
 
-```bash
-ros2 launch so101_pick_place pick_and_place.launch.py
-# (so101_moveit_config + so101_bringup doivent tourner, cf. §4)
+    moveit = MoveItPy(node_name="pick_and_place")
+    arm = moveit.get_planning_component("arm")
+    gripper = moveit.get_planning_component("gripper")
+    logger.info("MoveItPy prêt.")
+
+    ox, oy, oz = OBJECT_XYZ
+
+    # 0. Position de départ
+    move_arm_to_named(moveit, arm, "home", logger)
+
+    # 1. APPROCHE — au-dessus de l'objet, pince ouverte
+    set_gripper(moveit, gripper, "gripper_open", logger)
+    move_arm_to_pose(moveit, arm, make_pose(ox, oy, oz + APPROACH_HEIGHT), logger)
+
+    # 2. DESCENTE — jusqu'à l'objet
+    move_arm_to_pose(moveit, arm, make_pose(ox, oy, oz), logger)
+
+    # 3. PRÉHENSION
+    set_gripper(moveit, gripper, "gripper_close", logger)
+
+    # 4. RETRAIT
+    move_arm_to_pose(moveit, arm, make_pose(ox, oy, oz + RETREAT_HEIGHT), logger)
+
+    # 5. DÉPÔT
+    px, py, pz = PLACE_XYZ
+    move_arm_to_pose(moveit, arm, make_pose(px, py, pz + APPROACH_HEIGHT), logger)
+    move_arm_to_pose(moveit, arm, make_pose(px, py, pz), logger)
+    set_gripper(moveit, gripper, "gripper_open", logger)
+
+    # Retour home
+    move_arm_to_named(moveit, arm, "home", logger)
+
+    logger.info("Pick & place terminé.")
+    moveit.shutdown()
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    main()
 ```
+
+Lancez votre node (le `MoveItConfigsBuilder` doit charger `so101_moveit_config` ;
+pensez à `export LC_NUMERIC=C.UTF-8`).
 
 <Aside type="tip">
 Aucun objet réel n'est manipulé ici (pas de perception, pas de feedback de
@@ -197,55 +338,47 @@ sera traitée au [Jour 4 (Vision & IA)](/vision/) ; l'intégration complète au
 [Jours 5-6](/integration/).
 </Aside>
 
-<Aside type="note" title="Solution de référence">
-Bloqué ? Une solution commentée ligne à ligne est disponible :
-[`pick_and_place_solution.py`](/files/pick_and_place_solution.py). À consulter
-**après** avoir essayé — l'objectif est de coder la séquence vous-même.
-</Aside>
-
 ## Exercices
 
 Pour aller plus loin une fois le pick & place fonctionnel :
 
 ### Exercice 1 — Pose nommée vers pose nommée
 
-Enchaîner deux poses prédéfinies du SRDF (`home` → `ready` → `home`).
+Enchaîner deux poses prédéfinies du SRDF (`home` → `ready` → `home`) avec
+`move_arm_to_named` (cf. [§5.2](#52-brique-1--goal--une-pose-nommée)).
 
-- Dans RViz / MotionPlanning, sélectionnez la **goal state** par son nom.
-- Ou en code (`moveit_py`) :
+### Exercice 2 — Descente cartésienne en ligne droite
 
-  ```python
-  arm = moveit.get_planning_component("arm")
-  arm.set_start_state_to_current_state()
-  arm.set_goal_state(configuration_name="ready")
-  plan = arm.plan()
-  if plan:
-      moveit.execute(plan.trajectory)
-  ```
-
-### Exercice 2 — Cible cartésienne avec contrainte d'orientation
-
-Déplacer la pince à `(x=0.25, y=0.0, z=0.15)` en la gardant orientée
-**verticalement vers le bas** (préparation d'un pick).
-
-- Définissez un `PoseStamped` avec l'orientation cible.
-- Activez une **OrientationConstraint** dans la requête pour éviter que MoveIt
-  tourne le poignet en route.
+Remplacez la descente (étape 2 du §6) par une **vraie ligne droite** via
+`compute_cartesian_path` (cf. [§5.4](#54-brique-3--ligne-droite-cartésienne-approche--descente)).
+Comparez la trajectoire obtenue avec la version « pose à pose ».
 
 ### Exercice 3 — Évitement d'obstacle
 
-Ajouter une **boîte** au Planning Scene entre départ et cible, puis vérifier
-que MoveIt la contourne.
-
-- Publiez un `CollisionObject` (cf. [§6 Collisions](#6-collisions)).
-- Comparez deux planifications, avec et sans obstacle : le temps de
-  planification augmente légèrement et la trajectoire fait un détour.
+Ajoutez la **table** (ou une boîte intermédiaire) au Planning Scene
+(cf. [§5.5](#55-brique-4--sécuriser-avec-une-collision)) entre départ et cible, puis
+vérifiez que MoveIt la contourne. Comparez deux planifications, avec et sans obstacle.
 
 ### Exercice 4 — Pick & place avec dépôt contraint
 
-Reprenez votre pick & place et imposez une **zone de dépôt** : l'objet doit être
-relâché dans un carré de 10 cm de côté. Ajoutez la zone comme repère visuel et
-vérifiez la pose finale de la pince.
+Reprenez la séquence du §6 et imposez une **zone de dépôt** : l'objet doit être
+relâché dans le **carré vert de 10 cm** matérialisé dans le monde `pick_place.sdf`.
+
+<Steps>
+
+1. Lancez le monde dédié :
+   ```bash
+   ros2 launch so101_bringup gazebo.launch.py world:=pick_place.sdf
+   ```
+2. Adaptez `PLACE_XYZ` pour viser le centre de la zone, `(0.0, 0.20, 0.05)`.
+3. Après dépôt, **vérifiez la pose finale** de `gripper_link` :
+   ```bash
+   ros2 run tf2_ros tf2_echo base_link gripper_link
+   ```
+   Elle doit tomber dans le carré : `|x| ≤ 0.05` et `|y − 0.20| ≤ 0.05`.
+4. **Bonus** : ajoutez le `CollisionObject` « table » (§5.5) et observez l'évitement.
+
+</Steps>
 
 ## Prochaine étape
 

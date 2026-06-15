@@ -130,7 +130,7 @@ ROS 2 et Gazebo s'installent ensemble : le bridge `ros_gz` fait le lien entre le
       | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
     ```
 
-3. **Installer les paquets.** Le métapaquet `ros-kilted-desktop` inclut RViz 2, les démos, et la majorité des paquets utiles ; on y ajoute `joint-state-publisher` (visualisation URDF, sliders de joints) et `foxglove-bridge` (pont WebSocket pour Foxglove), tous deux utilisés tout au long du cours.
+3. **Installer les paquets.** Le métapaquet `ros-kilted-desktop` inclut RViz 2, les démos, et la majorité des paquets utiles ; on y ajoute `joint-state-publisher` (visualisation URDF, sliders de joints), `foxglove-bridge` (pont WebSocket pour Foxglove) et `ros2controlcli` (le CLI `ros2 control` pour lister et inspecter les contrôleurs `ros2_control`, utilisé au Jour 3 Manipulation et en Navigation — `ros-kilted-desktop` ne l'inclut pas) et `moveit-py` (le binding Python `moveit.planning.MoveItPy` du pick & place au Jour 3 Manipulation, non tiré par `ros-kilted-desktop`), tous utilisés tout au long du cours.
 
     ```bash
     sudo apt update && sudo apt upgrade -y
@@ -139,7 +139,9 @@ ROS 2 et Gazebo s'installent ensemble : le bridge `ros_gz` fait le lien entre le
       python3-argcomplete \
       ros-kilted-joint-state-publisher \
       ros-kilted-joint-state-publisher-gui \
-      ros-kilted-foxglove-bridge
+      ros-kilted-foxglove-bridge \
+      ros-kilted-ros2controlcli \
+      ros-kilted-moveit-py
     ```
 
     <Aside type="note" title="Foxglove — installez aussi l'application">

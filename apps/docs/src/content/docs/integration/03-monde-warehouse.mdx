@@ -1,0 +1,164 @@
+---
+title: "Le monde warehouse"
+description: Monde de simulation Gazebo « warehouse pick & place » du projet final — station, zones de dépôt, caméra eye-in-hand et spawn d'objets paramétrable.
+sidebar:
+  label: "Le monde warehouse"
+  order: 4
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Le projet final se déroule dans un **entrepôt simulé** (Gazebo Ionic, `gz-sim 9`) où le manipulateur
+mobile **LeKiwi + SO-101** détecte un objet, le saisit sur une **station de prélèvement**, puis le
+transporte vers une **zone de dépôt liée à sa classe**. Cette page décrit le monde et son outillage —
+les **interfaces, le detector et le coordinateur restent à votre charge** (Jours 1, 4 et 5).
+
+<Aside type="note" title="Ce qui est fourni">
+Le **monde** (`warehouse.sdf`), la **caméra eye-in-hand** (déjà sur le poignet du SO-101), une
+**bibliothèque d'objets** réutilisables et un **script de spawn paramétrable**. Tout est dans le
+package `lekiwi_bringup`.
+</Aside>
+
+## Plan du monde
+
+Entrepôt de 15 × 12 m, murs d'enceinte + cloison (obstacles pour le LiDAR / Nav2), rayonnages, piliers
+et caisses (décor de navigation), plus :
+
+| Élément | Rôle | Position (monde) |
+| --- | --- | --- |
+| `pick_station` | Table **basse** où apparaissent les objets à saisir. | `(0, 4.6)`, plateau à `z ≈ 0.15 m` |
+| `zone_a` (rouge) | Dépôt — classe `metal` (exemple) | `(-5, 3.5)` |
+| `zone_b` (vert) | Dépôt — classe `plastic` (exemple) | `(5, 3.5)` |
+| `zone_c` (bleu) | Dépôt — classe `paper` (exemple) | `(0, -3.5)` |
+
+Les trois zones sont **éloignées** les unes des autres pour forcer la navigation Nav2 entre la station et
+le dépôt. Le mapping **classe → zone** ci-dessus n'est qu'une proposition : c'est **votre
+`mission_coordinator`** qui le fixe (via un YAML).
+
+<Aside type="tip" title="Le poste de prélèvement">
+Le robot se gare au **poste** `(0.0, 4.0, yaw = π/2)` : il fait alors face à la station, qui tombe dans
+l'enveloppe atteignable du SO-101 (`arm_base_link` à ≈ 0.119 m du sol ; enveloppe X 0.15–0.25, Y ±0.20,
+Z 0.05–0.15 → objet à `z ≈ 0.17 m`). Le pick **réel** se fait ici, pas sur les étagères.
+</Aside>
+
+## La caméra eye-in-hand
+
+Une caméra RGB-D est montée sur le **poignet** du SO-101 (`arm_wrist_link`) et regarde vers la pince. Elle
+est pontée automatiquement par `sim_full.launch.py` :
+
+| Topic | Type |
+| --- | --- |
+| `/wrist_camera/image` (alias `/camera/image_raw`) | `sensor_msgs/Image` |
+| `/wrist_camera/camera_info` (alias `/camera/camera_info`) | `sensor_msgs/CameraInfo` |
+| `/wrist_camera/depth_image` (alias `/camera/depth_image`) | `sensor_msgs/Image` |
+| `/wrist_camera/points` | `sensor_msgs/PointCloud2` |
+
+L'alias `/camera/*` (option `camera_alias:=true`, activée par défaut) republie la même caméra sous le nom
+d'interface attendu par votre detector du Jour 4. Le `frame_id` est `wrist_camera_optical_frame`
+(convention REP-103), relié au TF du bras.
+
+## Démarrer le monde
+
+<Steps>
+
+1. **Compiler & sourcer** :
+   ```bash
+   cd ~/ros2_bootcamp_ws && colcon build --packages-select lekiwi_bringup
+   source install/setup.bash
+   ```
+
+2. **Lancer le monde + le robot + la caméra** :
+   ```bash
+   ros2 launch lekiwi_bringup warehouse_sim.launch.py
+   # variantes : headless:=true (sans GUI) | camera_alias:=false | spawn:=true
+   ```
+
+3. **Vérifier les flux** (autre terminal) :
+   ```bash
+   ros2 topic hz /scan
+   ros2 topic hz /camera/image_raw
+   ros2 topic echo /camera/camera_info --once
+   ```
+
+</Steps>
+
+## Faire apparaître des objets
+
+Les objets ne sont **pas** pré-placés : on les spawne à la demande avec `spawn_object.launch.py` (qui
+démarre le pont de services gz et le nœud de spawn). Le monde doit déjà tourner.
+
+```bash
+# Cube de couleur (détection HSV) — classe = couleur
+ros2 launch lekiwi_bringup spawn_object.launch.py object_type:=cube_color color:=green
+
+# Cube ArUco (pose 6D + classe = ID du marqueur)
+ros2 launch lekiwi_bringup spawn_object.launch.py object_type:=cube_aruco aruco_id:=1
+
+# Déchets simples (scénario de tri) : can=metal, bottle=plastic, carton=paper
+ros2 launch lekiwi_bringup spawn_object.launch.py object_type:=waste_can
+ros2 launch lekiwi_bringup spawn_object.launch.py object_type:=waste_bottle count:=2
+
+# Rejouer une mission proprement : supprime puis re-spawne
+ros2 launch lekiwi_bringup spawn_object.launch.py action:=respawn name:=pick_object_0
+
+# Modèle arbitraire (SDF/URDF) — branchez vos propres objets
+ros2 launch lekiwi_bringup spawn_object.launch.py object_type:=sdf model_path:=/chemin/model.sdf
+```
+
+### Bibliothèque d'objets
+
+| `object_type` | Description | Classe par défaut |
+| --- | --- | --- |
+| `cube_color` | Cube 4 cm coloré (`color:=red/green/blue/yellow` ou `"r g b a"`) | la couleur |
+| `cube_aruco` | Cube 4 cm, marqueur ArUco `DICT_4X4_50` sur le dessus | l'`aruco_id` |
+| `waste_can` | Canette (cylindre métal) | `metal` |
+| `waste_bottle` | Bouteille plastique (cylindre + col) | `plastic` |
+| `waste_carton` | Carton (boîte brune) | `paper` |
+| `sdf` | Modèle arbitraire via `model_path` | nom du fichier |
+
+<Aside type="caution" title="Pont de services Gazebo Ionic">
+Le spawn utilise les services **`ros_gz_interfaces/srv/SpawnEntity` / `DeleteEntity`**, pontés vers
+`/world/warehouse/create` et `/remove` — le mécanisme officiel de Gazebo Ionic. **N'utilisez pas**
+`spawn_entity.py` (Gazebo Classic). Le nom du monde (`warehouse`) doit correspondre dans
+`config/bridge_spawn.yaml`.
+</Aside>
+
+## Tout est paramétrable
+
+| Pour… | …éditer | Où |
+| --- | --- | --- |
+| **Changer d'objet** | `object_type` / `color` / `aruco_id` / `model_path` | argument de launch |
+| **Changer la zone d'apparition** | `station_xy`, `station_z`, `jitter` | paramètres du spawn |
+| **Repositionner la station** | la `<pose>` du modèle `pick_station` **+** `station_xy` | `worlds/warehouse.sdf` |
+| **Déplacer / ajouter une zone** | la `<pose>` (ou un nouveau modèle) `zone_*` | `worlds/warehouse.sdf` |
+| **Générer un nouveau marqueur ArUco** | `ros2 run lekiwi_bringup generate_aruco.py --id N` | — |
+
+<Aside type="tip">
+Ajouter une 4ᵉ zone = copier un bloc `<model name="zone_d">…` dans `warehouse.sdf` (changer `<pose>` et la
+couleur), puis l'ajouter à la map classe → zone de votre coordinateur. Aucun code à réécrire.
+</Aside>
+
+## Et ensuite ?
+
+Le monde fournit tout le **terrain de jeu** ; à vous de brancher vos briques du Jour 1 :
+
+<Steps>
+
+1. **Detector (Jour 4)** : s'abonne à `/camera/image_raw`, publie `Detection.msg` (`class_id` + `pose`)
+   sur `/detections`.
+
+2. **Bras (Jour 3)** : service `PickRequest.srv` (`Pose target` → `bool success`) avec MoveIt 2
+   (`lekiwi_manipulation_moveit_config`, groupe `arm`, poses `home` / `ready` / `gripper_open` /
+   `gripper_close`).
+
+3. **Navigation (Jour 2)** : action `NavigateToPose` (Nav2 sur LeKiwi) vers la zone liée à la classe.
+
+4. **Coordinateur (Jour 5)** : orchestre détection → pick → navigation → dépôt, piloté par un YAML
+   classe → zone.
+
+</Steps>
+
+<Aside type="note">
+Pensez à exporter `LC_NUMERIC=C.UTF-8` dans les launch qui démarrent MoveIt 2 (Kilted casse le parsing
+URDF en locale `fr_FR`).
+</Aside>
