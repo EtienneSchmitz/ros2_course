@@ -140,7 +140,7 @@ Plus besoin de cartographier : on relance en mode **localisation** sur la carte
 `bootcamp`, via le launch tout-en-un :
 
 ```bash
-ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
+ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=amcl map_name:=bootcamp
 ```
 
 Vérifiez que le robot se localise correctement sur la carte sans dériver.
@@ -193,7 +193,7 @@ Le launch tout-en-un empile la sim, la localisation sur la carte `bootcamp` et l
 Nav2 complète, plus RViz, en une seule commande :
 
 ```bash
-ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
+ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=amcl map_name:=bootcamp
 ```
 
 ### Premier goal au clic dans RViz
@@ -264,7 +264,7 @@ contenant trois zones colorées :
 Lancez la navigation en **localisation** sur votre carte :
 
 ```bash
-ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=localize map_name:=bootcamp
+ros2 launch lekiwi_navigation navigation.launch.py slam_mode:=amcl map_name:=bootcamp
 ```
 
 **Tout se pilote par le code, sans aucun clic dans RViz** — c'est la contrainte de
