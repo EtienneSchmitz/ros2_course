@@ -67,12 +67,21 @@ monde `pick_place.sdf`) **+** `move_group` **+** RViz avec le panneau *MotionPla
 
 <Steps>
 
-1. Onglet **Planning** → glissez la sphère interactive autour de la pince pour une
+1. Dans les **Options** (panneau *MotionPlanning*), **cochez `Approx IK Solutions`**.
+2. Onglet **Planning** → glissez la sphère interactive autour de la pince pour une
    cible cartésienne, ou choisissez une **pose nommée** dans *Goal State*.
-2. **Plan** : MoveIt cherche une trajectoire.
-3. **Execute** : elle est jouée sur le bras dans Gazebo.
+3. **Plan** : MoveIt cherche une trajectoire.
+4. **Execute** : elle est jouée sur le bras dans Gazebo.
 
 </Steps>
+
+<Aside type="tip" title="Pourquoi cocher « Approx IK Solutions »">
+Le SO-101 n'a que **5 DOF** : il ne peut pas atteindre une pose 6D (position **+**
+orientation) arbitraire. Sans cette case, l'IK exacte échoue souvent et le marqueur
+devient rouge / le Plan échoue. **`Approx IK Solutions`** autorise une solution
+**approchée** (position respectée, orientation au plus près) — c'est le pendant RViz
+du « on planifie en espace des joints » qu'on code à la partie suivante.
+</Aside>
 
 <Aside type="caution" title="Locale fr_FR">
 MoveIt 2 (Kilted) a une régression : en locale `fr_FR`, le séparateur décimal « , »
