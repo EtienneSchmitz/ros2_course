@@ -1,28 +1,83 @@
 ---
 title: Jour 4 — Vision
-description: Perception, OpenCV et asservissement visuel.
+description: Perception visuelle en ROS 2 — de l'image au Detection.msg. Présentation générale puis ateliers à la carte (OpenCV, ArUco, YOLO, CNN).
 sidebar:
   order: 1
   label: "Vue d'ensemble"
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SlidevEmbed from "../../../components/SlidevEmbed.astro";
 import DayFlow from "../../../components/DayFlow.astro";
 
-<Aside type="caution" title="En cours de réécriture pour la session 2026">
-Cette section sera réécrite dans le cadre de la refonte Perpignan 2026 (voir issue [#65](https://github.com/EtienneSchmitz/ros2_course/issues/65)).
+La journée explore la **vision par ordinateur** appliquée à la robotique : comment un
+robot transforme un flux d'images en information exploitable. Après une présentation
+générale du domaine, vous choisissez **un atelier** parmi quatre techniques, de la vision
+classique à l'intelligence artificielle.
 
-Le contenu de la session 2025 reste accessible :
-[ros2_course/tree/v2025/docs/vision](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/vision)
-</Aside>
+## Objectifs pédagogiques
+
+À la fin de la journée, vous saurez :
+
+- expliquer ce qu'est une image numérique (pixels, canaux, espaces colorimétriques) et le **pipeline vision** ;
+- situer les grandes familles de techniques : **OpenCV** (classique), **marqueurs** (ArUco), **apprentissage profond** (YOLO, CNN) ;
+- acquérir un flux caméra en ROS 2 (`sensor_msgs/Image` + `cv_bridge`) et estimer une **pose** ;
+- coder un nœud **`detector`** qui publie un `Detection.msg` sur `/detections` — la brique perception du fil rouge.
+
+## Pré-requis
+
+- Workspace `~/ros2_bootcamp_ws/` opérationnel avec le package `bootcamp_vision` (voir [Installation](/installation/)).
+- `Detection.msg` créé au Jour 1 dans votre package d'interfaces (`string class_id` + `geometry_msgs/Pose pose`).
+- Dépendances vision installées (voir [Installation](/installation/01-ubuntu/#ros-2-kilted--gazebo-ionic)).
 
 ## Déroulé de la journée
 
 <DayFlow>
 
-1. **Présentation** de la perception et du pipeline vision (slides à venir).
-2. **OpenCV + ROS 2** : acquisition et traitement d'images (`image_transport`).
-3. **Détection d'objets** avec une IA (PyTorch) — les classes du projet.
-4. **Asservissement visuel** : fournir la pose détectée au pick & place.
+1. **Présentation** de la vision par ordinateur et du pipeline de perception (slides ci-dessous).
+2. **[Socle commun](/vision/00-communs/)** : monde Gazebo, caméra, `cv_bridge`, squelette du nœud `detector`.
+3. **Atelier au choix** (un seul, selon votre envie) — voir les cartes ci-dessous.
+4. **Restitution** : votre détecteur publie sur `/detections`, prêt à remplacer le `detector` factice du Jour 1.
 
 </DayFlow>
+
+## Slides du jour
+
+<SlidevEmbed name="jour4" title="Jour 4 — Vision" />
+
+## Les ateliers à la carte
+
+<Aside type="tip" title="Vous en choisissez un seul">
+Les quatre ateliers sont **indépendants** : choisissez celui qui vous attire. Tous
+aboutissent au même résultat — un nœud qui publie `/detections` — mais explorent une
+technique différente. Le [socle commun](/vision/00-communs/) est le seul passage obligé.
+</Aside>
+
+<CardGrid>
+  <LinkCard
+    title="🟦 Formes (OpenCV)"
+    description="Vision classique : filtres, contours, couleur HSV. Aucun entraînement, déterministe."
+    href="/vision/01-formes-opencv/"
+  />
+  <LinkCard
+    title="🎯 ArUco (pose 6D)"
+    description="Marqueurs fiduciaires : identifiant + pose 6D complète. La méthode la plus robuste."
+    href="/vision/02-aruco/"
+  />
+  <LinkCard
+    title="🧠 YOLO (détection)"
+    description="Détection par IA : modèle pré-entraîné COCO, puis entraîné sur vos objets."
+    href="/vision/03-yolo/"
+  />
+  <LinkCard
+    title="🔢 Chiffres (CNN)"
+    description="Entraînez vous-même un réseau de neurones sur MNIST avec PyTorch."
+    href="/vision/04-chiffres/"
+  />
+</CardGrid>
+
+## Référence — version 2025
+
+Le contenu de la session 2025 (OpenCV couleur + reconnaissance de chiffres) reste
+accessible :
+[v2025/docs/vision](https://github.com/EtienneSchmitz/ros2_course/tree/v2025/docs/vision).

@@ -1,0 +1,204 @@
+---
+title: "Socle commun aux ateliers vision"
+description: Mise en place partagée par les quatre ateliers à la carte — dépendances, monde Gazebo, cv_bridge, squelette du nœud detector et back-projection vers /detections.
+sidebar:
+  label: "Socle commun"
+  order: 2
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+<Aside type="note" title="À lire avant n'importe quel atelier">
+Les quatre ateliers du jour ([Formes](/vision/01-formes-opencv/),
+[ArUco](/vision/02-aruco/), [YOLO](/vision/03-yolo/),
+[Chiffres](/vision/04-chiffres/)) sont **à la carte** : vous en choisissez **un** selon
+votre envie. Cette page rassemble ce dont **tous** ont besoin — faites-la une fois, puis
+filez vers l'atelier de votre choix.
+</Aside>
+
+Tous les ateliers suivent la même trajectoire **hybride** : on apprend la technique en
+**OpenCV/Python pur**, puis on l'emballe dans un **nœud ROS 2** qui publie un
+`Detection.msg` sur `/detections`. C'est la brique « perception » du fil rouge : votre
+détecteur remplacera le `detector` factice du Jour 1.
+
+## 1. Dépendances vision
+
+La **stack image ROS** (`cv-bridge`, `image-transport`, `image-publisher`) et
+**`opencv-contrib-python`** (qui fournit le module `aruco`) sont installées à l'étape
+[Installation](/installation/01-ubuntu/#ros-2-kilted--gazebo-ionic) — vérifiez-les avant
+de commencer :
+
+```bash
+python3 -c "import cv2, cv_bridge; print(cv2.__version__)"
+python3 -c "import cv2.aruco; print('aruco ok')"
+```
+
+<Aside type="caution" title="Un seul paquet OpenCV à la fois">
+N'installez **pas** `opencv-python` en plus de `opencv-contrib-python` : les deux
+entrent en conflit. En cas de doute : `pip uninstall opencv-python`.
+</Aside>
+
+<Aside type="note" title="Dépendances IA (YOLO / Chiffres seulement)">
+Les ateliers [YOLO](/vision/03-yolo/) et [Chiffres](/vision/04-chiffres/) ajoutent
+`torch` / `torchvision` / `ultralytics` (via pip). L'installation est décrite **dans ces
+ateliers** : inutile si vous choisissez Formes ou ArUco.
+</Aside>
+
+## 2. Lancer le monde « vision »
+
+La caméra et les objets vivent dans le package **`bootcamp_vision`** (monde
+`vision_table.sdf` : une caméra fixe en **vue de dessus** observe une table).
+
+<Tabs>
+<TabItem label="Terminal 1 — monde + caméra">
+
+```bash
+ros2 launch bootcamp_vision vision_world.launch.py
+```
+
+Vérifiez le flux dans un autre terminal :
+
+```bash
+ros2 topic list | grep camera     # /camera/image_raw + /camera/camera_info
+ros2 topic hz /camera/image_raw   # ~24 Hz
+```
+
+</TabItem>
+<TabItem label="Terminal 2 — faire apparaître un objet">
+
+Chaque atelier a son preset (`shapes`, `aruco`, `yolo`, `digit`) :
+
+```bash
+ros2 launch bootcamp_vision spawn_object.launch.py object:=shapes
+# object:=aruco aruco_id:=1   |   object:=yolo   |   object:=digit
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip" title="Visualiser sans coder">
+```bash
+ros2 run rqt_image_view rqt_image_view /camera/image_raw
+```
+Gardez cette fenêtre ouverte : vous y verrez ce que « voit » votre nœud.
+</Aside>
+
+## 3. `cv_bridge` : du message ROS au tableau OpenCV
+
+Un nœud ROS reçoit des `sensor_msgs/Image`. `cv_bridge` les convertit en image OpenCV
+(un tableau NumPy `H × W × C`, en **BGR**) :
+
+```python
+from cv_bridge import CvBridge
+bridge = CvBridge()
+frame = bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")   # -> np.ndarray BGR
+```
+
+## 4. Le contrat `/detections`
+
+<Aside type="caution" title="Importez VOTRE message Detection">
+`Detection.msg` (`string class_id` + `geometry_msgs/Pose pose`) a été créé dans votre
+**package d'interfaces** au Jour 1. Adaptez l'import au nom que vous lui avez donné
+(`from mon_projet_interfaces.msg import Detection`). Le package `bootcamp_vision` peut
+aussi le fournir.
+</Aside>
+
+Tous les ateliers publient le **même** message sur le **même** topic — c'est ce qui
+permet au Jour 5 de brancher votre perception sans rien changer en aval.
+
+## 5. Estimer la pose : back-projection sur le plan de la table
+
+`Detection.msg` attend une `geometry_msgs/Pose` (3D). Avec une caméra **en vue de
+dessus** et les intrinsèques connues, on remonte d'un pixel `(u, v)` vers un point 3D
+sur le plan de la table. La distance caméra→table est documentée dans le **README de
+`bootcamp_vision`**.
+
+```python
+# Intrinsèques de la caméra bootcamp_vision (cf. /camera/camera_info)
+FX, FY, CX, CY = 935.485, 935.485, 640.0, 360.0
+CAM_HEIGHT = 0.80   # distance caméra → plan de la table (m) — voir README bootcamp_vision
+
+def backproject(u, v):
+    """Pixel (u,v) -> (x, y, z) sur le plan de la table (repère caméra)."""
+    x = (u - CX) / FX * CAM_HEIGHT
+    y = (v - CY) / FY * CAM_HEIGHT
+    return x, y, 0.0
+```
+
+<Aside type="caution" title="Pose 2D dégradée">
+Cette pose suppose l'objet **posé à plat** (z connu) et ignore son orientation
+(quaternion identité). C'est suffisant pour le pick & place, mais ce n'est **pas** une
+vraie pose 6D. Seul l'atelier [ArUco](/vision/02-aruco/) fournit une pose **6D
+complète** — c'est pourquoi ArUco est le détecteur le plus fiable.
+</Aside>
+
+## 6. Le squelette du nœud `detector`
+
+Voici le **patron commun** : il souscrit à la caméra, convertit l'image, et publie sur
+`/detections`. Chaque atelier ne remplace que le bloc « détection » dans `on_image`.
+
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from geometry_msgs.msg import Pose
+from cv_bridge import CvBridge
+
+from mon_projet_interfaces.msg import Detection   # ⚠️ votre package d'interfaces (J1)
+
+FX, FY, CX, CY = 935.485, 935.485, 640.0, 360.0
+CAM_HEIGHT = 0.80
+
+
+class Detector(Node):
+    def __init__(self):
+        super().__init__("detector")
+        self.bridge = CvBridge()
+        self.pub = self.create_publisher(Detection, "/detections", 10)
+        self.create_subscription(Image, "/camera/image_raw", self.on_image, 10)
+        self.get_logger().info("detector prêt — j'écoute /camera/image_raw")
+
+    def on_image(self, msg):
+        frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        # >>> bloc spécifique à l'atelier : produire (class_id, u, v) <<<
+        # x, y, z = self.backproject(u, v)
+        # self.publier(class_id, x, y, z)
+
+    def backproject(self, u, v):
+        return (u - CX) / FX * CAM_HEIGHT, (v - CY) / FY * CAM_HEIGHT, 0.0
+
+    def publier(self, class_id, x, y, z, quat=(0.0, 0.0, 0.0, 1.0)):
+        det = Detection()
+        det.class_id = class_id
+        det.pose = Pose()
+        det.pose.position.x, det.pose.position.y, det.pose.position.z = x, y, z
+        (det.pose.orientation.x, det.pose.orientation.y,
+         det.pose.orientation.z, det.pose.orientation.w) = quat
+        self.pub.publish(det)
+
+
+def main():
+    rclpy.init()
+    rclpy.spin(Detector())
+    rclpy.shutdown()
+```
+
+Pour tester n'importe quel atelier, avec le monde lancé et un objet spawné :
+
+```bash
+ros2 run mon_projet_vision detector     # votre package
+ros2 topic echo /detections
+```
+
+## Choisir son atelier
+
+<Aside type="tip" title="Quatre ateliers, un seul à choisir">
+- 🟦 **[Formes (OpenCV)](/vision/01-formes-opencv/)** — vision classique : filtres,
+  contours, couleur. Aucun entraînement.
+- 🎯 **[ArUco (pose 6D)](/vision/02-aruco/)** — marqueurs fiduciaires, pose **6D**
+  robuste. Le plus fiable.
+- 🧠 **[YOLO (détection)](/vision/03-yolo/)** — détection par IA, modèle pré-entraîné
+  puis **entraîné sur vos objets**.
+- 🔢 **[Chiffres (CNN)](/vision/04-chiffres/)** — entraînez **vous-même** un réseau de
+  neurones (MNIST).
+</Aside>

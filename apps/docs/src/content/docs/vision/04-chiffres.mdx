@@ -1,0 +1,245 @@
+---
+title: "Reconnaître des chiffres : entraîner un CNN"
+description: Entraîner soi-même un réseau de neurones convolutif (CNN) sur MNIST avec PyTorch, l'utiliser en inférence, puis l'intégrer en nœud ROS 2 publiant /detections.
+sidebar:
+  label: "Chiffres (CNN)"
+  order: 6
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+<Aside type="note" title="Atelier à la carte">
+Un des quatre ateliers du jour, au choix. Faites d'abord le
+**[Socle commun](/vision/00-communs/)** (dépendances, monde Gazebo, squelette du nœud) :
+cet atelier s'appuie dessus.
+</Aside>
+
+Contrairement à YOLO (pré-entraîné), ici vous **entraînez vous-même** un réseau de
+neurones, de zéro, avec [PyTorch](https://pytorch.org/). L'objectif : reconnaître des
+**chiffres manuscrits** grâce à la base **MNIST**, puis exposer la prédiction dans un
+nœud ROS 2. C'est l'occasion de voir tout le cycle de l'apprentissage : données →
+modèle → entraînement → inférence.
+
+<Aside type="note" title="Objectifs">
+- Charger un jeu de données (**MNIST**) avec `torchvision` et un `DataLoader`.
+- Définir un **réseau convolutif (CNN)** avec `torch.nn`.
+- Écrire une **boucle d'entraînement** (perte, rétropropagation, optimiseur) et évaluer la précision.
+- Faire de l'**inférence** sur une image, puis publier le chiffre reconnu sur `/detections`.
+</Aside>
+
+<Aside type="tip" title="Classification vs détection">
+YOLO **détecte** (plusieurs objets, une boîte + classe chacun). Un CNN MNIST
+**classe** : il répond « quel chiffre ? » pour **une** image déjà recadrée. Deux tâches
+complémentaires.
+</Aside>
+
+## 0. Installer PyTorch
+
+```bash
+pip install torch torchvision    # CPU par défaut (suffisant pour MNIST)
+```
+
+<Aside type="caution" title="Environnement Python (Ubuntu 24.04)">
+Pour ne pas casser `rclpy`/`cv_bridge` (apt), installez dans un venv **avec accès aux
+paquets système**, sourcé **après** votre workspace ROS 2 :
+
+```bash
+python3 -m venv --system-site-packages ~/venv-vision
+source ~/venv-vision/bin/activate
+pip install torch torchvision
+```
+</Aside>
+
+## 1. Charger les données MNIST
+
+`torchvision` télécharge MNIST (60 000 images d'entraînement, 10 000 de test, en 28×28
+niveaux de gris) :
+
+```python
+from torchvision import datasets
+from torchvision.transforms import ToTensor
+from torch.utils.data import DataLoader
+
+train_data = datasets.MNIST(root="data", train=True, transform=ToTensor(), download=True)
+test_data  = datasets.MNIST(root="data", train=False, transform=ToTensor(), download=True)
+
+loaders = {
+    "train": DataLoader(train_data, batch_size=100, shuffle=True, num_workers=1),
+    "test":  DataLoader(test_data,  batch_size=100, shuffle=False, num_workers=1),
+}
+print(train_data.data.shape)   # torch.Size([60000, 28, 28])
+```
+
+## 2. Définir le CNN
+
+Un petit réseau : deux couches de convolution (extraction de motifs) suivies de deux
+couches « pleinement connectées » (classification en 10 chiffres).
+
+```python
+import torch.nn as nn
+import torch.nn.functional as F
+
+class CNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc2 = nn.Linear(50, 10)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = x.view(-1, 320)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
+```
+
+## 3. Entraîner
+
+On choisit le **dispositif** (GPU si dispo), l'**optimiseur** (Adam) et la **fonction de
+perte** (entropie croisée).
+
+```python
+import torch
+import torch.optim as optim
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = CNN().to(device)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+loss_fn = nn.CrossEntropyLoss()
+```
+
+La **boucle d'entraînement** : pour chaque lot, on calcule la prédiction, la perte, puis
+on rétropropage et on met à jour les poids.
+
+```python
+def train(epoch):
+    model.train()
+    for batch_idx, (data, target) in enumerate(loaders["train"]):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        loss = loss_fn(model(data), target)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % 100 == 0:
+            print(f"Epoch {epoch} [{batch_idx * len(data)}/{len(train_data)}]  perte={loss.item():.4f}")
+
+def test():
+    model.eval()
+    correct = 0
+    with torch.no_grad():
+        for data, target in loaders["test"]:
+            data, target = data.to(device), target.to(device)
+            pred = model(data).argmax(dim=1)
+            correct += pred.eq(target).sum().item()
+    print(f"Précision test : {100 * correct / len(test_data):.1f}%")
+```
+
+```python
+for epoch in range(1, 6):
+    train(epoch)
+    test()
+torch.save(model.state_dict(), "mnist_cnn.pth")   # sauvegarde des poids
+```
+
+<Aside type="tip" title="Quelques epochs suffisent">
+Sur MNIST, le CNN dépasse **98 %** de précision en **3 à 5 epochs**, même sur CPU.
+Inutile de viser des centaines d'epochs : surveillez la précision test et arrêtez quand
+elle plafonne.
+</Aside>
+
+## 4. Inférence sur une image
+
+On recharge les poids et on prédit. Une image caméra doit être préparée comme MNIST :
+**niveaux de gris**, **28×28**, chiffre blanc sur fond noir.
+
+```python
+import cv2 as cv
+import torch
+
+model = CNN().to(device)
+model.load_state_dict(torch.load("mnist_cnn.pth"))
+model.eval()
+
+def predire(img_bgr):
+    gris = cv.cvtColor(img_bgr, cv.COLOR_BGR2GRAY)
+    gris = cv.resize(gris, (28, 28))
+    gris = cv.bitwise_not(gris)                          # fond noir / chiffre blanc
+    x = torch.tensor(gris, dtype=torch.float32) / 255.0
+    x = x.unsqueeze(0).unsqueeze(0).to(device)           # forme (1, 1, 28, 28)
+    with torch.no_grad():
+        return int(model(x).argmax(dim=1).item())
+```
+
+Faites apparaître un panneau-chiffre dans la simulation et testez sur une capture :
+
+```bash
+ros2 launch bootcamp_vision spawn_object.launch.py object:=digit
+```
+
+## 5. Brancher dans le nœud `detector`
+
+Reprenez le [squelette du socle commun](/vision/00-communs/#6-le-squelette-du-nœud-detector).
+Le modèle est chargé **une fois** dans le constructeur ; à chaque image, on isole le
+chiffre (la zone la plus marquée), on le classe, et on publie. La `class_id` est le
+chiffre prédit ; la `pose` vient de la back-projection du centroïde.
+
+```python
+class DigitDetector(Node):
+    def __init__(self):
+        super().__init__("digit_detector")
+        # ... bridge / pub / subscription comme le socle commun ...
+        self.model = CNN().to(device)
+        self.model.load_state_dict(torch.load("mnist_cnn.pth"))
+        self.model.eval()
+
+    def on_image(self, msg):
+        frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        # 1) localiser le panneau-chiffre (seuillage + plus gros contour)
+        # 2) recadrer la ROI -> predire(roi) -> chiffre
+        # 3) centroïde -> backproject -> publier
+        chiffre = predire(roi)
+        x, y, z = self.backproject(u, v)
+        self.publier(str(chiffre), x, y, z)
+```
+
+```bash
+ros2 run mon_projet_vision digit_detector
+ros2 topic echo /detections     # class_id = "7", pose = centre back-projeté
+```
+
+<Aside type="caution" title="Du jeu de données au monde réel">
+MNIST, ce sont des chiffres **manuscrits centrés**. Vos images caméra (police imprimée,
+fond, éclairage) en diffèrent : pensez à bien **prétraiter** (recadrage serré, contraste,
+inversion). Cet écart « données d'entraînement ≠ données réelles » est un problème central
+de l'IA.
+</Aside>
+
+<Aside type="tip" title="Vérifiez votre compréhension">
+1. À quoi servent les couches de **convolution** dans le CNN ?
+2. Que font `loss.backward()` puis `optimizer.step()` dans la boucle d'entraînement ?
+3. Pourquoi faut-il **prétraiter** l'image caméra avant de la donner au modèle ?
+
+<details class="quiz-answers">
+<summary>Afficher les réponses</summary>
+
+1. Elles **extraient des motifs locaux** (traits, courbes) de l'image, de plus en plus
+   abstraits couche après couche — sans qu'on les programme à la main.
+2. `backward()` calcule le **gradient** de la perte par rapport aux poids
+   (rétropropagation) ; `step()` **met à jour** les poids dans le sens qui réduit la perte.
+3. Le modèle a appris sur des images **28×28, niveaux de gris, chiffre clair sur fond
+   sombre** : il faut présenter une entrée au **même format**, sinon la prédiction est mauvaise.
+
+</details>
+</Aside>
+
+## Pour aller plus loin
+
+- Affichez la **probabilité** (confiance) de la prédiction en plus du chiffre.
+- Augmentez les **epochs** ou ajoutez une couche : la précision test bouge-t-elle ?
+- Envie d'une détection multi-objets ? Voir [YOLO](/vision/03-yolo/). Sans IA :
+  [Formes](/vision/01-formes-opencv/) ou [ArUco](/vision/02-aruco/).

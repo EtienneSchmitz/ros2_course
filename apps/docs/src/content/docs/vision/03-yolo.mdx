@@ -1,0 +1,219 @@
+---
+title: "Détection d'objets avec YOLO"
+description: Inférence avec un YOLO pré-entraîné COCO, puis entraînement d'un modèle custom sur les objets du cours (dataset synthétique auto-labellisé), et intégration en nœud /detections.
+sidebar:
+  label: "YOLO (détection)"
+  order: 5
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="note" title="Atelier à la carte">
+Un des quatre ateliers du jour, au choix. Faites d'abord le
+**[Socle commun](/vision/00-communs/)** (dépendances, monde Gazebo, squelette du nœud) :
+cet atelier s'appuie dessus.
+</Aside>
+
+Place à l'**apprentissage profond** : **YOLO** (*You Only Look Once*) localise **et**
+classe plusieurs objets en une seule passe. Vous l'utiliserez d'abord **pré-entraîné**,
+puis vous l'**entraînerez sur vos propres objets** grâce à un dataset généré dans la
+simulation.
+
+<Aside type="note" title="Objectifs">
+- Distinguer **classification** et **détection** (bounding box + classe + score).
+- Faire de l'inférence avec un **YOLO pré-entraîné** (COCO) sur image et flux caméra.
+- Générer un **dataset synthétique auto-labellisé** depuis Gazebo et **entraîner** un YOLO custom.
+- Emballer le détecteur dans un nœud ROS 2 publiant `/detections`.
+</Aside>
+
+<Aside type="caution" title="Coût de calcul">
+YOLO est plus lourd que les méthodes précédentes. Le modèle **nano** (`yolo11n`)
+tourne sur **CPU** (quelques images/s) ; un **GPU** accélère surtout l'entraînement.
+Privilégiez `yolo11n` pendant la séance.
+</Aside>
+
+## Partie A — YOLO pré-entraîné (baseline)
+
+### 0. Installer ultralytics
+
+```bash
+pip install ultralytics    # tire torch/torchvision automatiquement
+```
+
+<Aside type="caution" title="Environnement Python (Ubuntu 24.04)">
+Pour ne pas casser `rclpy`/`cv_bridge` (apt), installez dans un venv **avec accès aux
+paquets système**, sourcé **après** votre workspace ROS 2 :
+
+```bash
+python3 -m venv --system-site-packages ~/venv-vision
+source ~/venv-vision/bin/activate
+pip install ultralytics
+```
+</Aside>
+
+### 1. Inférence sur une image
+
+Un modèle pré-entraîné sur **COCO** (80 classes courantes : `person`, `bottle`, `cup`…)
+se charge en une ligne :
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("yolo11n.pt")          # téléchargé automatiquement au 1er appel
+results = model("capture.png")       # inférence
+results[0].show()                    # affiche l'image annotée
+```
+
+Lancez le monde et faites apparaître un objet « réaliste » que COCO connaît
+(`trash_bottle` → classe `bottle`) :
+
+```bash
+ros2 launch bootcamp_vision vision_world.launch.py
+ros2 launch bootcamp_vision spawn_object.launch.py object:=yolo
+```
+
+### 2. Lire les résultats
+
+Chaque détection expose sa **classe**, son **score** et sa **boîte** (`xyxy`) :
+
+```python
+for box in results[0].boxes:
+    cls = model.names[int(box.cls)]      # ex. "bottle"
+    conf = float(box.conf)               # score de confiance
+    x1, y1, x2, y2 = box.xyxy[0].tolist()
+    print(f"{cls} ({conf:.2f}) — bbox=({x1:.0f},{y1:.0f},{x2:.0f},{y2:.0f})")
+```
+
+<Aside type="caution" title="COCO ne connaît pas vos objets">
+Le modèle pré-entraîné ne reconnaît que les **80 classes COCO**. Il verra la bouteille,
+mais **pas** vos `coffee_pack` ni vos colis ArUco. Pour détecter **vos** objets, il faut
+**entraîner** le modèle — c'est la partie B.
+</Aside>
+
+## Partie B — Entraîner YOLO sur vos objets
+
+### 3. Générer un dataset… dans la simulation
+
+Entraîner un détecteur demande beaucoup d'images **annotées** (objet + boîte + classe).
+Les annoter à la main est fastidieux. L'atout de la simulation : on **connaît** la
+position des objets, donc on peut **générer ET labelliser automatiquement** des milliers
+d'images en variant la pose, l'éclairage et les distracteurs (*domain randomization*).
+
+`bootcamp_vision` fournit un outil qui fait exactement cela :
+
+```bash
+# Génère un dataset YOLO auto-labellisé pour 5 classes, 300 images chacune
+ros2 run bootcamp_vision capture_dataset \
+  --classes coffee_pack_1 coffee_pack_2 coffee_pack_3 trash_bottle trash_can \
+  --per-class 300 --out ~/yolo_ds --val-split 0.2
+```
+
+→ Vous obtenez une arborescence au format ultralytics :
+
+```text
+~/yolo_ds/
+  images/train/  images/val/      # les .png capturés
+  labels/train/  labels/val/      # un .txt YOLO par image (classe + bbox normalisée)
+  data.yaml                       # noms de classes + chemins
+```
+
+<Aside type="tip" title="Domain randomization">
+Plus les images sont **variées** (position et orientation de l'objet, éclairage, objets
+parasites), mieux le modèle **généralise**. L'outil randomise la **pose de l'objet** (pas
+la caméra) à chaque capture.
+</Aside>
+
+### 4. Lancer l'entraînement
+
+```bash
+yolo detect train model=yolo11n.pt data=~/yolo_ds/data.yaml epochs=30 imgsz=640
+```
+
+YOLO part du modèle pré-entraîné (*transfer learning*) et l'adapte à vos classes. Les
+poids du meilleur modèle sont sauvegardés dans
+`runs/detect/train/weights/best.pt`.
+
+<Aside type="caution" title="Gérez votre temps">
+Génération + entraînement prennent du temps (plus encore sur CPU). Commencez **petit** :
+peu de classes, `epochs=10`, puis augmentez si le temps le permet. Gardez le modèle
+pré-entraîné de la partie A comme **filet de sécurité** si l'entraînement n'aboutit pas.
+</Aside>
+
+### 5. Tester votre modèle
+
+```python
+model = YOLO("runs/detect/train/weights/best.pt")
+results = model("capture.png")
+results[0].show()
+```
+
+Spawnez un `coffee_pack_2` et vérifiez que **votre** modèle le détecte alors que le
+modèle COCO en était incapable.
+
+## Partie C — Nœud ROS 2 `/detections`
+
+On réutilise le **squelette** du
+[socle commun](/vision/00-communs/#6-le-squelette-du-nœud-detector). Le modèle est
+chargé une fois dans le constructeur ; à chaque image, on publie une `Detection` par
+boîte. La `pose` est obtenue en **back-projetant le centre de la boîte** sur le plan de
+la table.
+
+```python
+from ultralytics import YOLO
+# ... (imports rclpy / Image / Pose / cv_bridge / Detection comme au TP 01)
+
+class YoloDetector(Node):
+    def __init__(self):
+        super().__init__("yolo_detector")
+        self.bridge = CvBridge()
+        self.model = YOLO("best.pt")        # votre modèle entraîné (ou "yolo11n.pt")
+        self.pub = self.create_publisher(Detection, "/detections", 10)
+        self.create_subscription(Image, "/camera/image_raw", self.on_image, 10)
+
+    def on_image(self, msg):
+        frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        for box in self.model(frame, verbose=False)[0].boxes:
+            if float(box.conf) < 0.5:
+                continue
+            x1, y1, x2, y2 = box.xyxy[0].tolist()
+            u, v = (x1 + x2) / 2, (y1 + y2) / 2      # centre de la boîte
+            x, y, z = self.backproject(u, v)          # cf. socle commun
+            self.publier(self.model.names[int(box.cls)], x, y, z)
+```
+
+```bash
+ros2 run mon_projet_vision yolo_detector
+ros2 topic echo /detections     # class_id = label COCO/custom, pose = centre back-projeté
+```
+
+<Aside type="caution" title="Pose 2D">
+YOLO donne une **boîte 2D**, pas d'orientation. La `pose` publiée reste **2D dégradée**
+(centre back-projeté, orientation identité). Pour une pose 6D, voir
+[ArUco](/vision/02-aruco/).
+</Aside>
+
+<Aside type="tip" title="Vérifiez votre compréhension">
+1. Quelle est la différence entre **classification** et **détection** d'objets ?
+2. Pourquoi peut-on générer un dataset **annoté** automatiquement en simulation ?
+3. Qu'apporte le *transfer learning* (`model=yolo11n.pt`) par rapport à un entraînement de zéro ?
+
+<details class="quiz-answers">
+<summary>Afficher les réponses</summary>
+
+1. La **classification** donne une seule classe pour toute l'image ; la **détection**
+   localise *plusieurs* objets avec une **boîte** + classe + score chacun.
+2. Parce qu'on **connaît la pose** de chaque objet spawné et les intrinsèques de la
+   caméra : on peut calculer la boîte automatiquement, sans annotation manuelle.
+3. On part de poids déjà entraînés sur des millions d'images : le modèle converge **bien
+   plus vite** et avec **beaucoup moins** de données qu'un entraînement *from scratch*.
+
+</details>
+</Aside>
+
+## Pour aller plus loin
+
+- Augmentez `--per-class` et le nombre d'**epochs**, comparez la précision obtenue.
+- Ajoutez des **distracteurs** lors de la capture et observez l'effet sur la robustesse.
+- Envie d'entraîner un réseau **de zéro** ? Tentez l'atelier
+  [Chiffres (CNN)](/vision/04-chiffres/). Sans IA : [Formes](/vision/01-formes-opencv/)
+  ou [ArUco](/vision/02-aruco/).
