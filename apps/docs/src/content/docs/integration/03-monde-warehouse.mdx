@@ -62,18 +62,21 @@ d'interface attendu par votre detector du Jour 4. Le `frame_id` est `wrist_camer
 <Steps>
 
 1. **Compiler & sourcer** :
+
    ```bash
    cd ~/ros2_bootcamp_ws && colcon build --packages-select lekiwi_bringup
    source install/setup.bash
    ```
 
 2. **Lancer le monde + le robot + la caméra** :
+
    ```bash
    ros2 launch lekiwi_bringup warehouse_sim.launch.py
    # variantes : headless:=true (sans GUI) | camera_alias:=false | spawn:=true
    ```
 
 3. **Vérifier les flux** (autre terminal) :
+
    ```bash
    ros2 topic hz /scan
    ros2 topic hz /camera/image_raw

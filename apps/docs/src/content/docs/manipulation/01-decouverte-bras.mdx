@@ -14,12 +14,13 @@ simulation Gazebo Ionic** via `ros2_control`. À la fin, vous saurez bouger le
 bras et la pince à la main — la seconde partie automatisera tout cela avec MoveIt 2.
 
 <Aside type="note" title="Objectifs">
-- Lire la chaîne cinématique 6 DoF du SO-101 dans son URDF Xacro.
+- Lire la chaîne cinématique du SO-101 (5 DOF de bras + pince) dans son URDF Xacro.
 - Visualiser le bras et inspecter ses topics (`/robot_description`, `/joint_states`, `tf`).
 - Comprendre le triptyque `ros2_control` et envoyer une trajectoire manuelle au bras et à la pince.
 </Aside>
 
-Le **SO-101** est un bras robotique open-source 6 DoF conçu par la communauté
+Le **SO-101** est un bras robotique open-source à **6 articulations motorisées**
+(5 DOF pour positionner le poignet + 1 pour la pince) conçu par la communauté
 <a href="https://huggingface.co/lerobot" target="_blank" rel="noopener noreferrer">LeRobot / Hugging Face</a>, motorisé par
 des servos Feetech STS3215. Il est suffisamment léger pour être posé sur une
 table ou monté sur la [base mobile LeKiwi](/navigation/01-base-mobile/).

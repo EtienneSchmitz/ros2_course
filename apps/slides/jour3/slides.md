@@ -321,7 +321,7 @@ $$
 
 <v-click>
 
-> SO-101 : chaîne **5–6 DOF** → l'IK cartésienne 6D arbitraire est dégradée. La planification dans l'espace des joints, elle, marche très bien.
+> SO-101 : bras **5 DOF** → on ne peut pas imposer une **orientation arbitraire**. Viser une pose 6D directe échoue souvent ; on **résout l'IK une fois** puis on planifie **dans l'espace des joints** (mesuré en TP : pose 6D 0/5 vs but articulaire 5/5).
 
 </v-click>
 
@@ -502,11 +502,10 @@ ajoute ce qu'il faut pour **planifier**, généré par le *MoveIt Setup Assistan
 
 <v-clicks>
 
-- **groupes** : `arm` (les 5 joints), `gripper` (la pince) ;
+- **groupes** : `arm` (chaîne `base_link → gripper_link`), `gripper` (joint `gripper`) ;
 - **poses nommées** : `home`, `ready`, `gripper_open`, `gripper_close` ;
-- **end-effector** : `gripper_ee` ;
-- **joint virtuel** : relie le robot au monde (`world → base`) ;
-- **matrice de collisions désactivées**.
+- **end-effector** : `gripper_ee` (parent `gripper_link`) ;
+- **matrice de collisions désactivées** (paires toujours/jamais en contact).
 
 </v-clicks>
 
@@ -581,6 +580,33 @@ Le nœud **`robot_state_publisher`** fait le lien entre la description statique 
 <v-click>
 
 > En clair : **URDF (forme) + `/joint_states` (angles) → FK → arbre TF**. C'est la cinématique directe de la Partie 02, appliquée en continu.
+
+</v-click>
+
+---
+layout: default
+---
+
+# Commander le matériel — `ros2_control`
+
+Entre « je veux cette trajectoire » et les moteurs, une couche standard
+**uniforme et temps réel** : `ros2_control`. Trois briques :
+
+<div class="bc-cards bc-cards--3">
+<div class="bc-card" v-click><div class="bc-card__title">🔌 Hardware interface</div><p>Le pont bas-niveau : <strong>lit</strong> l'état, <strong>écrit</strong> les commandes. <code>gz_ros2_control</code> en sim, driver Feetech en réel.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🎛️ Controller manager</div><p>Charge les contrôleurs et <strong>arbitre</strong> l'accès aux joints.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🧩 Contrôleurs</div><p><strong>JTC</strong> (suivre une trajectoire) pour le bras, un contrôleur de <strong>pince</strong> dédié.</p></div>
+</div>
+
+<v-click>
+
+<div class="bc-callout bc-callout--info">
+<div class="bc-callout__icon">🔁</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">command vs state interfaces</div>
+<p><strong>command</strong> = ce qu'on <strong>écrit</strong> (consignes) ; <strong>state</strong> = ce qu'on <strong>lit</strong> (mesures). Le <code>joint_state_broadcaster</code> republie l'état sur <code>/joint_states</code> — la boucle se referme. <strong>MoveIt envoie ses trajectoires à ce JTC.</strong></p>
+</div>
+</div>
 
 </v-click>
 
@@ -757,13 +783,40 @@ layout: default
 layout: default
 ---
 
+# Saisir un objet (pick & place)
+
+Planifier un mouvement ne suffit pas à **saisir**. Quatre points à part :
+
+<div class="bc-cards bc-cards--2">
+<div class="bc-card" v-click><div class="bc-card__title">🎯 Le bon repère (TCP)</div><p>On vise le <strong>point de préhension</strong> (<code>gripper_frame_link</code>), pas le corps de la pince — sinon les doigts tombent à côté.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">⬇️ Approche / retrait</div><p>On descend <strong>par le haut</strong> (pré-prise au-dessus), on saisit, on <strong>remonte</strong> avant de partir — pour ne pas heurter l'objet.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🧲 Attacher l'objet</div><p>À la fermeture, on <strong>attache</strong> l'objet à la pince dans la <em>planning scene</em> : il suit le bras et MoveIt gère ses collisions.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🔓 Relâcher</div><p>À l'ouverture, on le <strong>détache</strong> ; il est déposé.</p></div>
+</div>
+
+<v-click>
+
+<div class="bc-callout bc-callout--warn">
+<div class="bc-callout__icon">🧪</div>
+<div class="bc-callout__body">
+<div class="bc-callout__title">Sim ≠ réel</div>
+<p>En simulation, la saisie tient par <strong>friction</strong> (fragile) ou par <strong>attache</strong> ; sur le vrai SO-101, c'est la <strong>force des moteurs</strong>. Et sur 5 DOF on saisit <strong>par le haut</strong> (orientation imposée), pas sous tous les angles.</p>
+</div>
+</div>
+
+</v-click>
+
+---
+layout: default
+---
+
 # Récap Jour 3
 
-- <v-click>**Anatomie** : un bras = chaîne série de joints ; 1 joint = 1 DDL ; redondance & singularités.</v-click>
-- <v-click>**Espaces** : joints (angles) ↔ cartésien (pose), reliés par la cinématique.</v-click>
-- <v-click>**Cinématique** : FK (unique) vs IK (0 / 1 / ∞), résolue numériquement (KDL).</v-click>
+- <v-click>**Anatomie** : un bras = chaîne série de joints ; 1 joint = 1 DDL ; le SO-101 = **5 DOF** + pince.</v-click>
+- <v-click>**Cinématique** : FK (unique) vs IK (0 / 1 / ∞, KDL) ; sur 5 DOF on **planifie en espace des joints**.</v-click>
 - <v-click>**Modélisation** : URDF (géométrie), Xacro (paramétrage), SRDF (sémantique), TF (repères dans le temps).</v-click>
-- <v-click>**Planification** : OMPL cherche le chemin, **MoveIt 2** orchestre le tout via `move_group`.</v-click>
+- <v-click>**Exécution** : `ros2_control` (JTC + pince) pilote le matériel ; MoveIt lui envoie ses trajectoires.</v-click>
+- <v-click>**Planification** : OMPL cherche le chemin, **MoveIt 2** orchestre via `move_group` ; saisie = TCP + approche + attache.</v-click>
 
 <v-click>
 
