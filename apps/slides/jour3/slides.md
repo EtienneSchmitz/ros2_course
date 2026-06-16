@@ -95,11 +95,8 @@ Chaque joint a des **limites** : butées de position, vitesse max, effort max.
 
 <div class="bc-media bc-media--frame" style="height: 80%;">
 
-<!-- TODO : déposer l'image du joint (rotationnel vs linéaire) dans le dossier des
-     ressources, puis ajouter ici la balise image correspondante. Chemin laissé vide
-     volontairement pour ne pas faire échouer le link-checker CI tant que le fichier manque. -->
-
-<p style="opacity: 0.45; font-style: italic;">🖼️ Image joint — à insérer (rotationnel vs linéaire)</p>
+<img src="./img/so101-joints-frames.png"
+     alt="Repères du SO-101 dans RViz : chaîne base_link → … → gripper_link" />
 
 </div>
 
@@ -315,9 +312,13 @@ $$
 \text{trouver } \boldsymbol\theta \ \text{ t.q. } \ T_0^{n}(\boldsymbol\theta) = T^{*}
 $$
 
-- <v-click>**Plusieurs** solutions (coude haut / coude bas) ;</v-click>
-- <v-click>**aucune** solution (cible hors d'atteinte ou contrainte géométrique) ;</v-click>
-- <v-click>une **infinité** si le bras est redondant → on parle de **null-space**.</v-click>
+<v-clicks>
+
+- **Plusieurs** solutions (coude haut / coude bas) ;
+- **aucune** solution (cible hors d'atteinte ou contrainte géométrique) ;
+- une **infinité** si le bras est redondant → on parle de **null-space**.
+
+</v-clicks>
 
 <v-click>
 
@@ -466,6 +467,12 @@ layout: two-cols
 
 </v-clicks>
 
+<v-click>
+
+> Au lancement, Xacro est **développé en URDF pur** : c'est toujours ce dernier que ROS 2 consomme.
+
+</v-click>
+
 ::right::
 
 ```xml
@@ -484,12 +491,6 @@ layout: two-cols
 <!-- une ligne → un link complet -->
 <xacro:segment name="elbow" len="${arm_len}"/>
 ```
-
-<v-click>
-
-> Au lancement, Xacro est **développé en URDF pur** : c'est toujours ce dernier que ROS 2 consomme.
-
-</v-click>
 
 ---
 layout: two-cols
@@ -532,16 +533,11 @@ layout: two-cols
 **TF2** gère les relations spatiales (**position + orientation**) entre tous les
 repères : épaule, coude, poignet, pince… et les objets de la scène.
 
-```mermaid
-flowchart TD
-  world --> base["base_link"]
-  base --> sh["shoulder"]
-  sh --> el["elbow"]
-  el --> wr["wrist"]
-  wr --> grip["gripper_link"]
-```
+<v-click>
 
 Chaque arête est une transformation ; les composer donne la pose **de n'importe quel repère dans n'importe quel autre**.
+
+</v-click>
 
 ::right::
 
@@ -556,6 +552,24 @@ Chaque arête est une transformation ; les composer donne la pose **de n'importe
 </div>
 
 </v-click>
+
+---
+layout: default
+---
+
+# L'arbre TF du SO-101
+
+```mermaid {scale: 0.7}
+flowchart LR
+  world --> base["base_link"]
+  base --> sh["shoulder"]
+  sh --> el["elbow"]
+  el --> wr["wrist"]
+  wr --> grip["gripper_link"]
+```
+
+Chaque nœud est un repère, chaque arête une transformation. En les composant on
+obtient la pose de **n'importe quel repère dans n'importe quel autre**.
 
 <v-click>
 
@@ -598,13 +612,26 @@ Entre « je veux cette trajectoire » et les moteurs, une couche standard
 <div class="bc-card" v-click><div class="bc-card__title">🧩 Contrôleurs</div><p><strong>JTC</strong> (suivre une trajectoire) pour le bras, un contrôleur de <strong>pince</strong> dédié.</p></div>
 </div>
 
+---
+layout: default
+---
+
+# `ros2_control` — command vs state
+
+Deux types d'**interfaces** entre les contrôleurs et le matériel :
+
+<div class="bc-cards bc-cards--2">
+<div class="bc-card" v-click><div class="bc-card__title">✍️ command interfaces</div><p>Ce qu'on <strong>écrit</strong> : les <strong>consignes</strong> envoyées au matériel (position, vitesse, effort).</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">📖 state interfaces</div><p>Ce qu'on <strong>lit</strong> : les <strong>mesures</strong> remontées par le matériel (position, vitesse réelles).</p></div>
+</div>
+
 <v-click>
 
 <div class="bc-callout bc-callout--info">
 <div class="bc-callout__icon">🔁</div>
 <div class="bc-callout__body">
-<div class="bc-callout__title">command vs state interfaces</div>
-<p><strong>command</strong> = ce qu'on <strong>écrit</strong> (consignes) ; <strong>state</strong> = ce qu'on <strong>lit</strong> (mesures). Le <code>joint_state_broadcaster</code> republie l'état sur <code>/joint_states</code> — la boucle se referme. <strong>MoveIt envoie ses trajectoires à ce JTC.</strong></p>
+<div class="bc-callout__title">La boucle se referme</div>
+<p>Le <code>joint_state_broadcaster</code> republie l'état sur <code>/joint_states</code> — repris par TF et MoveIt. Et <strong>MoveIt envoie ses trajectoires à ce JTC.</strong></p>
 </div>
 </div>
 
@@ -713,6 +740,8 @@ layout: default
 
 # Le pipeline MoveIt 2
 
+Au cœur du pipeline, **`move_group`** reçoit une cible et distribue le travail aux briques spécialisées :
+
 ```mermaid
 graph LR
   rviz["RViz<br/>MotionPlanning"] --> mg["move_group"]
@@ -723,19 +752,29 @@ graph LR
   traj --> robot["Robot (sim / réel)"]
 ```
 
-<v-clicks>
+---
+layout: default
+---
 
-- une **cible** arrive (RViz ou code) → `move_group` orchestre ;
-- OMPL cherche un chemin, l'IK convertit les poses, les collisions sont vérifiées ;
-- la trajectoire validée part au contrôleur ; la pince est pilotée à part.
+# Le pipeline MoveIt 2 — déroulé
 
-</v-clicks>
+<div class="bc-cards bc-cards--3">
+<div class="bc-card" v-click><div class="bc-card__title">1 · Cible</div><p>Une <strong>cible</strong> arrive (RViz ou code) → <code>move_group</code> orchestre.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">2 · Calcul</div><p>OMPL cherche un chemin, l'<strong>IK</strong> convertit les poses, les <strong>collisions</strong> sont vérifiées.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">3 · Exécution</div><p>La trajectoire validée part au <strong>contrôleur</strong> ; la pince est pilotée à part.</p></div>
+</div>
+
+<v-click>
+
+> Une **cible** entre, une **trajectoire validée** sort — le reste est délégué aux briques éprouvées.
+
+</v-click>
 
 ---
 layout: two-cols
 ---
 
-# `move_group` — le cœur de MoveIt 2
+# `move_group` — le cœur
 
 Le nœud central qui **assemble** toutes les briques pour répondre à une demande de planification :
 
@@ -743,9 +782,8 @@ Le nœud central qui **assemble** toutes les briques pour répondre à une deman
 
 - charge **URDF + SRDF** (structure + sémantique) ;
 - interroge **TF** pour la pose courante ;
-- lance **OMPL** pour le chemin, **l'IK** pour les poses cartésiennes ;
-- **valide** chaque état (collisions, limites) ;
-- **transmet** la trajectoire au contrôleur.
+- lance **OMPL** (chemin) + **l'IK** (poses cartésiennes) ;
+- **valide** chaque état (collisions, limites), puis **transmet** au contrôleur.
 
 </v-clicks>
 
@@ -756,7 +794,6 @@ Le nœud central qui **assemble** toutes les briques pour répondre à une deman
 <div class="bc-layers__item"><div class="bc-layers__name">📄 URDF + SRDF</div><div class="bc-layers__desc">structure & sémantique</div></div>
 <div class="bc-layers__item"><div class="bc-layers__name">🌳 TF</div><div class="bc-layers__desc">pose courante des repères</div></div>
 <div class="bc-layers__item"><div class="bc-layers__name">🗺️ OMPL / IK</div><div class="bc-layers__desc">chemin & cinématique</div></div>
-<div class="bc-layers__item"><div class="bc-layers__name">🛡️ Collision checking</div><div class="bc-layers__desc">validation des états</div></div>
 </div>
 
 ---
@@ -794,13 +831,26 @@ Planifier un mouvement ne suffit pas à **saisir**. Quatre points à part :
 <div class="bc-card" v-click><div class="bc-card__title">🔓 Relâcher</div><p>À l'ouverture, on le <strong>détache</strong> ; il est déposé.</p></div>
 </div>
 
+---
+layout: default
+---
+
+# Saisir un objet — sim ≠ réel
+
+La saisie diffère selon l'environnement d'exécution :
+
+<div class="bc-cards bc-cards--2">
+<div class="bc-card" v-click><div class="bc-card__title">🖥️ En simulation</div><p>La saisie tient par <strong>friction</strong> (fragile) ou par <strong>attache</strong> dans la <em>planning scene</em>.</p></div>
+<div class="bc-card" v-click><div class="bc-card__title">🤖 Sur le vrai SO-101</div><p>C'est la <strong>force des moteurs</strong> qui maintient l'objet — pas d'attache magique.</p></div>
+</div>
+
 <v-click>
 
 <div class="bc-callout bc-callout--warn">
 <div class="bc-callout__icon">🧪</div>
 <div class="bc-callout__body">
-<div class="bc-callout__title">Sim ≠ réel</div>
-<p>En simulation, la saisie tient par <strong>friction</strong> (fragile) ou par <strong>attache</strong> ; sur le vrai SO-101, c'est la <strong>force des moteurs</strong>. Et sur 5 DOF on saisit <strong>par le haut</strong> (orientation imposée), pas sous tous les angles.</p>
+<div class="bc-callout__title">Contrainte des 5 DOF</div>
+<p>Sur 5 DOF on saisit <strong>par le haut</strong> (orientation imposée), pas sous tous les angles.</p>
 </div>
 </div>
 
@@ -812,17 +862,15 @@ layout: default
 
 # Récap Jour 3
 
-- <v-click>**Anatomie** : un bras = chaîne série de joints ; 1 joint = 1 DDL ; le SO-101 = **5 DOF** + pince.</v-click>
-- <v-click>**Cinématique** : FK (unique) vs IK (0 / 1 / ∞, KDL) ; sur 5 DOF on **planifie en espace des joints**.</v-click>
-- <v-click>**Modélisation** : URDF (géométrie), Xacro (paramétrage), SRDF (sémantique), TF (repères dans le temps).</v-click>
-- <v-click>**Exécution** : `ros2_control` (JTC + pince) pilote le matériel ; MoveIt lui envoie ses trajectoires.</v-click>
-- <v-click>**Planification** : OMPL cherche le chemin, **MoveIt 2** orchestre via `move_group` ; saisie = TCP + approche + attache.</v-click>
+<v-clicks>
 
-<v-click>
+- **Anatomie** : un bras = chaîne série de joints ; 1 joint = 1 DDL ; le SO-101 = **5 DOF** + pince.
+- **Cinématique** : FK (unique) vs IK (0 / 1 / ∞, KDL) ; sur 5 DOF on **planifie en espace des joints**.
+- **Modélisation** : URDF (géométrie), Xacro (paramétrage), SRDF (sémantique), TF (repères dans le temps).
+- **Exécution** : `ros2_control` (JTC + pince) pilote le matériel ; MoveIt lui envoie ses trajectoires.
+- **Planification** : OMPL cherche le chemin, **MoveIt 2** orchestre via `move_group` ; saisie = TCP + approche + attache.
 
-> La mise en pratique (visualisation du SO-101, planification dans RViz, pick & place) se fait en TP, documentée dans le bootcamp.
-
-</v-click>
+</v-clicks>
 
 ---
 layout: end
