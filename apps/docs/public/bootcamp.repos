@@ -18,3 +18,7 @@ repositories:
     type: git
     url: https://github.com/EtienneSchmitz/lekiwi_ros2.git
     version: main
+  bootcamp_ros2:
+    type: git
+    url: https://github.com/EtienneSchmitz/bootcamp_ros2.git
+    version: main
