@@ -400,8 +400,9 @@ flowchart LR
 
 <v-click>
 
-`Detection.msg` = `string class_id` + `geometry_msgs/Pose pose`. **Quelle que soit la
-méthode**, la sortie est la même → le Jour 5 branche votre perception sans rien changer.
+`DetectionArray` = liste de `Detection` (classe + score + boîte 2D + `position`).
+**Quelle que soit la méthode**, la sortie est la même → le Jour 5 branche votre
+perception sans rien changer.
 
 </v-click>
 

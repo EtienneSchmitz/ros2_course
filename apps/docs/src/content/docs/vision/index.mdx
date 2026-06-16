@@ -22,12 +22,12 @@ classique à l'intelligence artificielle.
 - expliquer ce qu'est une image numérique (pixels, canaux, espaces colorimétriques) et le **pipeline vision** ;
 - situer les grandes familles de techniques : **OpenCV** (classique), **marqueurs** (ArUco), **apprentissage profond** (YOLO, CNN) ;
 - acquérir un flux caméra en ROS 2 (`sensor_msgs/Image` + `cv_bridge`) et estimer une **pose** ;
-- coder un nœud **`detector`** qui publie un `Detection.msg` sur `/detections` — la brique perception du fil rouge.
+- coder un nœud **`detector`** qui publie un `DetectionArray` sur `/detections` — la brique perception du fil rouge.
 
 ## Pré-requis
 
 - Workspace `~/ros2_bootcamp_ws/` opérationnel avec le package `bootcamp_vision` (voir [Installation](/installation/)).
-- `Detection.msg` créé au Jour 1 dans votre package d'interfaces (`string class_id` + `geometry_msgs/Pose pose`).
+- Types de détection : `bootcamp_vision` fournit `Detection` / `DetectionArray` prêts à l'emploi (pour le fil rouge J5, vous les recréerez dans votre package d'interfaces).
 - Dépendances vision installées (voir [Installation](/installation/01-ubuntu/#ros-2-kilted--gazebo-ionic)).
 
 ## Déroulé de la journée

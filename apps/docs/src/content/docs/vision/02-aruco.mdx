@@ -23,7 +23,7 @@ journée — le détecteur « filet de sécurité » pour le projet final.
 - Comprendre ce qu'est un marqueur fiduciaire (ArUco / AprilTag) et un **dictionnaire**.
 - Détecter les marqueurs d'une image avec `cv2.aruco.ArucoDetector`.
 - Estimer la **pose 6D** d'un marqueur (`solvePnP`) à partir des intrinsèques et de sa taille.
-- Convertir `rvec`/`tvec` en `geometry_msgs/Pose` et publier sur `/detections`.
+- Publier la **`position`** du marqueur (depuis `tvec`) dans un `DetectionArray` sur `/detections` (l'orientation nécessite d'étendre le message).
 </Aside>
 
 ## 1. Qu'est-ce qu'un marqueur ArUco ?
@@ -121,66 +121,48 @@ et la distorsion. En simulation, les intrinsèques sont **connues et exactes** :
 lit dans `/camera/camera_info` (ou le README), et la distorsion est nulle.
 </Aside>
 
-## 4. Publier la pose sur `/detections`
+## 4. Publier sur `/detections`
 
 On réutilise le **squelette de nœud** du
-[socle commun](/vision/00-communs/#6-le-squelette-du-nœud-detector). Seule différence :
-ici la `pose` est **complète**. Il reste à convertir `rvec` (vecteur de Rodrigues) en
-**quaternion** :
+[socle commun](/vision/00-communs/#34-le-squelette-du-nœud-detector). La `position`
+provient directement de `tvec` (translation caméra→marqueur), et la classe de l'ID :
 
 ```python
-from geometry_msgs.msg import Pose
-import cv2 as cv
-import numpy as np
-
-def pose_depuis_rtvec(rvec, tvec):
-    R, _ = cv.Rodrigues(rvec)                 # vecteur de rotation -> matrice 3×3
-    # matrice de rotation -> quaternion (x, y, z, w)
-    t = np.trace(R)
-    if t > 0:
-        s = 0.5 / np.sqrt(t + 1.0)
-        w = 0.25 / s
-        x = (R[2, 1] - R[1, 2]) * s
-        y = (R[0, 2] - R[2, 0]) * s
-        z = (R[1, 0] - R[0, 1]) * s
-    else:
-        # cas dégénéré : voir scipy.spatial.transform.Rotation pour une version robuste
-        x, y, z, w = 0.0, 0.0, 0.0, 1.0
-
-    pose = Pose()
-    pose.position.x, pose.position.y, pose.position.z = map(float, tvec.flatten())
-    pose.orientation.x, pose.orientation.y = x, y
-    pose.orientation.z, pose.orientation.w = z, w
-    return pose
+def on_image(self, msg):
+    img = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+    coins, ids, _ = detector.detectMarkers(img)
+    out = DetectionArray()
+    out.header = msg.header
+    if ids is not None:
+        for coin, mid in zip(coins, ids.flatten()):
+            ok, rvec, tvec = cv.solvePnP(objp, coin[0], K, dist)
+            if not ok:
+                continue
+            tx, ty, tz = (float(c) for c in tvec.flatten())
+            det = self.make_det(f"aruco_{int(mid)}", int(mid), 1.0,
+                                coin[0][:, 0].mean(), coin[0][:, 1].mean(), 0.0, 0.0)
+            det.position.x, det.position.y, det.position.z = tx, ty, tz
+            out.detections.append(det)
+    self.pub.publish(out)
 ```
 
-<Aside type="tip" title="Plus simple avec scipy">
-La conversion matrice → quaternion est fournie par SciPy, déjà tirée par PyTorch :
-
-```python
-from scipy.spatial.transform import Rotation
-quat = Rotation.from_matrix(R).as_quat()   # [x, y, z, w]
-```
-</Aside>
-
-Dans la boucle image du nœud, pour chaque marqueur détecté :
-
-```python
-det = Detection()
-det.class_id = f"aruco_{int(mid)}"     # la classe = l'ID du marqueur
-det.pose = pose_depuis_rtvec(rvec, tvec)
-self.pub.publish(det)
-```
-
-Testez comme au TP précédent :
+Testez :
 
 ```bash
 ros2 run mon_projet_vision aruco_detector
 ros2 topic echo /detections
 ```
 
-Le `class_id` doit valoir `aruco_1` (ou l'ID spawné) et la `pose` doit contenir une
-**orientation réelle** (quaternion non trivial) qui change si vous tournez le colis.
+Le `class_name` doit valoir `aruco_1` (ou l'ID spawné) et la `position` la translation
+réelle du marqueur.
+
+<Aside type="caution" title="Orientation 6D : pas dans le message de référence">
+`solvePnP` vous donne aussi `rvec` (l'**orientation** du marqueur). Mais le `Detection`
+de `bootcamp_vision` ne porte qu'une **`position`** (`Point`). Pour transporter
+l'orientation 6D, **étendez le message** (ajoutez un `geometry_msgs/Quaternion`) ou
+publiez une **TF**. Convertissez `rvec` en quaternion avec
+`scipy.spatial.transform.Rotation.from_rotvec(rvec.flatten()).as_quat()`.
+</Aside>
 
 <Aside type="note" title="Pourquoi ArUco est votre baseline">
 ArUco vous donne **classe + pose 6D** de façon déterministe, sans entraînement ni

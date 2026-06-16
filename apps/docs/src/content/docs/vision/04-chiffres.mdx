@@ -48,6 +48,7 @@ python3 -m venv --system-site-packages ~/venv-vision
 source ~/venv-vision/bin/activate
 pip install torch torchvision
 ```
+
 </Aside>
 
 ## 1. Charger les données MNIST
@@ -183,33 +184,36 @@ ros2 launch bootcamp_vision spawn_object.launch.py object:=digit
 
 ## 5. Brancher dans le nœud `detector`
 
-Reprenez le [squelette du socle commun](/vision/00-communs/#6-le-squelette-du-nœud-detector).
-Le modèle est chargé **une fois** dans le constructeur ; à chaque image, on isole le
-chiffre (la zone la plus marquée), on le classe, et on publie. La `class_id` est le
-chiffre prédit ; la `pose` vient de la back-projection du centroïde.
+Reprenez le [squelette du socle commun](/vision/00-communs/#34-le-squelette-du-nœud-detector)
+(`make_det` y est défini). Le modèle est chargé **une fois** dans le constructeur ; à
+chaque image, on isole le chiffre, on le classe, et on l'ajoute. Le `class_name` est le
+chiffre prédit ; la `position` vient de la back-projection du centre de sa boîte.
 
 ```python
 class DigitDetector(Node):
     def __init__(self):
         super().__init__("digit_detector")
-        # ... bridge / pub / subscription comme le socle commun ...
+        # ... bridge / pub (DetectionArray) / subscription comme le socle commun ...
         self.model = CNN().to(device)
         self.model.load_state_dict(torch.load("mnist_cnn.pth"))
         self.model.eval()
 
     def on_image(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-        # 1) localiser le panneau-chiffre (seuillage + plus gros contour)
+        out = DetectionArray()
+        out.header = msg.header
+        # 1) localiser le panneau-chiffre (seuillage + plus gros contour -> boundingRect)
         # 2) recadrer la ROI -> predire(roi) -> chiffre
-        # 3) centroïde -> backproject -> publier
-        chiffre = predire(roi)
-        x, y, z = self.backproject(u, v)
-        self.publier(str(chiffre), x, y, z)
+        x, y, w, h = cv.boundingRect(cnt)
+        chiffre = predire(frame[y:y + h, x:x + w])
+        out.detections.append(
+            self.make_det(str(chiffre), chiffre, 1.0, x + w / 2, y + h / 2, w, h))
+        self.pub.publish(out)
 ```
 
 ```bash
 ros2 run mon_projet_vision digit_detector
-ros2 topic echo /detections     # class_id = "7", pose = centre back-projeté
+ros2 topic echo /detections     # class_name = "7", position = centre back-projeté
 ```
 
 <Aside type="caution" title="Du jeu de données au monde réel">

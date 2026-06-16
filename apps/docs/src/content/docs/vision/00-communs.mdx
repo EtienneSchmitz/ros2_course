@@ -83,98 +83,108 @@ ros2 run rqt_image_view rqt_image_view /camera/image_raw
 Gardez cette fenêtre ouverte : vous y verrez ce que « voit » votre nœud.
 </Aside>
 
-## 3. `cv_bridge` : du message ROS au tableau OpenCV
+## 3. De l'image au `/detections`
 
-Un nœud ROS reçoit des `sensor_msgs/Image`. `cv_bridge` les convertit en image OpenCV
-(un tableau NumPy `H × W × C`, en **BGR**) :
+Le cœur ROS 2, **commun à tous les ateliers** : on reçoit l'image, on détecte, on publie.
+Quatre briques.
+
+### 3.1 `cv_bridge` — du message ROS au tableau OpenCV
+
+`cv_bridge` convertit un `sensor_msgs/Image` en image OpenCV (tableau NumPy `H × W × C`,
+en **BGR**) :
 
 ```python
 from cv_bridge import CvBridge
-bridge = CvBridge()
-frame = bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")   # -> np.ndarray BGR
+frame = CvBridge().imgmsg_to_cv2(msg, "bgr8")   # -> np.ndarray BGR
 ```
 
-## 4. Le contrat `/detections`
+### 3.2 Le message `Detection` (fourni par `bootcamp_vision`)
 
-<Aside type="caution" title="Importez VOTRE message Detection">
-`Detection.msg` (`string class_id` + `geometry_msgs/Pose pose`) a été créé dans votre
-**package d'interfaces** au Jour 1. Adaptez l'import au nom que vous lui avez donné
-(`from mon_projet_interfaces.msg import Detection`). Le package `bootcamp_vision` peut
-aussi le fournir.
-</Aside>
-
-Tous les ateliers publient le **même** message sur le **même** topic — c'est ce qui
-permet au Jour 5 de brancher votre perception sans rien changer en aval.
-
-## 5. Estimer la pose : back-projection sur le plan de la table
-
-`Detection.msg` attend une `geometry_msgs/Pose` (3D). Avec une caméra **en vue de
-dessus** et les intrinsèques connues, on remonte d'un pixel `(u, v)` vers un point 3D
-sur le plan de la table. La distance caméra→table est documentée dans le **README de
-`bootcamp_vision`**.
+`bootcamp_vision` fournit deux types de **référence** prêts à l'emploi :
 
 ```python
-# Intrinsèques de la caméra bootcamp_vision (cf. /camera/camera_info)
-FX, FY, CX, CY = 935.485, 935.485, 640.0, 360.0
-CAM_HEIGHT = 0.80   # distance caméra → plan de la table (m) — voir README bootcamp_vision
-
-def backproject(u, v):
-    """Pixel (u,v) -> (x, y, z) sur le plan de la table (repère caméra)."""
-    x = (u - CX) / FX * CAM_HEIGHT
-    y = (v - CY) / FY * CAM_HEIGHT
-    return x, y, 0.0
+from bootcamp_vision.msg import Detection, DetectionArray
 ```
 
-<Aside type="caution" title="Pose 2D dégradée">
-Cette pose suppose l'objet **posé à plat** (z connu) et ignore son orientation
-(quaternion identité). C'est suffisant pour le pick & place, mais ce n'est **pas** une
-vraie pose 6D. Seul l'atelier [ArUco](/vision/02-aruco/) fournit une pose **6D
-complète** — c'est pourquoi ArUco est le détecteur le plus fiable.
+| Champ de `Detection` | Sens |
+| --- | --- |
+| `string class_name` | nom de classe (ex. `"coffee_pack_1"`) |
+| `int32 class_id` | identifiant numérique de classe |
+| `float32 score` | confiance `[0..1]` |
+| `float32 u, v, w, h` | boîte 2D dans l'image (pixels) |
+| `geometry_msgs/Point position` | position sur la table (m), `z = 0.40` |
+
+`DetectionArray` = `std_msgs/Header header` + `Detection[] detections` : **une liste par
+image**. On reprend le `header` de l'image (stamp + `frame_id`) pour rester synchronisé
+avec la TF.
+
+<Aside type="note" title="Et votre package d'interfaces du Jour 1 ?">
+Pour le fil rouge (Jour 5), le projet utilise **votre** package d'interfaces
+(placeholder des énoncés : `mon_projet_interfaces`). En attendant, importez directement
+les types de `bootcamp_vision` ci-dessus, ou recopiez `msg/Detection.msg` dans votre
+package et changez l'import — les champs sont identiques.
 </Aside>
 
-## 6. Le squelette du nœud `detector`
+### 3.3 Estimer la position — back-projection
 
-Voici le **patron commun** : il souscrit à la caméra, convertit l'image, et publie sur
-`/detections`. Chaque atelier ne remplace que le bloc « détection » dans `on_image`.
+Avec une caméra **en vue de dessus** et les intrinsèques connues, on remonte d'un pixel
+`(u, v)` vers un point sur le plan de la table (`z = 0.40`). La distance caméra→table
+(`1.00 m`) est documentée dans le **README de `bootcamp_vision`**.
+
+```python
+FX, FY, CX, CY = 935.485, 935.485, 640.0, 360.0   # cf. /camera/camera_info
+CAM_HEIGHT = 1.00          # caméra z=1.40, plateau z=0.40 -> 1.00 m
+TABLE_Z = 0.40
+
+def backproject(u, v):
+    """Pixel (u,v) -> position (x, y, z) sur le plateau."""
+    x = (u - CX) / FX * CAM_HEIGHT
+    y = (v - CY) / FY * CAM_HEIGHT
+    return x, y, TABLE_Z
+```
+
+<Aside type="caution" title="Position seule, pas d'orientation">
+Le message ne porte qu'une **position** (`Point`) : on suppose l'objet **posé à plat** et
+on n'estime pas son orientation. Seul l'atelier [ArUco](/vision/02-aruco/) sait calculer
+une **pose 6D** — mais il faut alors étendre le message (ou publier une TF) pour la
+transporter. Vérifiez les **signes** des axes selon `camera_optical_frame` (REP-103).
+</Aside>
+
+### 3.4 Le squelette du nœud `detector`
+
+Le **patron commun** : souscrit à la caméra, publie un `DetectionArray` sur
+`/detections`. Chaque atelier ne remplit que le bloc « détection » dans `on_image`.
 
 ```python
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Point
 from cv_bridge import CvBridge
-
-from mon_projet_interfaces.msg import Detection   # ⚠️ votre package d'interfaces (J1)
-
-FX, FY, CX, CY = 935.485, 935.485, 640.0, 360.0
-CAM_HEIGHT = 0.80
-
+from bootcamp_vision.msg import Detection, DetectionArray
 
 class Detector(Node):
     def __init__(self):
         super().__init__("detector")
         self.bridge = CvBridge()
-        self.pub = self.create_publisher(Detection, "/detections", 10)
+        self.pub = self.create_publisher(DetectionArray, "/detections", 10)
         self.create_subscription(Image, "/camera/image_raw", self.on_image, 10)
-        self.get_logger().info("detector prêt — j'écoute /camera/image_raw")
 
     def on_image(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-        # >>> bloc spécifique à l'atelier : produire (class_id, u, v) <<<
-        # x, y, z = self.backproject(u, v)
-        # self.publier(class_id, x, y, z)
+        out = DetectionArray()
+        out.header = msg.header          # stamp + frame_id (camera_optical_frame)
+        # >>> bloc atelier : pour chaque objet détecté <<<
+        #   out.detections.append(self.make_det("triangle", 0, 1.0, u, v, w, h))
+        self.pub.publish(out)
 
-    def backproject(self, u, v):
-        return (u - CX) / FX * CAM_HEIGHT, (v - CY) / FY * CAM_HEIGHT, 0.0
-
-    def publier(self, class_id, x, y, z, quat=(0.0, 0.0, 0.0, 1.0)):
+    def make_det(self, class_name, class_id, score, u, v, w, h):
         det = Detection()
-        det.class_id = class_id
-        det.pose = Pose()
-        det.pose.position.x, det.pose.position.y, det.pose.position.z = x, y, z
-        (det.pose.orientation.x, det.pose.orientation.y,
-         det.pose.orientation.z, det.pose.orientation.w) = quat
-        self.pub.publish(det)
+        det.class_name, det.class_id, det.score = class_name, int(class_id), float(score)
+        det.u, det.v, det.w, det.h = float(u), float(v), float(w), float(h)
+        x, y, z = backproject(u, v)
+        det.position = Point(x=x, y=y, z=z)
+        return det
 
 
 def main():
@@ -183,11 +193,11 @@ def main():
     rclpy.shutdown()
 ```
 
-Pour tester n'importe quel atelier, avec le monde lancé et un objet spawné :
+Pour tester, avec le monde lancé et un objet spawné :
 
 ```bash
 ros2 run mon_projet_vision detector     # votre package
-ros2 topic echo /detections
+ros2 topic echo /detections             # un DetectionArray par image
 ```
 
 ## Choisir son atelier

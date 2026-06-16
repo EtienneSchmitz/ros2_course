@@ -49,6 +49,7 @@ python3 -m venv --system-site-packages ~/venv-vision
 source ~/venv-vision/bin/activate
 pip install ultralytics
 ```
+
 </Aside>
 
 ### 1. Inférence sur une image
@@ -153,43 +154,45 @@ modèle COCO en était incapable.
 ## Partie C — Nœud ROS 2 `/detections`
 
 On réutilise le **squelette** du
-[socle commun](/vision/00-communs/#6-le-squelette-du-nœud-detector). Le modèle est
-chargé une fois dans le constructeur ; à chaque image, on publie une `Detection` par
-boîte. La `pose` est obtenue en **back-projetant le centre de la boîte** sur le plan de
-la table.
+[socle commun](/vision/00-communs/#34-le-squelette-du-nœud-detector). Le modèle est
+chargé une fois dans le constructeur ; à chaque image, on ajoute une `Detection` par
+boîte (`make_det` y est défini). YOLO fournit directement la classe, le score et la boîte.
 
 ```python
 from ultralytics import YOLO
-# ... (imports rclpy / Image / Pose / cv_bridge / Detection comme au TP 01)
+# ... (imports rclpy / Node / Image / Point / cv_bridge / Detection, DetectionArray)
 
 class YoloDetector(Node):
     def __init__(self):
         super().__init__("yolo_detector")
         self.bridge = CvBridge()
         self.model = YOLO("best.pt")        # votre modèle entraîné (ou "yolo11n.pt")
-        self.pub = self.create_publisher(Detection, "/detections", 10)
+        self.pub = self.create_publisher(DetectionArray, "/detections", 10)
         self.create_subscription(Image, "/camera/image_raw", self.on_image, 10)
 
     def on_image(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        out = DetectionArray()
+        out.header = msg.header
         for box in self.model(frame, verbose=False)[0].boxes:
             if float(box.conf) < 0.5:
                 continue
             x1, y1, x2, y2 = box.xyxy[0].tolist()
-            u, v = (x1 + x2) / 2, (y1 + y2) / 2      # centre de la boîte
-            x, y, z = self.backproject(u, v)          # cf. socle commun
-            self.publier(self.model.names[int(box.cls)], x, y, z)
+            u, v = (x1 + x2) / 2, (y1 + y2) / 2          # centre de la boîte
+            w, h = x2 - x1, y2 - y1
+            out.detections.append(self.make_det(
+                self.model.names[int(box.cls)], int(box.cls), float(box.conf), u, v, w, h))
+        self.pub.publish(out)
 ```
 
 ```bash
 ros2 run mon_projet_vision yolo_detector
-ros2 topic echo /detections     # class_id = label COCO/custom, pose = centre back-projeté
+ros2 topic echo /detections     # class_name = label, position = centre back-projeté
 ```
 
-<Aside type="caution" title="Pose 2D">
-YOLO donne une **boîte 2D**, pas d'orientation. La `pose` publiée reste **2D dégradée**
-(centre back-projeté, orientation identité). Pour une pose 6D, voir
-[ArUco](/vision/02-aruco/).
+<Aside type="caution" title="Position 2D">
+YOLO donne une **boîte 2D**, pas d'orientation. La `position` publiée vient du centre de
+la boîte back-projeté sur le plateau. Pour une pose 6D, voir [ArUco](/vision/02-aruco/).
 </Aside>
 
 <Aside type="tip" title="Vérifiez votre compréhension">

@@ -130,8 +130,8 @@ Réglez les seuils en direct avec des
 
 ## 5. Brancher dans le nœud `detector`
 
-Reprenez le [squelette du socle commun](/vision/00-communs/#6-le-squelette-du-nœud-detector)
-et complétez `on_image` avec votre détection :
+Reprenez le [squelette du socle commun](/vision/00-communs/#34-le-squelette-du-nœud-detector)
+et complétez `on_image` avec votre détection (`make_det` y est défini) :
 
 ```python
 def on_image(self, msg):
@@ -141,14 +141,15 @@ def on_image(self, msg):
     _, binaire = cv.threshold(flou, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
     contours, _ = cv.findContours(binaire, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
+    out = DetectionArray()
+    out.header = msg.header
     for cnt in contours:
         if not (500 < cv.contourArea(cnt) < 200_000):
             continue
-        centre = centroide(cnt)
-        if centre is None:
-            continue
-        x, y, z = self.backproject(*centre)        # cf. socle commun
-        self.publier(nommer_forme(cnt), x, y, z)   # pose 2D, orientation identité
+        x, y, w, h = cv.boundingRect(cnt)          # boîte 2D
+        u, v = x + w / 2, y + h / 2                 # centre
+        out.detections.append(self.make_det(nommer_forme(cnt), 0, 1.0, u, v, w, h))
+    self.pub.publish(out)
 ```
 
 Testez :
@@ -158,18 +159,19 @@ ros2 run mon_projet_vision detector
 ros2 topic echo /detections
 ```
 
-Vous devez voir défiler des `Detection` avec un `class_id` (`triangle`, `carre`,
-`cercle`) et une `pose` non nulle. **C'est votre premier détecteur réel.**
+Vous devez voir défiler un `DetectionArray` dont les détections portent un `class_name`
+(`triangle`, `carre`, `cercle`) et une `position` non nulle. **C'est votre premier
+détecteur réel.**
 
-<Aside type="caution" title="Pose 2D">
-La `pose` publiée est **2D dégradée** (objet supposé à plat, orientation identité). Pour
-une pose **6D**, voir l'atelier [ArUco](/vision/02-aruco/).
+<Aside type="caution" title="Position 2D">
+La `position` publiée suppose l'objet **posé à plat** (back-projection sur le plateau,
+sans orientation). Pour une pose **6D**, voir l'atelier [ArUco](/vision/02-aruco/).
 </Aside>
 
 <Aside type="tip" title="Vérifiez votre compréhension">
 1. Pourquoi convertir en **HSV** plutôt que de seuiller directement en BGR ?
 2. Que représente le résultat de `approxPolyDP`, et comment en déduit-on la forme ?
-3. Pourquoi la `pose` publiée est-elle « 2D dégradée » ?
+3. Pourquoi la `position` publiée est-elle « 2D » (sans orientation) ?
 
 <details class="quiz-answers">
 <summary>Afficher les réponses</summary>
