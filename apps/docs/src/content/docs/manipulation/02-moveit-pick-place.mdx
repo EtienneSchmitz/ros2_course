@@ -267,6 +267,8 @@ Deux pièges à connaître, gérés par le launch :
   l'exécution n'est jamais validée (« couldn't receive full current joint state »).
 - un `moveit_cpp.yaml` qui définit `planning_pipelines.pipeline_names: ["ompl"]` —
   sinon « Failed to load any planning pipelines ».
+- le pipeline OMPL au **format Kilted** (`planning_plugins` en **liste**, adapters en
+  listes) — sinon « expected [string array] got [string] » au démarrage.
 
 ```python
 # launch/pick_and_place.launch.py
@@ -284,6 +286,45 @@ def generate_launch_description():
         additional_env={"LC_NUMERIC": "C.UTF-8"},
     )])
 ```
+
+Le `moveit_cpp.yaml` correspondant (`config/moveit_cpp.yaml` de votre package) :
+
+```yaml
+# config/moveit_cpp.yaml — paramètres MoveItCpp pour moveit_py.
+# MoveItCpp lit la forme IMBRIQUÉE planning_pipelines.pipeline_names (≠ liste plate de move_group).
+planning_pipelines:
+  pipeline_names: ["ompl"]
+
+# Pipeline OMPL — FORMAT KILTED : planning_plugins est une LISTE (ex-planning_plugin string)
+# et les adapters sont des listes. C'est ce qui corrige « expected [string array] got [string] ».
+ompl:
+  planning_plugins:
+    - ompl_interface/OMPLPlanner
+  request_adapters:
+    - default_planning_request_adapters/ResolveConstraintFrames
+    - default_planning_request_adapters/ValidateWorkspaceBounds
+    - default_planning_request_adapters/CheckStartStateBounds
+    - default_planning_request_adapters/CheckStartStateCollision
+  response_adapters:
+    - default_planning_response_adapters/AddTimeOptimalParameterization
+    - default_planning_response_adapters/ValidateSolution
+    - default_planning_response_adapters/DisplayMotionPath
+
+# Params par défaut de PlanningComponent.plan() appelé sans argument.
+plan_request_params:
+  planning_attempts: 10
+  planning_pipeline: ompl
+  max_velocity_scaling_factor: 1.0
+  max_acceleration_scaling_factor: 1.0
+  planning_time: 5.0
+```
+
+<Aside type="caution" title="OMPL déjà chargé par so101_moveit_config ?">
+Si `so101_moveit_config` fournit déjà un `ompl_planning.yaml` **au format Kilted**, le
+bloc `ompl:` ci-dessus est inutile (gardez seulement `planning_pipelines` et
+`plan_request_params`). Ne le dupliquez que si l'erreur « expected string array »
+persiste — signe que l'OMPL chargé est encore à l'ancien format.
+</Aside>
 
 Puis, dans **deux terminaux** :
 
