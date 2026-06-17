@@ -23,7 +23,7 @@ journée — le détecteur « filet de sécurité » pour le projet final.
 - Comprendre ce qu'est un marqueur fiduciaire (ArUco / AprilTag) et un **dictionnaire**.
 - Détecter les marqueurs d'une image avec `cv2.aruco.ArucoDetector`.
 - Estimer la **pose 6D** d'un marqueur (`solvePnP`) à partir des intrinsèques et de sa taille.
-- Publier la **`position`** du marqueur (depuis `tvec`) dans un `DetectionArray` sur `/detections` (l'orientation nécessite d'étendre le message).
+- Publier la **pose 6D** du marqueur (`tvec` → position, `rvec` → orientation) dans un `DetectionArray` sur `/detections`.
 </Aside>
 
 ## 1. Qu'est-ce qu'un marqueur ArUco ?
@@ -125,9 +125,13 @@ lit dans `/camera/camera_info` (ou le README), et la distorsion est nulle.
 
 On réutilise le **squelette de nœud** du
 [socle commun](/vision/00-communs/#34-le-squelette-du-nœud-detector). La `position`
-provient directement de `tvec` (translation caméra→marqueur), et la classe de l'ID :
+provient de `tvec` (translation caméra→marqueur) et — contrairement aux autres ateliers —
+l'**orientation** de `rvec` : ArUco remplit donc la **pose 6D** complète. La classe vient
+de l'ID :
 
 ```python
+from scipy.spatial.transform import Rotation
+
 def on_image(self, msg):
     img = self.bridge.imgmsg_to_cv2(msg, "bgr8")
     coins, ids, _ = detector.detectMarkers(img)
@@ -141,7 +145,12 @@ def on_image(self, msg):
             tx, ty, tz = (float(c) for c in tvec.flatten())
             det = self.make_det(f"aruco_{int(mid)}", int(mid), 1.0,
                                 coin[0][:, 0].mean(), coin[0][:, 1].mean(), 0.0, 0.0)
-            det.position.x, det.position.y, det.position.z = tx, ty, tz
+            # position : translation du marqueur (écrase la back-projection)
+            det.pose.position.x, det.pose.position.y, det.pose.position.z = tx, ty, tz
+            # orientation 6D : rvec (rotation vector) -> quaternion
+            qx, qy, qz, qw = Rotation.from_rotvec(rvec.flatten()).as_quat()
+            det.pose.orientation.x, det.pose.orientation.y = float(qx), float(qy)
+            det.pose.orientation.z, det.pose.orientation.w = float(qz), float(qw)
             out.detections.append(det)
     self.pub.publish(out)
 ```
@@ -153,15 +162,15 @@ ros2 run mon_projet_vision aruco_detector
 ros2 topic echo /detections
 ```
 
-Le `class_name` doit valoir `aruco_1` (ou l'ID spawné) et la `position` la translation
-réelle du marqueur.
+Le `class_name` doit valoir `aruco_1` (ou l'ID spawné), la `pose.position` la translation
+réelle du marqueur et la `pose.orientation` son orientation.
 
-<Aside type="caution" title="Orientation 6D : pas dans le message de référence">
-`solvePnP` vous donne aussi `rvec` (l'**orientation** du marqueur). Mais le `Detection`
-de `bootcamp_vision` ne porte qu'une **`position`** (`Point`). Pour transporter
-l'orientation 6D, **étendez le message** (ajoutez un `geometry_msgs/Quaternion`) ou
-publiez une **TF**. Convertissez `rvec` en quaternion avec
-`scipy.spatial.transform.Rotation.from_rotvec(rvec.flatten()).as_quat()`.
+<Aside type="tip" title="Pose 6D : c'est l'atout d'ArUco">
+`solvePnP` vous donne `tvec` (position) **et** `rvec` (orientation). Comme le message
+`Detection` porte une **`geometry_msgs/Pose`** complète, vous publiez la **pose 6D** sans
+rien étendre : on convertit simplement `rvec` en quaternion avec
+`scipy.spatial.transform.Rotation.from_rotvec(rvec.flatten()).as_quat()`. Les autres
+ateliers laissent l'orientation à l'identité — ArUco est le seul à la remplir.
 </Aside>
 
 <Aside type="note" title="Pourquoi ArUco est votre baseline">

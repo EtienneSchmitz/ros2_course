@@ -134,10 +134,16 @@ YOLO part du modèle pré-entraîné (*transfer learning*) et l'adapte à vos cl
 poids du meilleur modèle sont sauvegardés dans
 `runs/detect/train/weights/best.pt`.
 
-<Aside type="caution" title="Gérez votre temps">
-Génération + entraînement prennent du temps (plus encore sur CPU). Commencez **petit** :
-peu de classes, `epochs=10`, puis augmentez si le temps le permet. Gardez le modèle
-pré-entraîné de la partie A comme **filet de sécurité** si l'entraînement n'aboutit pas.
+<Aside type="caution" title="Gérez votre temps (ordres de grandeur)">
+Génération + entraînement prennent du temps, **surtout sur CPU** :
+- **Capture du dataset** : ~quelques minutes pour 5 classes × 300 images (dépend du débit
+  de la sim).
+- **Entraînement** : sur **GPU**, `epochs=30` en ~5–15 min ; sur **CPU**, comptez plutôt
+  **30 min à plus d'une heure** — d'où l'intérêt de démarrer à `epochs=10`.
+
+Commencez **petit** : peu de classes, `epochs=10`, puis augmentez si le temps le permet.
+Gardez le modèle pré-entraîné de la partie A comme **filet de sécurité** si l'entraînement
+n'aboutit pas.
 </Aside>
 
 ### 5. Tester votre modèle
@@ -187,12 +193,13 @@ class YoloDetector(Node):
 
 ```bash
 ros2 run mon_projet_vision yolo_detector
-ros2 topic echo /detections     # class_name = label, position = centre back-projeté
+ros2 topic echo /detections     # class_name = label, pose.position = centre back-projeté
 ```
 
 <Aside type="caution" title="Position 2D">
-YOLO donne une **boîte 2D**, pas d'orientation. La `position` publiée vient du centre de
-la boîte back-projeté sur le plateau. Pour une pose 6D, voir [ArUco](/vision/02-aruco/).
+YOLO donne une **boîte 2D**, pas d'orientation. La `pose.position` publiée vient du centre
+de la boîte back-projeté sur le plateau (orientation laissée à l'identité). Pour une pose
+6D, voir [ArUco](/vision/02-aruco/).
 </Aside>
 
 <Aside type="tip" title="Vérifiez votre compréhension">

@@ -112,7 +112,7 @@ from bootcamp_vision.msg import Detection, DetectionArray
 | `int32 class_id` | identifiant numérique de classe |
 | `float32 score` | confiance `[0..1]` |
 | `float32 u, v, w, h` | boîte 2D dans l'image (pixels) |
-| `geometry_msgs/Point position` | position sur la table (m), `z = 0.40` |
+| `geometry_msgs/Pose pose` | pose sur la table (position en m, `z = 0.40` ; orientation = identité, sauf ArUco) |
 
 `DetectionArray` = `std_msgs/Header header` + `Detection[] detections` : **une liste par
 image**. On reprend le `header` de l'image (stamp + `frame_id`) pour rester synchronisé
@@ -143,11 +143,12 @@ def backproject(u, v):
     return x, y, TABLE_Z
 ```
 
-<Aside type="caution" title="Position seule, pas d'orientation">
-Le message ne porte qu'une **position** (`Point`) : on suppose l'objet **posé à plat** et
-on n'estime pas son orientation. Seul l'atelier [ArUco](/vision/02-aruco/) sait calculer
-une **pose 6D** — mais il faut alors étendre le message (ou publier une TF) pour la
-transporter. Vérifiez les **signes** des axes selon `camera_optical_frame` (REP-103).
+<Aside type="caution" title="Orientation : identité par défaut">
+Le message porte une **pose complète** (`geometry_msgs/Pose`), mais la plupart des
+ateliers n'estiment **que la position** : on suppose l'objet **posé à plat** et on laisse
+l'orientation à l'**identité** (`orientation.w = 1.0`). Seul l'atelier
+[ArUco](/vision/02-aruco/) calcule une **pose 6D** complète et remplit l'orientation
+réelle. Vérifiez les **signes** des axes selon `camera_optical_frame` (REP-103).
 </Aside>
 
 ### 3.4 Le squelette du nœud `detector`
@@ -183,7 +184,8 @@ class Detector(Node):
         det.class_name, det.class_id, det.score = class_name, int(class_id), float(score)
         det.u, det.v, det.w, det.h = float(u), float(v), float(w), float(h)
         x, y, z = backproject(u, v)
-        det.position = Point(x=x, y=y, z=z)
+        det.pose.position = Point(x=x, y=y, z=z)
+        det.pose.orientation.w = 1.0     # orientation inconnue -> identité (ArUco la remplace)
         return det
 
 
@@ -192,6 +194,12 @@ def main():
     rclpy.spin(Detector())
     rclpy.shutdown()
 ```
+
+<Aside type="note" title="N'oubliez pas `backproject`">
+`make_det` appelle la fonction `backproject` (et ses constantes `FX, FY, CX, CY,
+CAM_HEIGHT, TABLE_Z`) définie en [3.3](#33-estimer-la-position--back-projection) :
+copiez-la **dans le même module** que votre nœud.
+</Aside>
 
 Pour tester, avec le monde lancé et un objet spawné :
 

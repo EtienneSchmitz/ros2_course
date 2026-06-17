@@ -63,7 +63,7 @@ est donné dans [le contrat des briques](https://github.com/EtienneSchmitz/ros2_
 
 | Interface | Forme | Producteur → consommateur |
 | --- | --- | --- |
-| topic de détections (`Detection.msg`) | `string class_id` + `geometry_msgs/Pose pose` | détection (J4) → coordinateur |
+| topic de détections (`Detection.msg`) | `string class_name` + `int32 class_id` + `geometry_msgs/Pose pose` (+ score, boîte 2D) | détection (J4) → coordinateur |
 | service de saisie (`PickRequest.srv`) | requête `Pose target` → réponse `bool success` | coordinateur → bras (J3) |
 | action de navigation (`NavigateToPose`) | goal `PoseStamped` | coordinateur → base (J2) |
 

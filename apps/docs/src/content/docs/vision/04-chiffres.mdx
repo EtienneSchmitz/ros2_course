@@ -186,8 +186,9 @@ ros2 launch bootcamp_vision spawn_object.launch.py object:=digit
 
 Reprenez le [squelette du socle commun](/vision/00-communs/#34-le-squelette-du-nœud-detector)
 (`make_det` y est défini). Le modèle est chargé **une fois** dans le constructeur ; à
-chaque image, on isole le chiffre, on le classe, et on l'ajoute. Le `class_name` est le
-chiffre prédit ; la `position` vient de la back-projection du centre de sa boîte.
+chaque image, on **localise le panneau** (seuillage + plus gros contour), on **recadre**
+sa boîte, on la classe, et on l'ajoute. Le `class_name` est le chiffre prédit ; la
+`pose.position` vient de la back-projection du centre de sa boîte.
 
 ```python
 class DigitDetector(Node):
@@ -202,18 +203,27 @@ class DigitDetector(Node):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         out = DetectionArray()
         out.header = msg.header
-        # 1) localiser le panneau-chiffre (seuillage + plus gros contour -> boundingRect)
-        # 2) recadrer la ROI -> predire(roi) -> chiffre
-        x, y, w, h = cv.boundingRect(cnt)
-        chiffre = predire(frame[y:y + h, x:x + w])
-        out.detections.append(
-            self.make_det(str(chiffre), chiffre, 1.0, x + w / 2, y + h / 2, w, h))
+
+        # 1) localiser le panneau : seuillage + contours
+        gris = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        flou = cv.GaussianBlur(gris, (5, 5), 0)
+        _, binaire = cv.threshold(flou, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+        contours, _ = cv.findContours(binaire, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        contours = [c for c in contours if cv.contourArea(c) > 1000]   # anti-bruit
+
+        # 2) le panneau = plus gros contour -> recadrer -> predire
+        if contours:
+            cnt = max(contours, key=cv.contourArea)
+            x, y, w, h = cv.boundingRect(cnt)
+            chiffre = predire(frame[y:y + h, x:x + w])
+            out.detections.append(
+                self.make_det(str(chiffre), chiffre, 1.0, x + w / 2, y + h / 2, w, h))
         self.pub.publish(out)
 ```
 
 ```bash
 ros2 run mon_projet_vision digit_detector
-ros2 topic echo /detections     # class_name = "7", position = centre back-projeté
+ros2 topic echo /detections     # class_name = "7", pose.position = centre back-projeté
 ```
 
 <Aside type="caution" title="Du jeu de données au monde réel">

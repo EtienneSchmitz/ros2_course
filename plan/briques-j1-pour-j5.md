@@ -35,7 +35,8 @@ Pipeline ROS 2 : **perception → décision → action**.
 - **Noms de topics / interfaces figés** : `/detections`, `Detection.msg`, `PickRequest.srv`.
   J2/J3/J4 doivent fournir/consommer **exactement** ces interfaces pour que J5 assemble sans
   réécriture.
-- `Detection.msg` : au moins `string class_id` + `geometry_msgs/Pose pose`.
+- `Detection.msg` : `string class_name` + `int32 class_id` + `float32 score` + boîte 2D
+  (`float32 u, v, w, h`) + `geometry_msgs/Pose pose` (cf. `bootcamp_vision`, repris en J4).
 - `PickRequest.srv` : requête `geometry_msgs/Pose target` → réponse `bool success`.
 - Le `mission_coordinator` ne dépend **que** des interfaces, jamais d'un robot précis →
   c'est ce qui permet de basculer factice ↔ réel.

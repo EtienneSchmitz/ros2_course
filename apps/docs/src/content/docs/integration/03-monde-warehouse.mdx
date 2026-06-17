@@ -147,8 +147,8 @@ Le monde fournit tout le **terrain de jeu** ; à vous de brancher vos briques du
 
 <Steps>
 
-1. **Detector (Jour 4)** : s'abonne à `/camera/image_raw`, publie `Detection.msg` (`class_id` + `pose`)
-   sur `/detections`.
+1. **Detector (Jour 4)** : s'abonne à `/camera/image_raw`, publie `Detection.msg`
+   (`class_name` + `class_id` + `score` + boîte 2D + `geometry_msgs/Pose pose`) sur `/detections`.
 
 2. **Bras (Jour 3)** : service `PickRequest.srv` (`Pose target` → `bool success`) avec MoveIt 2
    (`lekiwi_manipulation_moveit_config`, groupe `arm`, poses `home` / `ready` / `gripper_open` /

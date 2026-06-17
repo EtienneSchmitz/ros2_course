@@ -160,12 +160,13 @@ ros2 topic echo /detections
 ```
 
 Vous devez voir défiler un `DetectionArray` dont les détections portent un `class_name`
-(`triangle`, `carre`, `cercle`) et une `position` non nulle. **C'est votre premier
+(`triangle`, `carre`, `cercle`) et une `pose.position` non nulle. **C'est votre premier
 détecteur réel.**
 
 <Aside type="caution" title="Position 2D">
-La `position` publiée suppose l'objet **posé à plat** (back-projection sur le plateau,
-sans orientation). Pour une pose **6D**, voir l'atelier [ArUco](/vision/02-aruco/).
+La `pose.position` publiée suppose l'objet **posé à plat** (back-projection sur le plateau,
+orientation laissée à l'identité). Pour une pose **6D**, voir l'atelier
+[ArUco](/vision/02-aruco/).
 </Aside>
 
 <Aside type="tip" title="Vérifiez votre compréhension">
