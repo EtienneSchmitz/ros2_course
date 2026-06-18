@@ -32,7 +32,7 @@ Monde lancé (cf. [socle commun](/vision/00-communs/#2-lancer-le-monde-vision)),
 une forme colorée :
 
 ```bash
-ros2 launch bootcamp_vision spawn_object.launch.py object:=shapes
+ros2 launch bootcamp_vision spawn_object.launch.py object_type:=shapes
 ```
 
 → Une **étoile rouge**, un **cube bleu** ou un **cylindre vert** apparaît sur la table.
@@ -64,10 +64,12 @@ La détection est plus robuste sur une image **nettoyée** :
 
 ```mermaid
 flowchart LR
-  A["Image BGR"] --> B["Niveaux de gris"]
-  B --> C["Flou gaussien"]
-  C --> D["Seuillage / Canny"]
-  D --> E["Image binaire"]
+  A["📷 Image BGR"] -->|cvtColor| B["Niveaux de gris"]
+  B -->|GaussianBlur| C["Image floutée"]
+  C -->|"threshold + Otsu"| D["Image binaire"]
+  C -->|Canny| E["Carte de bords"]
+  D -->|findContours| F["Contours"]
+  E -->|findContours| F
 ```
 
 ```python

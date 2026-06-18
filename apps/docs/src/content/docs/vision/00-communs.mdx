@@ -69,8 +69,8 @@ ros2 topic hz /camera/image_raw   # ~24 Hz
 Chaque atelier a son preset (`shapes`, `aruco`, `yolo`, `digit`) :
 
 ```bash
-ros2 launch bootcamp_vision spawn_object.launch.py object:=shapes
-# object:=aruco aruco_id:=1   |   object:=yolo   |   object:=digit
+ros2 launch bootcamp_vision spawn_object.launch.py object_type:=shapes
+# object_type:=aruco aruco_id:=1   |   object_type:=yolo   |   object_type:=digit
 ```
 
 </TabItem>

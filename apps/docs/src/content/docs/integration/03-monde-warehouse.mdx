@@ -85,6 +85,52 @@ d'interface attendu par votre detector du Jour 4. Le `frame_id` est `wrist_camer
 
 </Steps>
 
+## Options de lancement (MoveIt, Nav2, RViz)
+
+`warehouse_sim.launch.py` est le **point d'entrée unique**. Les options sont combinables :
+
+| Argument | Défaut | Effet |
+| --- | --- | --- |
+| `headless:=true` | `false` | Gazebo sans GUI |
+| `camera_alias:=false` | `true` | ne pas republier `/camera/*` |
+| `spawn:=true` | `false` | poser un objet au démarrage (avec `object_type:=…`) |
+| `moveit:=true` | `false` | démarrer **MoveIt** (`move_group`) |
+| `rviz:=true` | `false` | **RViz** MoveIt (nécessite `moveit:=true`) |
+| `nav2:=true` | `false` | démarrer **localisation + Nav2** |
+| `slam_mode:=…` | `map` | `map` (SLAM live) \| `localize` \| `amcl` (cf. ci-dessous) |
+| `map_name:=…` | — | carte pour `localize` / `amcl` (ex. `warehouse`) |
+
+```bash
+# Tout-en-un : sim + MoveIt + RViz + Nav2 (AMCL sur la carte warehouse)
+ros2 launch lekiwi_bringup warehouse_sim.launch.py \
+    moveit:=true rviz:=true nav2:=true slam_mode:=amcl map_name:=warehouse
+```
+
+<Aside type="note" title="MoveIt & locale">
+Avec `moveit:=true`, `warehouse_sim` exporte déjà `LC_NUMERIC=C.UTF-8` (MoveIt 2 Kilted casse le
+parsing URDF en locale `fr_FR`) — rien à faire de votre côté.
+</Aside>
+
+## Navigation : SLAM live ou AMCL
+
+`nav2:=true` démarre Nav2 (planner + controller) **et** la localisation choisie par `slam_mode` :
+
+| `slam_mode` | Localisation | Carte |
+| --- | --- | --- |
+| `map` (défaut) | slam_toolbox *mapping* | **construite en direct** |
+| `localize` | slam_toolbox *localization* | carte sauvegardée (`map_name`) |
+| `amcl` | `nav2_map_server` + **AMCL** | carte statique (`map_name`) |
+
+Une carte `warehouse` est fournie (`lekiwi_navigation/maps/warehouse/`). En mode `amcl` / `localize`,
+donnez la **pose initiale** dans RViz (**« 2D Pose Estimate »**) ou via `/initialpose` : tant qu'AMCL
+n'est pas localisé, des avertissements costmap *« odom → base_footprint »* au démarrage sont **normaux**.
+
+<Aside type="tip" title="LiDAR & bras pendant la nav">
+Le LiDAR 360° a son `min` réglé à **0,20 m** : cela masque les **auto-retours** du bras et des montants
+(la base du bras traverse le plan de scan à `z = 0.115 m`). Le bras reste en pose `home` pendant la
+navigation ; il ne s'articule qu'à l'arrêt, au poste, pour le pick.
+</Aside>
+
 ## Faire apparaître des objets
 
 Les objets ne sont **pas** pré-placés : on les spawne à la demande avec `spawn_object.launch.py` (qui
@@ -131,6 +177,8 @@ Le spawn utilise les services **`ros_gz_interfaces/srv/SpawnEntity` / `DeleteEnt
 | Pour… | …éditer | Où |
 | --- | --- | --- |
 | **Changer d'objet** | `object_type` / `color` / `aruco_id` / `model_path` | argument de launch |
+| **Poser à un endroit précis** | `pose:="x y z [yaw]"` (vide ⇒ aléatoire sur la station) | argument de launch |
+| **Forcer la classe** | `class_id:=…` (sinon dérivée du type / couleur / `aruco_id`) | argument de launch |
 | **Changer la zone d'apparition** | `station_xy`, `station_z`, `jitter` | paramètres du spawn |
 | **Repositionner la station** | la `<pose>` du modèle `pick_station` **+** `station_xy` | `worlds/warehouse.sdf` |
 | **Déplacer / ajouter une zone** | la `<pose>` (ou un nouveau modèle) `zone_*` | `worlds/warehouse.sdf` |
